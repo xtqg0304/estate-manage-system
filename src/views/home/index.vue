@@ -22,14 +22,13 @@
           <el-dropdown class="user-name" trigger="click">
 
             <span class="el-dropdown-link">
-
               111111111
               <i class="el-icon-caret-bottom" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <a :href="loginoutHref" target="_blank">
+              <router-link to ="/login">
                 <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
-              </a>
+              </router-link>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -40,7 +39,7 @@
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.estateSys }}">
             <li>
               <a class="to top ">
-                <svg-icon icon-class="logo" />
+                <svg-icon icon-class="repair" />
               </a>
               <span>物业管理</span>
             </li>
@@ -48,7 +47,7 @@
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.paySys }}">
             <li>
               <a :href="allSysList[2].serverLink " class="to top ">
-                <svg-icon icon-class="logo" />
+                <svg-icon icon-class="pay" />
               </a>
               <span>基础缴费</span>
             </li>
@@ -56,7 +55,7 @@
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.doorSys }}">
             <li>
               <a :href="allSysList[3].serverLink " class="to top ">
-                <svg-icon icon-class="logo" />
+                <svg-icon icon-class="door" />
               </a>
               <span>门禁管理</span>
             </li>
@@ -65,7 +64,7 @@
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.vehicleSys }}">
             <li>
               <a :href="allSysList[1].serverLink " class="to top ">
-                <svg-icon icon-class="logo" />
+                <svg-icon icon-class="vehicle" />
               </a>
               <span>车辆管理</span>
             </li>
@@ -73,7 +72,7 @@
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
             <li>
               <a :href="allSysList[1].serverLink " class="to top ">
-                <svg-icon icon-class="logo" />
+                <svg-icon icon-class="build" />
               </a>
               <span>更多系统</span>
             </li>
@@ -451,14 +450,14 @@ header .user-name {
   width: 2.5em;
   height: 2.5em;
   border-radius: 50%;
-  line-height: 3.5em;
+  line-height: 3em;
   text-align: center;
   background-color: #7564fc;
   margin: 0 auto;
   color: #fff;
 }
 .navigation li a .svg-icon {
-  font-size: 2em;
+  font-size: 1.5em;
   color: #fff;
 }
 .navigation a:nth-child(3) a {
