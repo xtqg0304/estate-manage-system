@@ -39,6 +39,8 @@ const user = {
       state.avatar = avatar
     },
     SET_ROLES: (state, roles) => {
+      // state.roles.length = 0
+      // state.roles = state.roles.concat(roles)
       state.roles = roles
     }
   },
@@ -132,7 +134,7 @@ const user = {
     },
 
     // 动态修改权限
-    ChangeRoles({ commit }, role) {
+    ChangeRoles({ commit, dispatch }, role) {
       return new Promise(resolve => {
         commit('SET_TOKEN', role)
         setToken(role)
@@ -142,10 +144,17 @@ const user = {
           commit('SET_NAME', data.name)
           commit('SET_AVATAR', data.avatar)
           commit('SET_INTRODUCTION', data.introduction)
+          dispatch('GenerateRoutes', data)
           resolve()
         })
       })
     }
+    // ChangeRoles({ commit }, roles) {
+    //   return new Promise(resolve => {
+    //     commit('SET_ROLES', roles)
+    //     resolve()
+    //   })
+    // }
   }
 }
 

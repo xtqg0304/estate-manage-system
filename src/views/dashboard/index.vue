@@ -33,14 +33,14 @@ export default {
   //   })
   // },
   created() {
-    console.log(this.$route.params.systemName)
+    // console.log(this.$route.params.systemName)
     if (this.$route.params.systemName.includes('estate')) {
       this.currentRole = 'estateDashboard'
     }
     if (this.$route.params.systemName.includes('pay')) {
       this.currentRole = 'payDashboard'
     }
-    console.log(this.currentRole)
+    // console.log(this.currentRole)
   },
   methods: {
     // changeRole() {
