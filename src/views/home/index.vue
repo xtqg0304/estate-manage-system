@@ -26,7 +26,7 @@
               <i class="el-icon-caret-bottom" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <router-link to ="/login">
+              <router-link to="/login">
                 <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
               </router-link>
             </el-dropdown-menu>
@@ -82,13 +82,15 @@
     </header>
     <ul class="dataVisual-con dataVisual-con-left">
       <li class="dataVisual-item ">
-        <h3>
-          <i class="el-icon-menu" />学生考勤
-        </h3>
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:98%;height:98%;margin:1%; ">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; " />
+            <div class="main-box " style="width:100%;height:100%;">
+              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+                <histogram />
+                <!-- <histogram  style="width:100%;height:20%; " />
+                <histogram  style="width:100%;height:20%; " /> -->
+                <!-- <tablecomponent /> -->
+              </div>
             </div>
           </div>
         </div>
@@ -96,13 +98,13 @@
     </ul>
     <ul class="dataVisual-con dataVisual-con-center">
       <li class="dataVisual-item ">
-        <h3>
-          <i class="el-icon-menu" />学生考勤
-        </h3>
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:98%;height:98%;margin:1%; ">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; " />
+            <div class="main-box " style="width:100%;height:100%;">
+              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+                <linechart />
+                <tablecomponent />
+              </div>
             </div>
           </div>
         </div>
@@ -110,13 +112,13 @@
     </ul>
     <ul class="dataVisual-con dataVisual-con-right">
       <li class="dataVisual-item ">
-        <h3>
-          <i class="el-icon-menu" />学生考勤
-        </h3>
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:98%;height:98%;margin:1%; ">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; " />
+            <div class="main-box " style="width:100%;height:100%;">
+              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+                <ringchart />
+                <tablecomponent />
+              </div>
             </div>
           </div>
         </div>
@@ -128,9 +130,17 @@
 <script>
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
+import histogram from './histogram'
+import linechart from './line'
+import ringchart from './ring'
+import tablecomponent from './table'
 export default {
   components: {
-    draggable
+    draggable,
+    histogram,
+    linechart,
+    ringchart,
+    tablecomponent
   },
   data() {
     return {
@@ -296,19 +306,23 @@ export default {
       self.hoursT = (hours < 10 ? '0' : '') + hours
     }, 1000)
   },
-  // beforeRouteLeave(to, from, next) {
-  //   // console.log(this, 'beforeRouteLeave')
-  //   // console.log(to.params.systemName)
-  //   this.$store.dispatch('ChangeRoles', to.params.systemName).then(() => {
-  //     console.log('dashboard roles')
-  //     console.log(this.roles)
-  //   }).catch(() => {
-  //   })
-  //   next()
-  // },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.SetRoleAdmin()
+    })
+  },
+  beforeRouteLeave(to, from, next) {
+    this.$store.dispatch('ChangeRoles', to.params.systemName).then(() => {
+    })
+    next()
+  },
   created() {
   },
   methods: {
+    SetRoleAdmin() {
+      this.$store.dispatch('ChangeRoles', 'admin').then(() => {
+      })
+    }
   }
 }
 </script>
@@ -479,7 +493,7 @@ header .user-name {
 .dataVisual-con-center,
 .dataVisual-con-right {
   width: 33.33%;
-  margin-top: 0;
+  margin: 0;
 }
 .dataVisual-con-left .dataVisual-item-t,
 .dataVisual-con-center .dataVisual-item-t,
@@ -487,17 +501,4 @@ header .user-name {
   padding-bottom: 120%;
 }
 
-ul h3 {
-  color: #bfcbd9;
-  font-size: 1.2rem;
-  line-height: 1.5rem;
-  padding: 1rem 0;
-  text-align: left;
-}
-ul h3 i.el-icon-menu {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-right: 0.5rem;
-  color: #409eff;
-}
 </style>

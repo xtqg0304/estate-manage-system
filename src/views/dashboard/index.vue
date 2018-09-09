@@ -1,15 +1,13 @@
 <template>
   <div class="dashboard-container">
-    <component :is="currentRole" />
+    <component v-if="checkPermission(['estate','pay'])" :is="currentRole" />
   </div>
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
-// import adminDashboard from './admin'
-// import editorDashboard from './editor'
 import estateDashboard from './estate'
 import payDashboard from './pay'
+import checkPermission from '@/utils/permission' // 权限判断函数
 
 export default {
   name: 'Dashboard',
@@ -19,19 +17,6 @@ export default {
       currentRole: ''
     }
   },
-  // computed: {
-  //   ...mapGetters([
-  //     'roles'
-  //   ])
-  // },
-  // beforeRouteEnter(to, from, next) {
-  //   // console.log(to.params.systemName)
-  //   // console.log('kkkk')
-  //   next(vm => {
-  //     // console.log(vm)
-  //     // vm.changeRole()
-  //   })
-  // },
   created() {
     // console.log(this.$route.params.systemName)
     if (this.$route.params.systemName.includes('estate')) {
@@ -43,13 +28,7 @@ export default {
     // console.log(this.currentRole)
   },
   methods: {
-    // changeRole() {
-    //   this.$store.dispatch('ChangeRoles', this.$route.params.systemName).then(() => {
-    //     console.log('dashboard roles')
-    //     console.log(this.roles)
-    //   }).catch(() => {
-    //   })
-    // }
+    checkPermission
   }
 }
 </script>

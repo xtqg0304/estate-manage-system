@@ -4,10 +4,10 @@
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <navbar/>
-      <tags-view/>
+      <!-- <tags-view/> -->
       <app-main/>
       <el-tooltip placement="top" content="返回顶部">
-        <back-to-top :custom-style="myBackToTopStyle" :visibility-height="500" :back-position="50" transition-name="fade"/>
+        <back-to-top :custom-style="myBackToTopStyle" :visibility-height="500" :back-position="50" transition-name="fade" />
       </el-tooltip>
     </div>
   </div>

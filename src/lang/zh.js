@@ -7,6 +7,7 @@ export default {
     repair: '报事报修',
     news: '小区资讯',
     notice: '小区公告',
+    home: '系统首页',
     dashboard: '首页',
     introduction: '简述',
     documentation: '文档',
@@ -72,6 +73,7 @@ export default {
   },
   navbar: {
     logOut: '退出登录',
+    home: '系统首页',
     dashboard: '首页',
     github: '项目地址',
     screenfull: '全屏',

@@ -99,45 +99,10 @@ export default new Router({
 
 export const asyncRouterMap = [
   {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/index',
-    alwaysShow: true,
-    meta: {
-      title: 'permission',
-      icon: 'lock',
-      roles: ['admin', 'estate', 'editor']
-    },
-    children: [
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
-        meta: {
-          title: 'pagePermission',
-          roles: ['admin', 'estate']
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'directivePermission',
-          roles: ['admin', 'estate', 'editor']
-        }
-      }
-    ],
-    hidden: false
-  },
-  {
     path: '/notice',
     component: Layout,
     redirect: '/notice/index',
-    alwaysShow: true,
     meta: {
-      title: 'notice',
-      icon: 'notice',
       roles: ['admin', 'estate', 'editor']
     },
     children: [
@@ -147,6 +112,7 @@ export const asyncRouterMap = [
         name: 'Notice',
         meta: {
           title: 'notice',
+          icon: 'notice',
           noCache: true,
           roles: ['estate']
         }
@@ -157,10 +123,7 @@ export const asyncRouterMap = [
     path: '/news',
     component: Layout,
     redirect: '/news/index',
-    alwaysShow: true,
     meta: {
-      title: 'news',
-      icon: 'news',
       roles: ['admin', 'estate', 'editor']
     },
     children: [
@@ -170,6 +133,7 @@ export const asyncRouterMap = [
         name: 'News',
         meta: {
           title: 'news',
+          icon: 'news',
           noCache: true,
           roles: ['estate']
         }
@@ -180,10 +144,7 @@ export const asyncRouterMap = [
     path: '/repair',
     component: Layout,
     redirect: '/repair/index',
-    alwaysShow: true,
     meta: {
-      title: 'repair',
-      icon: 'repair',
       roles: ['admin', 'estate', 'editor']
     },
     children: [
@@ -193,6 +154,7 @@ export const asyncRouterMap = [
         name: 'Repair',
         meta: {
           title: 'repair',
+          icon: 'repair',
           noCache: true,
           roles: ['estate']
         }
@@ -203,10 +165,7 @@ export const asyncRouterMap = [
     path: '/advise',
     component: Layout,
     redirect: '/advise/index',
-    alwaysShow: true,
     meta: {
-      title: 'advise',
-      icon: 'advise',
       roles: ['admin', 'estate', 'editor']
     },
     children: [
@@ -216,6 +175,7 @@ export const asyncRouterMap = [
         name: 'Advise',
         meta: {
           title: 'advise',
+          icon: 'advise',
           noCache: true,
           roles: ['estate']
         }
@@ -226,10 +186,7 @@ export const asyncRouterMap = [
     path: '/phone',
     component: Layout,
     redirect: '/phone/index',
-    alwaysShow: true,
     meta: {
-      title: 'phone',
-      icon: 'phone',
       roles: ['admin', 'estate', 'editor']
     },
     children: [
@@ -239,6 +196,7 @@ export const asyncRouterMap = [
         name: 'Phone',
         meta: {
           title: 'phone',
+          icon: 'phone',
           noCache: true,
           roles: ['estate']
         }
@@ -249,16 +207,13 @@ export const asyncRouterMap = [
     path: '/estatePay',
     component: Layout,
     redirect: '/estatePay/index',
-    alwaysShow: true,
     meta: {
-      title: 'phone',
-      icon: 'phone',
       roles: ['pay']
     },
     children: [
       {
-        path: 'estatePay',
-        component: () => import('@/views/estatePay/index.vue'),
+        path: 'index',
+        component: () => import('@/views/estatePay/index'),
         name: 'estatePay',
         meta: {
           title: 'estatePay',
@@ -273,10 +228,7 @@ export const asyncRouterMap = [
     path: '/vehiclePay',
     component: Layout,
     redirect: '/vehiclePay/index',
-    alwaysShow: true,
     meta: {
-      title: 'vehiclePay',
-      icon: 'vehiclePay1',
       roles: ['pay']
     },
     children: [
@@ -290,6 +242,19 @@ export const asyncRouterMap = [
           noCache: true,
           roles: ['pay']
         }
+      }
+    ]
+  },
+  {
+    path: '/icon',
+    component: Layout,
+    meta: { roles: ['pay'] },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/svg-icons/index'),
+        name: 'Icons',
+        meta: { title: 'icons', icon: 'icon', noCache: true }
       }
     ]
   },

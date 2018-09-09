@@ -7,7 +7,7 @@ const userMap = {
     introduction: '我是超级管理员',
     avatar:
       'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    name: '用户名 Admin'
   },
   editor: {
     roles: ['editor'],
@@ -15,7 +15,7 @@ const userMap = {
     introduction: '我是编辑',
     avatar:
       'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
+    name: '用户名 Editor'
   },
   estate: {
     roles: ['estate'],
@@ -23,7 +23,7 @@ const userMap = {
     introduction: '我是estate',
     avatar:
       'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal estate'
+    name: '用户名 estate'
   },
   pay: {
     roles: ['pay'],
@@ -31,7 +31,7 @@ const userMap = {
     introduction: '我是pay',
     avatar:
       'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal pay'
+    name: '用户名 pay'
   }
 }
 

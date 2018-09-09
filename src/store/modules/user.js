@@ -39,8 +39,6 @@ const user = {
       state.avatar = avatar
     },
     SET_ROLES: (state, roles) => {
-      // state.roles.length = 0
-      // state.roles = state.roles.concat(roles)
       state.roles = roles
     }
   },
@@ -149,12 +147,6 @@ const user = {
         })
       })
     }
-    // ChangeRoles({ commit }, roles) {
-    //   return new Promise(resolve => {
-    //     commit('SET_ROLES', roles)
-    //     resolve()
-    //   })
-    // }
   }
 }
 

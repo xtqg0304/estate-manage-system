@@ -5,11 +5,11 @@
 
         <el-tooltip placement="top">
           <div slot="content">
-            小区公告
+            1111 小区公告
           </div>
           <div class="icon-item">
             <svg-icon icon-class="notice" />
-            <span>小区公告 </span>
+            <span>111小区公告 </span>
           </div>
         </el-tooltip>
         <el-tooltip placement="top">
