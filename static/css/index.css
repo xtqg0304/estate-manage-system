@@ -204,22 +204,3 @@
 .v-charts-data-empty {
   background-color: #12234f;
 }
-/*重置table样式*/
-.el-table {
-  width: 100%;
-}
-.el-table th,
-.el-table tr {
-  background: #12234f;
-}
-.el-table td,
-.el-table th.is-leaf {
-  border-bottom: 1px solid #385c81;
-}
-.el-table thead,
-.el-table tbody {
-  color: #fff;
-}
-.el-table__body tr:hover > td {
-  background: #385c81 !important;
-}

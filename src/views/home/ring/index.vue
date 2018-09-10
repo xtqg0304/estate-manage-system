@@ -1,75 +1,99 @@
 <template>
-  <ve-ring :data="chartData" :settings="chartSettings" :extend="vChartOptions"/>
+  <ve-ring :loading="loading" :data-empty="dataEmpty" :data="chartData" :settings="chartSettings" :extend="vChartOptions" :colors="vChartOptions.colors" :width="width" :height="height" />
 </template>
 
 <script>
 export default {
+  props: {
+    ringdata: {
+      type: Object,
+      default: function() {}
+    }
+  },
   data() {
     this.chartSettings = {
-      dimension: '日期',
-      metrics: '访问用户',
       roseType: 'radius',
       limitShowNum: 3,
       dataType: 'KMB',
-      radius: [50, 100],
-      offsetY: 200
+      radius: [40, 60],
+      offsetY: 100
     }
-    this.vChartOptions = { // 设置图标的基本样式
+    this.vChartOptions = {
+      grid: {
+        show: false,
+        x: 5,
+        x2: 5,
+        y: 40,
+        y2: 0,
+        height: '50%'
+      },
       title: {
+        show: true,
         text: '',
-        subtext: '',
-        left: 'center',
+        left: 'left',
+        top: 10,
         textStyle: {
-          color: '#00aeff',
+          color: '#bfcbd9',
           fontWeight: 'normal',
-          fontSize: 20
+          fontSize: 16
         }
       },
       legend: {
         show: false,
         type: 'plain',
         orient: 'horizontal',
-        bottom: 20,
+        top: 10,
+        left: 'center',
         textStyle: {
           color: '#00aeff'
         },
-        // data: this.chartData.columns,
         pageTextStyle: '#00aeff'
       },
       colors: [
-        '#c23531', '#61a0a8', '#6e7074',
-        '#d48265', '#91c7ae', '#749f83',
-        '#ca8622', '#bda29a', '#2f4554',
-        '#546570', '#c4ccd3'
+        '#63c2ff', '#2ec7c9', '#c8b2f4', '#ffcb8c', '#ed868c', '#c8b2f4'
       ],
-      grid: {
-        show: true,
-        top: 65,
-        backgroundColor: 'transparent',
-        containLabel: true,
-        borderWidth: 0,
-        borderColor: '#00aeff'
+      series: {
+        barMaxWidth: 20
       },
       toolbox: {
         show: true,
         orient: 'horizontal',
         feature: {
-          saveAsImage: { show: true, iconStyle: { borderColor: '#fff' }}
+          saveAsImage: {
+            show: true,
+            iconStyle: { borderColor: '#fff' }
+          }
         },
         color: '#00aeff'
       }
     }
     return {
       chartData: {
-        columns: ['日期', '访问用户'],
-        rows: [
-          { '日期': '1/1', '访问用户': 1393 },
-          { '日期': '1/2', '访问用户': 3530 },
-          { '日期': '1/3', '访问用户': 2923 },
-          { '日期': '1/4', '访问用户': 1723 },
-          { '日期': '1/5', '访问用户': 3792 },
-          { '日期': '1/6', '访问用户': 4593 }
-        ]
+        columns: [],
+        rows: []
+      },
+      loading: false,
+      dataEmpty: false,
+      width: '100%',
+      height: '100%'
+    }
+  },
+  watch: {
+    ringdata(oldValue, newValue) {
+      this.getData()
+    }
+  },
+  created() {
+    this.getData()
+  },
+  methods: {
+    getData() {
+      this.loading = true
+      if (this.ringdata.chartData) {
+        this.vChartOptions.title.text = this.ringdata.vChartOptions.title.text
+        this.chartData = this.ringdata.chartData.rows.length ? Object.assign({}, this.ringdata.chartData) : Object.assign({}, this.chartData)
+        this.dataEmpty = !this.chartData.rows.length
+        this.loading = false
       }
     }
   }

@@ -20,15 +20,14 @@
             <svg-icon icon-class="user" />
           </div>
           <el-dropdown class="user-name" trigger="click">
-
             <span class="el-dropdown-link">
-              111111111
+              {{ name }}
               <i class="el-icon-caret-bottom" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <router-link to="/login">
-                <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
-              </router-link>
+              <el-dropdown-item divided>
+                <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -72,6 +71,46 @@
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
             <li>
               <a :href="allSysList[1].serverLink " class="to top ">
+                <svg-icon icon-class="video" />
+              </a>
+              <span>视频系统</span>
+            </li>
+          </router-link>
+          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
+            <li>
+              <a :href="allSysList[1].serverLink " class="to top ">
+                <svg-icon icon-class="device" />
+              </a>
+              <span>设备管理</span>
+            </li>
+          </router-link>
+          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
+            <li>
+              <a :href="allSysList[1].serverLink " class="to top ">
+                <svg-icon icon-class="face" />
+              </a>
+              <span>人脸识别</span>
+            </li>
+          </router-link>
+          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
+            <li>
+              <a :href="allSysList[1].serverLink " class="to top ">
+                <svg-icon icon-class="shop" />
+              </a>
+              <span>社区商城</span>
+            </li>
+          </router-link>
+          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
+            <li>
+              <a :href="allSysList[1].serverLink " class="to top ">
+                <svg-icon icon-class="multiscreen" />
+              </a>
+              <span>多屏互动</span>
+            </li>
+          </router-link>
+          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
+            <li>
+              <a :href="allSysList[1].serverLink " class="to top ">
                 <svg-icon icon-class="build" />
               </a>
               <span>更多系统</span>
@@ -86,10 +125,15 @@
           <div class="dataVisual-bgImg numb ">
             <div class="main-box " style="width:100%;height:100%;">
               <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
-                <histogram />
-                <!-- <histogram  style="width:100%;height:20%; " />
-                <histogram  style="width:100%;height:20%; " /> -->
-                <!-- <tablecomponent /> -->
+                <div style="height:33.33%; ">
+                  <histogram :histogramdata="estatePaydata"/>
+                </div>
+                <div style="height:33.33%; ">
+                  <histogram :histogramdata="vehiclePaydata"/>
+                </div>
+                <div style="height:33.33%; ">
+                  <histogram :histogramdata="tempstopPaydata"/>
+                </div>
               </div>
             </div>
           </div>
@@ -102,8 +146,12 @@
           <div class="dataVisual-bgImg numb ">
             <div class="main-box " style="width:100%;height:100%;">
               <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
-                <linechart />
-                <tablecomponent />
+                <div style="height:50%; ">
+                  <linechart :linedata="userActivedata" />
+                </div>
+                <div style="height:50%; ">
+                  <linechart :linedata="userVisitdata"/>
+                </div>
               </div>
             </div>
           </div>
@@ -116,8 +164,57 @@
           <div class="dataVisual-bgImg numb ">
             <div class="main-box " style="width:100%;height:100%;">
               <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
-                <ringchart />
-                <tablecomponent />
+                <div style="width:50%;height:50%;float:left;">
+                  <ringchart :ringdata="doorAnalysisdata"/>
+                </div>
+                <div style="width:50%;height:50%;float:left;">
+                  <ringchart :ringdata="vehicleAnalysisdata"/>
+                </div>
+                <div style="width:50%;height:50%;float:left;">
+                  <ringchart :ringdata="eventAnalysisdata"/>
+                </div>
+                <div style="width:50%;height:50%;float:left;">
+                  <ringchart :ringdata="eventpercentAnalysisdata"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <ul class="dataVisual-con dataVisual-con-left">
+      <li class="dataVisual-item ">
+        <div class="dataVisual-item-t numbox ">
+          <div class="dataVisual-bgImg numb ">
+            <div class="main-box " style="width:100%;height:100%;">
+              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+                <tablecomponent :tabledata="userTabledata"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <ul class="dataVisual-con dataVisual-con-center">
+      <li class="dataVisual-item ">
+        <div class="dataVisual-item-t numbox ">
+          <div class="dataVisual-bgImg numb ">
+            <div class="main-box " style="width:100%;height:100%;">
+              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+                <tablecomponent :tabledata="doorTabledata"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <ul class="dataVisual-con dataVisual-con-right">
+      <li class="dataVisual-item ">
+        <div class="dataVisual-item-t numbox ">
+          <div class="dataVisual-bgImg numb ">
+            <div class="main-box " style="width:100%;height:100%;">
+              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+                <tablecomponent :tabledata="vehicleTabledata"/>
               </div>
             </div>
           </div>
@@ -144,6 +241,322 @@ export default {
   },
   data() {
     return {
+      estatePaydata: {
+        chartData: {
+          columns: ['日期', '金额'],
+          rows: [
+            { '日期': '1/1', '金额': 43 },
+            { '日期': '1/2', '金额': 30 },
+            { '日期': '1/3', '金额': 53 },
+            { '日期': '1/4', '金额': 93 },
+            { '日期': '1/5', '金额': 32 },
+            { '日期': '1/6', '金额': 85 },
+            { '日期': '1/7', '金额': 23 },
+            { '日期': '1/8', '金额': 30 },
+            { '日期': '1/9', '金额': 53 },
+            { '日期': '1/10', '金额': 23 },
+            { '日期': '1/11', '金额': 82 },
+            { '日期': '1/12', '金额': 45 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '物业缴费'
+          }
+        }
+      },
+      vehiclePaydata: {
+        chartData: {
+          columns: ['日期', '金额'],
+          rows: [
+            { '日期': '1/1', '金额': 12 },
+            { '日期': '1/2', '金额': 30 },
+            { '日期': '1/3', '金额': 23 },
+            { '日期': '1/4', '金额': 43 },
+            { '日期': '1/5', '金额': 62 },
+            { '日期': '1/6', '金额': 45 },
+            { '日期': '1/7', '金额': 93 },
+            { '日期': '1/8', '金额': 55 },
+            { '日期': '1/9', '金额': 23 },
+            { '日期': '1/10', '金额': 73 },
+            { '日期': '1/11', '金额': 32 },
+            { '日期': '1/12', '金额': 95 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '车位缴费'
+          }
+        }
+      },
+      tempstopPaydata: {
+        chartData: {
+          columns: ['日期', '金额'],
+          rows: [
+            { '日期': '1/1', '金额': 93 },
+            { '日期': '1/2', '金额': 30 },
+            { '日期': '1/3', '金额': 23 },
+            { '日期': '1/4', '金额': 13 },
+            { '日期': '1/5', '金额': 32 },
+            { '日期': '1/6', '金额': 45 },
+            { '日期': '1/7', '金额': 93 },
+            { '日期': '1/8', '金额': 30 },
+            { '日期': '1/9', '金额': 23 },
+            { '日期': '1/10', '金额': 13 },
+            { '日期': '1/11', '金额': 32 },
+            { '日期': '1/12', '金额': 45 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '临停缴费'
+          }
+        }
+      },
+      userActivedata: {
+        chartData: {
+          columns: ['日期', '活跃用户'],
+          rows: [
+            { '日期': '2018-08-08', '活跃用户': 3 },
+            { '日期': '2018-08-09', '活跃用户': 88 },
+            { '日期': '2018-08-10', '活跃用户': 23 },
+            { '日期': '2018-08-11', '活跃用户': 50 },
+            { '日期': '2018-08-12', '活跃用户': 32 },
+            { '日期': '2018-08-13', '活跃用户': 25 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '用户活跃度'
+          }
+        }
+      },
+      userVisitdata: {
+        chartData: {
+          columns: ['日期', '访问用户'],
+          rows: [
+            { '日期': '2018-08-08', '访问用户': 93 },
+            { '日期': '2018-08-09', '访问用户': 30 },
+            { '日期': '2018-08-10', '访问用户': 23 },
+            { '日期': '2018-08-11', '访问用户': 13 },
+            { '日期': '2018-08-12', '访问用户': 32 },
+            { '日期': '2018-08-13', '访问用户': 45 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '用户访问量'
+          }
+        }
+      },
+      doorAnalysisdata: {
+        chartData: {
+          columns: ['类型', '用户数'],
+          rows: [
+            { '类型': '业主', '用户数': 50 },
+            { '类型': '租客', '用户数': 30 },
+            { '类型': '其他', '用户数': 23 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '门禁分析'
+          }
+        }
+      },
+      vehicleAnalysisdata: {
+        chartData: {
+          columns: ['支付类型', '用户数'],
+          rows: [
+            { '支付类型': '现金', '用户数': 93 },
+            { '支付类型': '手机', '用户数': 30 },
+            { '支付类型': '银联', '用户数': 50 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '车场分析'
+          }
+        }
+      },
+      eventAnalysisdata: {
+        chartData: {
+          columns: ['类型', '数值'],
+          rows: [
+            { '类型': '户内', '数值': 70 },
+            { '类型': '户外', '数值': 30 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '报事分析'
+          }
+        }
+      },
+      eventpercentAnalysisdata: {
+        chartData: {
+          columns: ['状态', '百分比'],
+          rows: [
+            { '状态': '已完成', '百分比': 60 },
+            { '状态': '未完成', '百分比': 40 }
+          ]
+        },
+        vChartOptions: {
+          title: {
+            text: '报事完成率'
+          }
+        }
+      },
+      vehicleTabledata: {
+        tableData: [
+          {
+            '车牌号': '闽A44444',
+            '进场时间': '2018-09-03 15:30',
+            '出场时间': '2018-09-03 16:20',
+            '停车时长': '0小时50分',
+            '金额（元）': '5元'
+          },
+          {
+            '车牌号': '闽A44444',
+            '进场时间': '2018-09-03 15:30',
+            '出场时间': '2018-09-03 16:20',
+            '停车时长': '0小时50分',
+            '金额（元）': '5元'
+          },
+          {
+            '车牌号': '闽A44444',
+            '进场时间': '2018-09-03 15:30',
+            '出场时间': '2018-09-03 16:20',
+            '停车时长': '0小时50分',
+            '金额（元）': '5元'
+          },
+          {
+            '车牌号': '闽A44444',
+            '进场时间': '2018-09-03 15:30',
+            '出场时间': '2018-09-03 16:20',
+            '停车时长': '0小时50分',
+            '金额（元）': '5元'
+          },
+          {
+            '车牌号': '闽A44444',
+            '进场时间': '2018-09-03 15:30',
+            '出场时间': '2018-09-03 16:20',
+            '停车时长': '0小时50分',
+            '金额（元）': '5元'
+          },
+          {
+            '车牌号': '闽A44444',
+            '进场时间': '2018-09-03 15:30',
+            '出场时间': '2018-09-03 16:20',
+            '停车时长': '0小时50分',
+            '金额（元）': '5元'
+          }
+        ],
+        formThead: ['车牌号', '进场时间', '出场时间', '停车时长', '金额（元）'],
+        tableTitle: '停车实时数据',
+        loading: true,
+        dataEmpty: true
+      },
+      userTabledata: {
+        tableData: [
+          {
+            '小区名称': '群升',
+            '用户名': '王某',
+            '登录方式': '公众号',
+            '登录时间': '2018-06-03 16:50:20',
+            '菜单': '缴费'
+          },
+          {
+            '小区名称': '群升',
+            '用户名': '王某',
+            '登录方式': '公众号',
+            '登录时间': '2018-06-03',
+            '菜单': '缴费'
+          },
+          {
+            '小区名称': '群升',
+            '用户名': '王某',
+            '登录方式': '公众号',
+            '登录时间': '2018-06-03',
+            '菜单': '缴费'
+          },
+          {
+            '小区名称': '群升',
+            '用户名': '王某',
+            '登录方式': '公众号',
+            '登录时间': '2018-06-03',
+            '菜单': '缴费'
+          },
+          {
+            '小区名称': '群升',
+            '用户名': '王某',
+            '登录方式': '公众号',
+            '登录时间': '2018-06-03',
+            '菜单': '缴费'
+          },
+          {
+            '小区名称': '群升',
+            '用户名': '王某',
+            '登录方式': '公众号',
+            '登录时间': '2018-06-03',
+            '菜单': '缴费'
+          }
+        ],
+        formThead: ['小区名称', '用户名', '登录方式', '登录时间', '菜单'],
+        tableTitle: '用户实时数据',
+        loading: true,
+        dataEmpty: true
+      },
+      doorTabledata: {
+        tableData: [
+          {
+            '用户': '张**',
+            '类型': '业主',
+            '门禁': '西门',
+            '开门时间': '2018-06-06 15:30:20',
+            '状态': '一键开门'
+          },
+          {
+            '用户': '张**',
+            '类型': '租客',
+            '门禁': '西门',
+            '开门时间': '2018-06-06',
+            '状态': '扫码开门'
+          },
+          {
+            '用户': '张**',
+            '类型': '其他成员',
+            '门禁': '西门',
+            '开门时间': '2018-06-06',
+            '状态': '一键开门'
+          },
+          {
+            '用户': '张**',
+            '类型': '业主',
+            '门禁': '西门',
+            '开门时间': '2018-06-06',
+            '状态': '扫码开门'
+          },
+          {
+            '用户': '张**',
+            '类型': '业主',
+            '门禁': '西门',
+            '开门时间': '2018-06-06',
+            '状态': '一键开门'
+          },
+          {
+            '用户': '张**',
+            '类型': '业主',
+            '门禁': '西门',
+            '开门时间': '2018-06-06',
+            '状态': '一键开门'
+          }
+        ],
+        formThead: ['用户', '类型', '门禁', '开门时间', '状态'],
+        tableTitle: '门禁实时数据',
+        loading: true,
+        dataEmpty: true
+      },
       systems: {
         /*
         estateSys  物业管理系统
@@ -280,7 +693,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'roles'
+      'roles',
+      'name'
     ])
   },
   mounted() {
@@ -321,6 +735,11 @@ export default {
   methods: {
     SetRoleAdmin() {
       this.$store.dispatch('ChangeRoles', 'admin').then(() => {
+      })
+    },
+    logout() {
+      this.$store.dispatch('LogOut').then(() => {
+        location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
     }
   }
@@ -381,12 +800,11 @@ header .clock #point {
 }
 header .user-name {
   display: inline-block;
-  color: #fff;
   position: relative;
-  font-weight: bold;
   top: -0.7rem;
   right: 0.5rem;
   font-size: 1rem;
+  color: #fff;
 }
 .user-avator {
   display: inline-block;
@@ -448,7 +866,7 @@ header .user-name {
 .navigation li {
   list-style: none;
   float: left;
-  width: calc(20% - 2rem);
+  width: calc(10% - 2rem);
   display: inline-block;
   margin: 1rem;
 }
@@ -481,12 +899,24 @@ header .user-name {
   background-color: #0fc2d6;
 }
 .navigation a:nth-child(5) a {
-  background-color: #ff305c;
+  background-color: #b3490f;
 }
 .navigation a:nth-child(4) a {
   background-color: #3973d2;
 }
 .navigation a:nth-child(6) a {
+  background-color: #a74cf3;
+}
+.navigation a:nth-child(7) a {
+  background-color: #0fc2d6;
+}
+.navigation a:nth-child(8) a {
+  background-color: #3973d2;
+}
+.navigation a:nth-child(9) a {
+  background-color: #7564fc;
+}
+.navigation a:nth-child(10) a {
   background-color: #b3490f;
 }
 .dataVisual-con-left,
@@ -498,7 +928,6 @@ header .user-name {
 .dataVisual-con-left .dataVisual-item-t,
 .dataVisual-con-center .dataVisual-item-t,
 .dataVisual-con-right .dataVisual-item-t {
-  padding-bottom: 120%;
+  padding-bottom: 72%;
 }
-
 </style>

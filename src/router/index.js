@@ -208,16 +208,40 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/estatePay/index',
     meta: {
+      title: 'estatePay',
+      icon: 'estatePay',
       roles: ['pay']
     },
     children: [
       {
         path: 'index',
         component: () => import('@/views/estatePay/index'),
-        name: 'estatePay',
+        name: 'paybill',
         meta: {
-          title: 'estatePay',
-          icon: 'estatePay',
+          title: 'paybill',
+          icon: 'paybill',
+          noCache: true,
+          roles: ['pay']
+        }
+      },
+      {
+        path: 'index',
+        component: () => import('@/views/estatePay/index'),
+        name: 'payrecord',
+        meta: {
+          title: 'payrecord',
+          icon: 'payrecord',
+          noCache: true,
+          roles: ['pay']
+        }
+      },
+      {
+        path: 'index',
+        component: () => import('@/views/estatePay/index'),
+        name: 'paydetail',
+        meta: {
+          title: 'paydetail',
+          icon: 'paydetail',
           noCache: true,
           roles: ['pay']
         }
@@ -229,32 +253,32 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/vehiclePay/index',
     meta: {
+      title: 'vehiclePay',
+      icon: 'vehiclePay1',
       roles: ['pay']
     },
     children: [
       {
         path: 'index',
         component: () => import('@/views/vehiclePay/index'),
-        name: 'VehiclePay',
+        name: 'paymonthly',
         meta: {
-          title: 'vehiclePay',
-          icon: 'vehiclePay1',
+          title: 'paymonthly',
+          icon: 'paymonthly',
           noCache: true,
           roles: ['pay']
         }
-      }
-    ]
-  },
-  {
-    path: '/icon',
-    component: Layout,
-    meta: { roles: ['pay'] },
-    children: [
+      },
       {
         path: 'index',
-        component: () => import('@/views/svg-icons/index'),
-        name: 'Icons',
-        meta: { title: 'icons', icon: 'icon', noCache: true }
+        component: () => import('@/views/vehiclePay/index'),
+        name: 'paymoney',
+        meta: {
+          title: 'paymoney',
+          icon: 'paymoney',
+          noCache: true,
+          roles: ['pay']
+        }
       }
     ]
   },

@@ -1,5 +1,10 @@
 export default {
   route: {
+    paymoney: '包月缴费',
+    paymonthly: '包月账单',
+    payrecord: '缴费记录',
+    paydetail: '缴费明细',
+    paybill: '缴费账单',
     estatePay: '物业缴费',
     vehiclePay: '停车缴费',
     phone: '便民电话',

@@ -1,5 +1,10 @@
 export default {
   route: {
+    paymoney: 'Paymoney',
+    paymonthly: 'Paymonthly',
+    payrecord: 'Payrecord',
+    paydetail: 'Paydetail',
+    paybill: 'Paybill',
     estatePay: 'EstatePay',
     vehiclePay: 'VehiclePay',
     phone: 'Phone',

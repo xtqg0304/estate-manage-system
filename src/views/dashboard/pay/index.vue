@@ -5,47 +5,47 @@
 
         <el-tooltip placement="top">
           <div slot="content">
-            1111 小区公告
+            缴费账单
           </div>
           <div class="icon-item">
-            <svg-icon icon-class="notice" />
-            <span>111小区公告 </span>
+            <svg-icon icon-class="paybill" />
+            <span>缴费账单 </span>
           </div>
         </el-tooltip>
         <el-tooltip placement="top">
           <div slot="content">
-            小区咨讯
+            缴费记录
           </div>
           <div class="icon-item">
-            <svg-icon icon-class="news" />
-            <span>小区咨讯 </span>
+            <svg-icon icon-class="payrecord" />
+            <span>缴费记录 </span>
           </div>
         </el-tooltip>
         <el-tooltip placement="top">
           <div slot="content">
-            报事报修
+            缴费明细
           </div>
           <div class="icon-item">
-            <svg-icon icon-class="repair" />
-            <span>报事报修 </span>
+            <svg-icon icon-class="paydetail" />
+            <span>缴费明细 </span>
           </div>
         </el-tooltip>
         <el-tooltip placement="top">
           <div slot="content">
-            投诉建议
+            包月账单
           </div>
           <div class="icon-item">
-            <svg-icon icon-class="advise" />
-            <span>投诉建议 </span>
+            <svg-icon icon-class="paymonthly" />
+            <span>包月账单 </span>
           </div>
         </el-tooltip>
         <el-tooltip placement="top">
           <div slot="content">
-            便民电话
+            包月缴费
           </div>
           <div class="icon-item">
-            <svg-icon icon-class="phone" />
-            <span>便民电话 </span>
+            <svg-icon icon-class="paymoney" />
+            <span>包月缴费 </span>
           </div>
         </el-tooltip>
         <el-tooltip placement="top">

@@ -1,27 +1,42 @@
 <template>
-  <ve-histogram :width="width" :height="height" :data="chartData" :extend="vChartOptions"/>
+  <ve-histogram :loading="loading" :data-empty="dataEmpty" :width="width" :height="height" :data="chartData" :extend="vChartOptions" :colors="vChartOptions.colors" />
 </template>
 
 <script>
 import 'echarts/lib/component/title'
 export default {
+  props: {
+    histogramdata: {
+      type: Object,
+      default: function() {}
+    }
+  },
   data() {
     this.vChartOptions = {
+      grid: {
+        show: false,
+        x: 5,
+        x2: 5,
+        y: 40,
+        y2: 0,
+        height: '65%'
+      },
       title: {
         show: true,
-        text: '物业缴费',
+        text: '',
         left: 'left',
         top: 10,
         textStyle: {
-          color: '#00aeff',
-          fontWeight: 'normal'
+          color: '#bfcbd9',
+          fontWeight: 'normal',
+          fontSize: 16
         }
       },
       legend: {
         show: false,
         type: 'plain',
         orient: 'horizontal',
-        bottom: 10,
+        top: 10,
         left: 'center',
         textStyle: {
           color: '#00aeff'
@@ -29,7 +44,7 @@ export default {
         pageTextStyle: '#00aeff'
       },
       colors: [
-        '#0fc2d6', '#2087d7'
+        '#63c2ff', '#2ec7c9', '#c8b2f4', '#ffcb8c', '#ed868c', '#c8b2f4'
       ],
       xAxis: {
         show: true,
@@ -41,7 +56,7 @@ export default {
           length: 5,
           inside: false,
           lineStyle: {
-            color: '#2d3a4b',
+            color: '#606266',
             width: 2,
             type: 'solid'
           }
@@ -53,15 +68,15 @@ export default {
           show: true,
           onZero: true,
           lineStyle: {
-            color: '#2d3a4b',
+            color: '#606266',
             width: 2
           }
         },
         axisLabel: {
           show: true,
           inside: false,
-          color: '#fff',
-          rotate: 45
+          color: '#606266',
+          rotate: 0
         }
       },
       'yAxis.0': {
@@ -70,7 +85,7 @@ export default {
         nameRotate: null,
         inverse: false,
         nameTextStyle: {
-          color: '#bfcbd9'
+          color: '#606266'
         },
         axisTick: {
           show: true,
@@ -78,7 +93,7 @@ export default {
           length: 5,
           inside: false,
           lineStyle: {
-            color: '#2d3a4b',
+            color: '#606266',
             width: 2,
             type: 'solid'
           }
@@ -86,7 +101,7 @@ export default {
         splitLine: {
           show: false,
           lineStyle: {
-            color: '#448bcb',
+            color: '#606266',
             width: 1,
             type: 'solid',
             opacity: 0.8
@@ -96,45 +111,61 @@ export default {
           show: true,
           onZero: true,
           lineStyle: {
-            color: '#2d3a4b',
+            color: '#606266',
             width: 2
           }
         },
         axisLabel: {
           show: true,
           inside: false,
-          color: '#fff'
+          color: '#606266'
         }
       },
       series: {
-        barMaxWidth: 10
+        barMaxWidth: 20
       },
       toolbox: {
         show: true,
         orient: 'horizontal',
         feature: {
-          saveAsImage: { show: true, iconStyle: { borderColor: '#fff' }}
+          saveAsImage: {
+            show: true,
+            iconStyle: { borderColor: '#fff' }
+          }
         },
         color: '#00aeff'
       }
     }
     return {
       chartData: {
-        columns: ['日期', '访问用户', '下单用户', '下单率'],
-        rows: [
-          { '日期': '1/1', '访问用户': 13, '下单用户': 10, '下单率': 0.32 },
-          { '日期': '1/2', '访问用户': 30, '下单用户': 30, '下单率': 0.26 },
-          { '日期': '1/3', '访问用户': 23, '下单用户': 23, '下单率': 0.76 },
-          { '日期': '1/4', '访问用户': 13, '下单用户': 13, '下单率': 0.49 },
-          { '日期': '1/5', '访问用户': 32, '下单用户': 32, '下单率': 0.323 },
-          { '日期': '1/6', '访问用户': 43, '下单用户': 42, '下单率': 0.78 }
-        ]
+        columns: [],
+        rows: []
       },
       loading: false,
       dataEmpty: false,
       width: '100%',
       height: '100%'
     }
+  },
+  watch: {
+    histogramdata(oldValue, newValue) {
+      this.getData()
+    }
+  },
+  created() {
+    this.getData()
+  },
+  methods: {
+    getData() {
+      this.loading = true
+      if (this.histogramdata.chartData) {
+        this.vChartOptions.title.text = this.histogramdata.vChartOptions.title.text
+        this.chartData = this.histogramdata.chartData.rows.length ? Object.assign({}, this.histogramdata.chartData) : Object.assign({}, this.chartData)
+        this.dataEmpty = !this.chartData.rows.length
+        this.loading = false
+      }
+    }
   }
+
 }
 </script>
