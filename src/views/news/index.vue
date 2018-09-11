@@ -3,9 +3,9 @@
     <div class="filter-container">
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">{{ $t('table.add') }}</el-button>
       <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">{{ $t('table.reviewer') }}</el-checkbox>
-      <el-date-picker v-model="listQuery.starttoendimestamp" :picker-options="pickerOptions" class="filter-item-rangedate" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"/>
-      <el-select v-model="listQuery.statusnotice" placeholder="公告状态" clearable class="filter-item">
-        <el-option v-for="item in noticeOptions" :key="item" :label="item" :value="item" />
+      <el-date-picker v-model="listQuery.starttoendimestamp" :picker-options="pickerOptions" class="filter-item-rangedate" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" />
+      <el-select v-model="listQuery.statusNews" placeholder="资讯状态" clearable class="filter-item">
+        <el-option v-for="item in statusOptions" :key="item" :label="$t('table.'+item)" :value="item" />
       </el-select>
       <el-input v-model="listQuery.keyword" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
@@ -24,6 +24,11 @@
       <el-table-column :label="$t('table.title')" min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.title }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.content')" min-width="150px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.author')" width="110px" align="center">
@@ -78,7 +83,10 @@
           <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item :label="$t('table.content')" prop="content" style="width:650px;">
-          <tinymce v-model="temp.content" height="50" />
+          <tinymce v-model="temp.content" />
+        </el-form-item>
+        <el-form-item :label="$t('table.author')" prop="author">
+          <el-input v-model="temp.author" />
         </el-form-item>
         <el-form-item :label="$t('table.status')">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
@@ -115,7 +123,7 @@ import {
   fetchTable,
   createNotice,
   updateNotice
-} from '@/api/notice'
+} from '@/api/news'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
@@ -172,7 +180,7 @@ export default {
         page: 1,
         limit: 20,
         starttoendimestamp: undefined,
-        statusnotice: undefined,
+        statusNews: undefined,
         keyword: undefined
       },
       noticeOptions: ['已发布', '未发布'],
@@ -188,7 +196,8 @@ export default {
         timestamp: new Date(),
         title: '',
         status: 'published',
-        content: ''
+        content: '',
+        author: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -392,19 +401,19 @@ export default {
 }
 </script>
 <style>
-.filter-container .filter-item-rangedate{
-  display:inline-flex;
+.filter-container .filter-item-rangedate {
+  display: inline-flex;
   vertical-align: middle;
   margin-bottom: 10px;
 }
-.el-date-editor .el-range-separator{
-  padding:0;
+.el-date-editor .el-range-separator {
+  padding: 0;
 }
 .filter-container,
 .pagination-container {
   text-align: right;
 }
-.editor-custom-btn-container{
-  top:0 !important;
+.editor-custom-btn-container {
+  top: 0 !important;
 }
 </style>

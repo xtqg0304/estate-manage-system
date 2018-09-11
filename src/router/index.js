@@ -206,7 +206,7 @@ export const asyncRouterMap = [
   {
     path: '/estatePay',
     component: Layout,
-    redirect: '/estatePay/index',
+    redirect: '/estatePay/bill.vue',
     meta: {
       title: 'estatePay',
       icon: 'estatePay',
@@ -214,8 +214,8 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/estatePay/index'),
+        path: 'bill',
+        component: () => import('@/views/estatePay/bill.vue'),
         name: 'paybill',
         meta: {
           title: 'paybill',
@@ -225,8 +225,8 @@ export const asyncRouterMap = [
         }
       },
       {
-        path: 'index',
-        component: () => import('@/views/estatePay/index'),
+        path: 'record',
+        component: () => import('@/views/estatePay/record.vue'),
         name: 'payrecord',
         meta: {
           title: 'payrecord',
@@ -236,8 +236,8 @@ export const asyncRouterMap = [
         }
       },
       {
-        path: 'index',
-        component: () => import('@/views/estatePay/index'),
+        path: 'detail',
+        component: () => import('@/views/estatePay/detail.vue'),
         name: 'paydetail',
         meta: {
           title: 'paydetail',
@@ -251,7 +251,7 @@ export const asyncRouterMap = [
   {
     path: '/vehiclePay',
     component: Layout,
-    redirect: '/vehiclePay/index',
+    redirect: '/vehiclePay/monthlybill.vue',
     meta: {
       title: 'vehiclePay',
       icon: 'vehiclePay1',
@@ -259,8 +259,8 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/vehiclePay/index'),
+        path: 'monthlybill',
+        component: () => import('@/views/vehiclePay/monthlybill.vue'),
         name: 'paymonthly',
         meta: {
           title: 'paymonthly',
@@ -270,8 +270,8 @@ export const asyncRouterMap = [
         }
       },
       {
-        path: 'index',
-        component: () => import('@/views/vehiclePay/index'),
+        path: 'monthlymoney',
+        component: () => import('@/views/vehiclePay/monthlymoney.vue'),
         name: 'paymoney',
         meta: {
           title: 'paymoney',

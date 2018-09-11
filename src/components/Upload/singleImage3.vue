@@ -1,29 +1,16 @@
 <template>
   <div class="upload-container">
-    <el-upload
-      :data="dataObj"
-      :multiple="false"
-      :show-file-list="false"
-      :on-success="handleImageSuccess"
-      class="image-uploader"
-      drag
-      action="https://httpbin.org/post">
-      <i class="el-icon-upload"/>
-      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-    </el-upload>
-    <div class="image-preview image-app-preview">
-      <div v-show="imageUrl.length>1" class="image-preview-wrapper">
-        <img :src="imageUrl">
-        <div class="image-preview-action">
-          <i class="el-icon-delete" @click="rmImage"/>
-        </div>
+    <el-upload v-show="imageUrl.length<=1" :data="dataObj" :multiple="false" :show-file-list="false" :on-success="handleImageSuccess" class="image-uploader" drag action="https://httpbin.org/post">
+      <i class="el-icon-upload" />
+      <div class="el-upload__text">
+        <em>点击上传</em>
       </div>
-    </div>
-    <div class="image-preview">
+    </el-upload>
+    <div v-show="imageUrl.length>1" class="image-preview">
       <div v-show="imageUrl.length>1" class="image-preview-wrapper">
         <img :src="imageUrl">
         <div class="image-preview-action">
-          <i class="el-icon-delete" @click="rmImage"/>
+          <i class="el-icon-delete" @click="rmImage" />
         </div>
       </div>
     </div>
@@ -31,7 +18,7 @@
 </template>
 
 <script>
-import { getToken } from '@/api/qiniu'
+import { getToken } from '@/api/upload'
 
 export default {
   name: 'SingleImageUpload3',
@@ -83,32 +70,38 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-@import "src/styles/mixin.scss";
+@import 'src/styles/mixin.scss';
 .upload-container {
   width: 100%;
   position: relative;
   @include clearfix;
   .image-uploader {
-    width: 35%;
-    float: left;
+    width: 70%;
+    position: relative;
   }
   .image-preview {
-    width: 200px;
+    width: 231px;
     height: 200px;
     position: relative;
+    top: 0;
+    left: 0;
     border: 1px dashed #d9d9d9;
-    float: left;
-    margin-left: 50px;
+    border-radius: 5px;
     .image-preview-wrapper {
-      position: relative;
+      border-radius: 5px;
+      position: absolute;
+      left: 0;
+      top: 0;
       width: 100%;
       height: 100%;
       img {
         width: 100%;
         height: 100%;
+        border-radius: 5px;
       }
     }
     .image-preview-action {
+      border-radius: 5px;
       position: absolute;
       width: 100%;
       height: 100%;
@@ -119,8 +112,8 @@ export default {
       color: #fff;
       opacity: 0;
       font-size: 20px;
-      background-color: rgba(0, 0, 0, .5);
-      transition: opacity .3s;
+      background-color: rgba(0, 0, 0, 0.5);
+      transition: opacity 0.3s;
       cursor: pointer;
       text-align: center;
       line-height: 200px;
@@ -132,22 +125,6 @@ export default {
       .image-preview-action {
         opacity: 1;
       }
-    }
-  }
-  .image-app-preview {
-    width: 320px;
-    height: 180px;
-    position: relative;
-    border: 1px dashed #d9d9d9;
-    float: left;
-    margin-left: 50px;
-    .app-fake-conver {
-      height: 44px;
-      position: absolute;
-      width: 100%; // background: rgba(0, 0, 0, .1);
-      text-align: center;
-      line-height: 64px;
-      color: #fff;
     }
   }
 }

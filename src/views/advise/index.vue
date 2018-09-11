@@ -1,11 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">{{ $t('table.reviewer') }}</el-checkbox>
-      <el-date-picker v-model="listQuery.starttoendimestamp" :picker-options="pickerOptions" class="filter-item-rangedate" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"/>
-      <el-select v-model="listQuery.statusnotice" placeholder="公告状态" clearable class="filter-item">
-        <el-option v-for="item in noticeOptions" :key="item" :label="item" :value="item" />
+      <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">{{ $t('table.add') }}</el-button> -->
+      <el-checkbox v-model="showroomnumber" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">{{ $t('table.roomnumber') }}</el-checkbox>
+      <el-select v-model="listQuery.statusType" placeholder="投诉类型" clearable class="filter-item">
+        <el-option v-for="item in statustypeOptions" :key="item" :label="$t('table.'+item)" :value="item" />
+      </el-select>
+      <el-date-picker v-model="listQuery.starttoendimestamp" :picker-options="pickerOptions" class="filter-item-rangedate" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" />
+      <el-select v-model="listQuery.statusAdvise" placeholder="投诉状态" clearable class="filter-item">
+        <el-option v-for="item in statusOptions" :key="item" :label="$t('table.'+item)" :value="item" />
       </el-select>
       <el-input v-model="listQuery.keyword" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
@@ -16,50 +19,59 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.date')" width="150px" align="center">
+      <el-table-column :label="$t('table.username')" width="110px">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.username }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.title')" min-width="150px">
+      <el-table-column v-if="showroomnumber" :label="$t('table.roomnumber')" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.title }}</span>
+          <span style="color:red;">{{ scope.row.roomnumber }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.author')" width="110px" align="center">
+      <el-table-column :label="$t('table.phonenumber')" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.phonenumber }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showReviewer" :label="$t('table.reviewer')" width="110px" align="center">
+
+      <el-table-column :label="$t('table.content')" min-width="150px">
         <template slot-scope="scope">
-          <span style="color:red;">{{ scope.row.reviewer }}</span>
+          <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
+
       <el-table-column :label="$t('table.importance')" width="80px">
         <template slot-scope="scope">
           <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.readings')" align="center" width="95">
+      <el-table-column :label="$t('table.statustype')" class-name="status-col" width="150">
         <template slot-scope="scope">
-          <span v-if="scope.row.pageviews" class="link-type" @click="handleFetchPv(scope.row.pageviews)">{{ scope.row.pageviews }}</span>
-          <span v-else>0</span>
+          <el-tag :type="scope.row.statustype | statusFilter">{{ $t('table.'+scope.row.statustype) }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.date')" width="150px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.status')" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
+          <el-tag :type="scope.row.status | statusFilter">{{ $t('table.'+scope.row.status) }}</el-tag>
         </template>
       </el-table-column>
+
       <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">{{ $t('table.publish') }}
+          <!-- <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button> -->
+          <el-button v-if="scope.row.status!='replyed'&&scope.row.status!='finished'" size="mini" type="success" @click="handleModifyStatus(scope.row,'replyed')">{{ $t('table.reply') }}
           </el-button>
-          <el-button v-if="scope.row.status!='draft'" size="mini" @click="handleModifyStatus(scope.row,'draft')">{{ $t('table.draft') }}
+          <el-button v-if="scope.row.status=='replyed'||scope.row.status=='finished'" disabled size="mini">{{ $t('table.replyed') }}
           </el-button>
-          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">{{ $t('table.delete') }}
+          <el-button v-if="scope.row.status!='finished'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'finished')">{{ $t('table.finish') }}
+          </el-button>
+          <el-button v-if="scope.row.status=='finished'" disabled size="mini">{{ $t('table.finished') }}
           </el-button>
         </template>
       </el-table-column>
@@ -78,7 +90,10 @@
           <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item :label="$t('table.content')" prop="content" style="width:650px;">
-          <tinymce v-model="temp.content" height="50" />
+          <tinymce v-model="temp.content" />
+        </el-form-item>
+        <el-form-item :label="$t('table.author')" prop="author">
+          <el-input v-model="temp.author" />
         </el-form-item>
         <el-form-item :label="$t('table.status')">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
@@ -115,7 +130,7 @@ import {
   fetchTable,
   createNotice,
   updateNotice
-} from '@/api/notice'
+} from '@/api/advise.js'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
@@ -127,9 +142,11 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        replyed: 'success',
+        wait: 'info',
+        finished: 'danger',
+        service: 'success',
+        project: 'danger'
       }
       return statusMap[status]
     }
@@ -172,23 +189,25 @@ export default {
         page: 1,
         limit: 20,
         starttoendimestamp: undefined,
-        statusnotice: undefined,
+        statusAdvise: undefined,
+        statusType: undefined,
         keyword: undefined
       },
-      noticeOptions: ['已发布', '未发布'],
       sortOptions: [
         { label: 'ID Ascending', key: '+id' },
         { label: 'ID Descending', key: '-id' }
       ],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
+      statusOptions: ['replyed', 'wait', 'finished'],
+      statustypeOptions: ['service', 'project'],
+      showroomnumber: false,
       temp: {
         id: undefined,
         importance: 1,
         timestamp: new Date(),
         title: '',
-        status: 'published',
-        content: ''
+        status: 'reply',
+        content: '',
+        author: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -224,6 +243,7 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
+        console.log(response.data.items)
         this.list = response.data.items
         this.total = response.data.total
 
@@ -392,19 +412,19 @@ export default {
 }
 </script>
 <style>
-.filter-container .filter-item-rangedate{
-  display:inline-flex;
+.filter-container .filter-item-rangedate {
+  display: inline-flex;
   vertical-align: middle;
   margin-bottom: 10px;
 }
-.el-date-editor .el-range-separator{
-  padding:0;
+.el-date-editor .el-range-separator {
+  padding: 0;
 }
 .filter-container,
 .pagination-container {
   text-align: right;
 }
-.editor-custom-btn-container{
-  top:0 !important;
+.editor-custom-btn-container {
+  top: 0 !important;
 }
 </style>

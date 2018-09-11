@@ -9,13 +9,11 @@ for (let i = 0; i < count; i++) {
     Mock.mock({
       id: '@increment',
       timestamp: new Date(),
-      author: '1111',
-      reviewer: '11111',
-      title: '公告公告',
-      content: '公告公告内容内容',
-      importance: 1,
-      'status|1': ['published', 'draft', 'deleted'],
-      pageviews: 111111
+      servicename: '客户服务中心',
+      servicephone: '13859623365',
+      remarks: '公告公告内容内容',
+      'statusservice|1': ['estate', 'periphery'],
+      uploadimg: 'href---'
     })
   )
 }

@@ -1,10 +1,10 @@
 <template>
   <div>
     <input id="excel-upload-input" ref="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
-    <div id="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover">
-      Drop excel file here or
-      <el-button :loading="loading" style="margin-left:16px;" size="mini" type="primary" @click="handleUpload">Browse</el-button>
-    </div>
+    <!-- <div id="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover"> -->
+    <!-- Drop excel file here or -->
+    <el-button :loading="loading" type="primary" icon="el-icon-upload" @click="handleUpload">导入</el-button>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -124,12 +124,18 @@ export default {
 </script>
 
 <style scoped>
-#excel-upload-input{
+div {
+  display: inline-block;
+  vertical-align: middle;
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+#excel-upload-input {
   display: none;
   z-index: -9999;
 }
-#drop{
-  border: 2px dashed #bbb;
+#drop {
+  border: 2px dashed rgb(124, 84, 84);
   width: 600px;
   height: 160px;
   line-height: 160px;

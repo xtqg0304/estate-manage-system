@@ -126,13 +126,13 @@
             <div class="main-box " style="width:100%;height:100%;">
               <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
                 <div style="height:33.33%; ">
-                  <histogram :histogramdata="estatePaydata"/>
+                  <histogram :histogramdata="estatePaydata" />
                 </div>
                 <div style="height:33.33%; ">
-                  <histogram :histogramdata="vehiclePaydata"/>
+                  <histogram :histogramdata="vehiclePaydata" />
                 </div>
                 <div style="height:33.33%; ">
-                  <histogram :histogramdata="tempstopPaydata"/>
+                  <histogram :histogramdata="tempstopPaydata" />
                 </div>
               </div>
             </div>
@@ -150,7 +150,7 @@
                   <linechart :linedata="userActivedata" />
                 </div>
                 <div style="height:50%; ">
-                  <linechart :linedata="userVisitdata"/>
+                  <linechart :linedata="userVisitdata" />
                 </div>
               </div>
             </div>
@@ -165,16 +165,16 @@
             <div class="main-box " style="width:100%;height:100%;">
               <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
                 <div style="width:50%;height:50%;float:left;">
-                  <ringchart :ringdata="doorAnalysisdata"/>
+                  <ringchart :ringdata="doorAnalysisdata" />
                 </div>
                 <div style="width:50%;height:50%;float:left;">
-                  <ringchart :ringdata="vehicleAnalysisdata"/>
+                  <ringchart :ringdata="vehicleAnalysisdata" />
                 </div>
                 <div style="width:50%;height:50%;float:left;">
-                  <ringchart :ringdata="eventAnalysisdata"/>
+                  <ringchart :ringdata="eventAnalysisdata" />
                 </div>
                 <div style="width:50%;height:50%;float:left;">
-                  <ringchart :ringdata="eventpercentAnalysisdata"/>
+                  <ringchart :ringdata="eventpercentAnalysisdata" />
                 </div>
               </div>
             </div>
@@ -182,39 +182,39 @@
         </div>
       </li>
     </ul>
-    <ul class="dataVisual-con dataVisual-con-left">
+    <ul class="dataVisual-con dataVisual-con-table">
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
             <div class="main-box " style="width:100%;height:100%;">
               <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
-                <tablecomponent :tabledata="userTabledata"/>
+                <tablecomponent :tabledata="userTabledata" />
               </div>
             </div>
           </div>
         </div>
       </li>
     </ul>
-    <ul class="dataVisual-con dataVisual-con-center">
+    <ul class="dataVisual-con dataVisual-con-table">
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
             <div class="main-box " style="width:100%;height:100%;">
               <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
-                <tablecomponent :tabledata="doorTabledata"/>
+                <tablecomponent :tabledata="doorTabledata" />
               </div>
             </div>
           </div>
         </div>
       </li>
     </ul>
-    <ul class="dataVisual-con dataVisual-con-right">
+    <ul class="dataVisual-con dataVisual-con-table">
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
             <div class="main-box " style="width:100%;height:100%;">
               <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
-                <tablecomponent :tabledata="vehicleTabledata"/>
+                <tablecomponent :tabledata="vehicleTabledata" />
               </div>
             </div>
           </div>
@@ -921,7 +921,8 @@ header .user-name {
 }
 .dataVisual-con-left,
 .dataVisual-con-center,
-.dataVisual-con-right {
+.dataVisual-con-right,
+.dataVisual-con-table {
   width: 33.33%;
   margin: 0;
 }
@@ -929,5 +930,8 @@ header .user-name {
 .dataVisual-con-center .dataVisual-item-t,
 .dataVisual-con-right .dataVisual-item-t {
   padding-bottom: 72%;
+}
+.dataVisual-con-table .dataVisual-item-t {
+  padding-bottom: 40%;
 }
 </style>
