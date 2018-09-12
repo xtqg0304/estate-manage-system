@@ -9,13 +9,14 @@ for (let i = 0; i < count; i++) {
     Mock.mock({
       id: '@increment',
       timestamp: new Date(),
-      author: '1111',
-      reviewer: '11111',
-      title: '公告公告',
-      content: '公告公告内容内容',
-      importance: 1,
+      propertyname: '房产名称（群升白马郡）',
+      ownername: '张笑笑',
+      ownerphone: '13869532214',
+      'categorypayment|1': ['chargeforwater', 'chargeforelectric', 'chargeforestate', 'chargeforpublic', 'chargeforpark'],
+      'statepayment|1': ['payment', 'nopay'],
+      'statuspayment|1': ['cash', 'alipay', 'wechat', 'unionpay'],
       'status|1': ['published', 'draft', 'deleted'],
-      pageviews: 111111
+      feesofpay: '1000'
     })
   )
 }

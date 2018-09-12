@@ -76,7 +76,8 @@ export default {
 </script>
 <style scoped>
 .el-menu--collapse #logo-img {
-  margin-left: -7px !important;
+  margin-left: -6px !important;
+  width: 112%;
 }
 #titleLogo li {
   padding-left: 5px !important;

@@ -34,9 +34,16 @@
           <span>{{ scope.row.remarks }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.uploadimg')" align="center" width="95">
-        <template slot-scope="scope">
-          <span class="link-type">{{ scope.row.uploadimg }}</span>
+      <el-table-column :label="$t('table.uploadimg')" align="center" width="120">
+        <template slot-scope="scope" >
+          <span class="link-type">
+            <el-popover placement="left" trigger="hover">
+              <!-- <img  :src="scope.row.uploadimg" style="max-height:200px;"  >
+              <img  :src="scope.row.uploadimg" slot="reference" style="max-height:23px;vertical-align: bottom;"  > -->
+              <img src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg" style="max-height:200px;">
+              <img slot="reference" src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg" style="max-height:23px;vertical-align: bottom;">
+            </el-popover>
+          </span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.statusservice')" class-name="status-col" width="150">

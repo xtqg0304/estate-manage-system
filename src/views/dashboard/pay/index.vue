@@ -2,61 +2,72 @@
   <div class="icons-container">
     <div class="icons-wrapper">
       <div>
-
-        <el-tooltip placement="top">
-          <div slot="content">
-            缴费账单
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="paybill" />
-            <span>缴费账单 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            缴费记录
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="payrecord" />
-            <span>缴费记录 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            缴费明细
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="paydetail" />
-            <span>缴费明细 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            包月账单
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="paymonthly" />
-            <span>包月账单 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            包月缴费
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="paymoney" />
-            <span>包月缴费 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            更多功能建设中...
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="build" />
-            <span>更多功能 </span>
-          </div>
-        </el-tooltip>
+        <router-link to="/estatePay/bill">
+          <el-tooltip placement="top">
+            <div slot="content">
+              缴费账单
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="paybill" />
+              <span>缴费账单 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/estatePay/record">
+          <el-tooltip placement="top">
+            <div slot="content">
+              缴费记录
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="payrecord" />
+              <span>缴费记录 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/estatePay/detail">
+          <el-tooltip placement="top">
+            <div slot="content">
+              缴费明细
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="paydetail" />
+              <span>缴费明细 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/vehiclePay/monthlybill">
+          <el-tooltip placement="top">
+            <div slot="content">
+              包月账单
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="paymonthly" />
+              <span>包月账单 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/vehiclePay/monthlymoney">
+          <el-tooltip placement="top">
+            <div slot="content">
+              包月缴费
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="paymoney" />
+              <span>包月缴费 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/home">
+          <el-tooltip placement="top">
+            <div slot="content">
+              更多功能建设中...
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="build" />
+              <span>更多功能 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
       </div>
     </div>
   </div>

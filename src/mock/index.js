@@ -5,7 +5,9 @@ import newsAPI from './news'
 import repairAPI from './repair'
 import adviseAPI from './advise'
 import phoneAPI from './phone'
-import estatePayAPI from './estatePay'
+import estatePaybillAPI from './estatePaybill'
+import estatePayrecordAPI from './estatePayrecord'
+import estatePaydetailAPI from './estatePaydetail'
 import remoteSearchAPI from './remoteSearch'
 import transactionAPI from './transaction'
 
@@ -50,11 +52,25 @@ Mock.mock(/\/phone\/create/, 'post', phoneAPI.createNotice)
 Mock.mock(/\/phone\/update/, 'post', phoneAPI.updateNotice)
 
 // 物业缴费相关
-Mock.mock(/\/estatePay\/list/, 'get', estatePayAPI.getList)
-Mock.mock(/\/estatePay\/detail/, 'get', estatePayAPI.getNotice)
-Mock.mock(/\/estatePay\/pv/, 'get', estatePayAPI.getTable)
-Mock.mock(/\/estatePay\/create/, 'post', estatePayAPI.createNotice)
-Mock.mock(/\/estatePay\/update/, 'post', estatePayAPI.updateNotice)
+Mock.mock(/\/estatePaybill\/list/, 'get', estatePaybillAPI.getList)
+Mock.mock(/\/estatePaybill\/detail/, 'get', estatePaybillAPI.getNotice)
+Mock.mock(/\/estatePaybill\/pv/, 'get', estatePaybillAPI.getTable)
+Mock.mock(/\/estatePaybill\/create/, 'post', estatePaybillAPI.createNotice)
+Mock.mock(/\/estatePaybill\/update/, 'post', estatePaybillAPI.updateNotice)
+
+// 物业缴费记录相关
+Mock.mock(/\/estatePayrecord\/list/, 'get', estatePayrecordAPI.getList)
+Mock.mock(/\/estatePayrecord\/detail/, 'get', estatePayrecordAPI.getNotice)
+Mock.mock(/\/estatePayrecord\/pv/, 'get', estatePayrecordAPI.getTable)
+Mock.mock(/\/estatePayrecord\/create/, 'post', estatePayrecordAPI.createNotice)
+Mock.mock(/\/estatePayrecord\/update/, 'post', estatePayrecordAPI.updateNotice)
+
+// 物业缴费明细相关
+Mock.mock(/\/estatePaydetail\/list/, 'get', estatePaydetailAPI.getList)
+Mock.mock(/\/estatePaydetail\/detail/, 'get', estatePaydetailAPI.getNotice)
+Mock.mock(/\/estatePaydetail\/pv/, 'get', estatePaydetailAPI.getTable)
+Mock.mock(/\/estatePaydetail\/create/, 'post', estatePaydetailAPI.createNotice)
+Mock.mock(/\/estatePaydetail\/update/, 'post', estatePaydetailAPI.updateNotice)
 
 // 搜索相关
 Mock.mock(/\/search\/user/, 'get', remoteSearchAPI.searchUser)

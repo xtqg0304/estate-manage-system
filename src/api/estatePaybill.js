@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/estatePay/list',
+    url: '/estatePaybill/list',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function fetchNotice(id) {
   return request({
-    url: '/estatePay/detail',
+    url: '/estatePaybill/detail',
     method: 'get',
     params: { id }
   })
@@ -18,7 +18,7 @@ export function fetchNotice(id) {
 
 export function fetchTable(pv) {
   return request({
-    url: '/estatePay/pv',
+    url: '/estatePaybill/pv',
     method: 'get',
     params: { pv }
   })
@@ -26,7 +26,7 @@ export function fetchTable(pv) {
 
 export function createNotice(data) {
   return request({
-    url: '/estatePay/create',
+    url: '/estatePaybill/create',
     method: 'post',
     data
   })
@@ -34,7 +34,7 @@ export function createNotice(data) {
 
 export function updateNotice(data) {
   return request({
-    url: '/estatePay/update',
+    url: '/estatePaybill/update',
     method: 'post',
     data
   })

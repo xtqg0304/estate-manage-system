@@ -2,61 +2,73 @@
   <div class="icons-container">
     <div class="icons-wrapper">
       <div>
+        <router-link to="/notice/index">
+          <el-tooltip placement="top">
+            <div slot="content">
+              小区公告
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="notice" />
+              <span>小区公告 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/news/index">
+          <el-tooltip placement="top">
+            <div slot="content">
+              小区咨讯
+            </div>
 
-        <el-tooltip placement="top">
-          <div slot="content">
-            小区公告
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="notice" />
-            <span>小区公告 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            小区咨讯
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="news" />
-            <span>小区咨讯 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            报事报修
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="repair" />
-            <span>报事报修 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            投诉建议
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="advise" />
-            <span>投诉建议 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            便民电话
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="phone" />
-            <span>便民电话 </span>
-          </div>
-        </el-tooltip>
-        <el-tooltip placement="top">
-          <div slot="content">
-            更多功能建设中...
-          </div>
-          <div class="icon-item">
-            <svg-icon icon-class="build" />
-            <span>更多功能 </span>
-          </div>
-        </el-tooltip>
+            <div class="icon-item">
+              <svg-icon icon-class="news" />
+              <span>小区咨讯 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/repair/index">
+          <el-tooltip placement="top">
+            <div slot="content">
+              报事报修
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="repair" />
+              <span>报事报修 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/advise/index">
+          <el-tooltip placement="top">
+            <div slot="content">
+              投诉建议
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="advise" />
+              <span>投诉建议 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/phone/index">
+          <el-tooltip placement="top">
+            <div slot="content">
+              便民电话
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="phone" />
+              <span>便民电话 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
+        <router-link to="/home">
+          <el-tooltip placement="top">
+            <div slot="content">
+              更多功能建设中...
+            </div>
+            <div class="icon-item">
+              <svg-icon icon-class="build" />
+              <span>更多功能 </span>
+            </div>
+          </el-tooltip>
+        </router-link>
       </div>
     </div>
   </div>

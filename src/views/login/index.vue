@@ -14,7 +14,7 @@
               <h3 class="title">
                 <svg-icon icon-class="logo" /> 智慧社区云
               </h3>
-              <lang-select class="set-language" />
+              <!-- <lang-select class="set-language" /> -->
             </div>
 
             <el-form-item prop="username">
@@ -36,7 +36,7 @@
 
             <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
-            <div class="tips">
+            <!-- <div class="tips">
               <span>{{ $t('login.username') }} : admin</span>
               <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
             </div>
@@ -45,18 +45,18 @@
               <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
             </div>
 
-            <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.thirdparty') }}</el-button>
+            <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.thirdparty') }}</el-button> -->
           </el-form>
         </div>
       </el-col>
     </el-row>
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
+    <!-- <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
       {{ $t('login.thirdpartyTips') }}
       <br>
       <br>
       <br>
       <social-sign />
-    </el-dialog>
+    </el-dialog> -->
 
   </div>
 </template>
