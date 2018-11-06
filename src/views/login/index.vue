@@ -138,6 +138,7 @@ export default {
           this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
             this.loading = false
             this.$router.push({ path: '/home' })
+            console.log("1111")
           }).catch(() => {
             this.loading = false
           })
