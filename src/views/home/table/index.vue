@@ -3,7 +3,7 @@
     <div class="filter-container">
       <span>{{ tableTitle }}</span>
     </div>
-    <el-table v-loading="loading" :data="tableData" :header-cell-style="{background:'#2d3a4b',padding:'3px 0',borderBottom:'0'}" :cell-style="{background:'#263445',padding:'3px 0',border:'0',fontSize:'12px'}" stripe style="width: 100%">
+    <el-table v-loading="loading" :data="tableData" :header-cell-style="{background:'#304156',padding:'3px 0',borderBottom:'0'}" :cell-style="{background:'#1e2c47',padding:'3px 0',border:'0',fontSize:'12px'}" stripe style="width: 100%">
       <el-table-column v-for="item in formThead" :key="item" :label="item" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row[item] }}
@@ -72,6 +72,6 @@ div.el-table::before {
   height: 0 !important;
 }
 .el-loading-mask{
-  background: #2d3a4b;
+  background: #162238;
 }
 </style>

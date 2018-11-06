@@ -11,6 +11,9 @@ import estatePaydetailAPI from './estatePaydetail'
 import remoteSearchAPI from './remoteSearch'
 import transactionAPI from './transaction'
 
+import householdInfoAPI from './householdInfo'
+import propertyInfoAPI from './propertyInfo'
+
 // Mock.setup({
 //   timeout: '350-600'
 // })
@@ -77,5 +80,19 @@ Mock.mock(/\/search\/user/, 'get', remoteSearchAPI.searchUser)
 
 // 账单相关
 Mock.mock(/\/transaction\/list/, 'get', transactionAPI.getList)
+
+// 与住户资料相关
+Mock.mock(/\/householdInfo\/list/, 'get', householdInfoAPI.getList)
+Mock.mock(/\/householdInfo\/detail/, 'get', householdInfoAPI.getNotice)
+Mock.mock(/\/householdInfo\/pv/, 'get', householdInfoAPI.getTable)
+Mock.mock(/\/householdInfo\/create/, 'post', householdInfoAPI.createNotice)
+Mock.mock(/\/householdInfo\/update/, 'post', householdInfoAPI.updateNotice)
+
+// 与房产资料相关
+Mock.mock(/\/propertyInfo\/list/, 'get', propertyInfoAPI.getList)
+Mock.mock(/\/propertyInfo\/detail/, 'get', propertyInfoAPI.getNotice)
+Mock.mock(/\/propertyInfo\/pv/, 'get', propertyInfoAPI.getTable)
+Mock.mock(/\/propertyInfo\/create/, 'post', propertyInfoAPI.createNotice)
+Mock.mock(/\/propertyInfo\/update/, 'post', propertyInfoAPI.updateNotice)
 
 export default Mock

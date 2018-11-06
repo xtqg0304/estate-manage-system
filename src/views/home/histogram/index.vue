@@ -1,5 +1,12 @@
 <template>
-  <ve-histogram :loading="loading" :data-empty="dataEmpty" :width="width" :height="height" :data="chartData" :extend="vChartOptions" :colors="vChartOptions.colors" />
+  <ve-histogram :loading="loading"
+                :data-empty="dataEmpty"
+                :width="width"
+                :height="height"
+                :data="chartData"
+                :settings="chartSettings"
+                :extend="vChartOptions"
+                :colors="vChartOptions.colors" />
 </template>
 
 <script>
@@ -8,10 +15,10 @@ export default {
   props: {
     histogramdata: {
       type: Object,
-      default: function() {}
+      default: function () { }
     }
   },
-  data() {
+  data () {
     this.vChartOptions = {
       grid: {
         show: false,
@@ -44,7 +51,7 @@ export default {
         pageTextStyle: '#00aeff'
       },
       colors: [
-        '#63c2ff', '#2ec7c9', '#c8b2f4', '#ffcb8c', '#ed868c', '#c8b2f4'
+        '#407fff', '#a682e6', '#00cccd', '#db5c6d', '#f59956', '#c8b2f4'
       ],
       xAxis: {
         show: true,
@@ -136,6 +143,9 @@ export default {
         color: '#00aeff'
       }
     }
+    this.chartSettings = {
+      showLine: ['已缴金额', '未缴金额', '总金额', '已完成']
+    }
     return {
       chartData: {
         columns: [],
@@ -148,15 +158,15 @@ export default {
     }
   },
   watch: {
-    histogramdata(oldValue, newValue) {
+    histogramdata (oldValue, newValue) {
       this.getData()
     }
   },
-  created() {
+  created () {
     this.getData()
   },
   methods: {
-    getData() {
+    getData () {
       this.loading = true
       if (this.histogramdata.chartData) {
         this.vChartOptions.title.text = this.histogramdata.vChartOptions.title.text

@@ -1,5 +1,12 @@
 <template>
-  <ve-line :loading="loading" :data-empty="dataEmpty" :data="chartData" :settings="chartSettings" :extend="vChartOptions" :colors="vChartOptions.colors" :width="width" :height="height" />
+  <ve-line :loading="loading"
+           :data-empty="dataEmpty"
+           :data="chartData"
+           :settings="chartSettings"
+           :extend="vChartOptions"
+           :colors="vChartOptions.colors"
+           :width="width"
+           :height="height" />
 </template>
 
 <script>
@@ -7,10 +14,10 @@ export default {
   props: {
     linedata: {
       type: Object,
-      default: function() {}
+      default: function () { }
     }
   },
-  data() {
+  data () {
     this.vChartOptions = {
       grid: {
         show: false,
@@ -43,7 +50,7 @@ export default {
         pageTextStyle: '#00aeff'
       },
       colors: [
-        '#63c2ff', '#2ec7c9', '#c8b2f4', '#ffcb8c', '#ed868c', '#c8b2f4'
+        '#407fff', '#a682e6', '#00cccd', '#db5c6d', '#f59956', '#c8b2f4'
       ],
       xAxis: {
         show: true,
@@ -136,7 +143,7 @@ export default {
       }
     }
     this.chartSettings = {
-      area: true
+      // area: true
     }
     return {
       chartData: {
@@ -150,15 +157,15 @@ export default {
     }
   },
   watch: {
-    linedata(oldValue, newValue) {
+    linedata (oldValue, newValue) {
       this.getData()
     }
   },
-  created() {
+  created () {
     this.getData()
   },
   methods: {
-    getData() {
+    getData () {
       this.loading = true
       if (this.linedata.chartData) {
         this.vChartOptions.title.text = this.linedata.vChartOptions.title.text

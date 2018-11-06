@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import Vue from 'vue'
 
 import Cookies from 'js-cookie'
@@ -11,6 +12,7 @@ import '@/styles/index.scss' // global css
 import VeLine from 'v-charts/lib/line.common'
 import VeHistogram from 'v-charts/lib/histogram.common'
 import VeRing from 'v-charts/lib/ring.common'
+import VeMap from 'v-charts/lib/map.common'
 
 import App from './App'
 import router from './router'
@@ -20,7 +22,7 @@ import i18n from './lang' // Internationalization
 import './icons' // icon
 import './errorLog' // error log
 import './permission' // permission control
-import './mock' // simulation data
+// import './mock' // simulation data
 
 import * as filters from './filters' // global filters
 
@@ -31,6 +33,7 @@ Vue.use(Element, {
 Vue.component(VeLine.name, VeLine)
 Vue.component(VeHistogram.name, VeHistogram)
 Vue.component(VeRing.name, VeRing)
+Vue.component(VeMap.name, VeMap)
 // register global utility filters.
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

@@ -1,5 +1,12 @@
 <template>
-  <ve-ring :loading="loading" :data-empty="dataEmpty" :data="chartData" :settings="chartSettings" :extend="vChartOptions" :colors="vChartOptions.colors" :width="width" :height="height" />
+  <ve-ring :loading="loading"
+           :data-empty="dataEmpty"
+           :data="chartData"
+           :settings="chartSettings"
+           :extend="vChartOptions"
+           :colors="vChartOptions.colors"
+           :width="width"
+           :height="height" />
 </template>
 
 <script>
@@ -7,15 +14,15 @@ export default {
   props: {
     ringdata: {
       type: Object,
-      default: function() {}
+      default: function () { }
     }
   },
-  data() {
+  data () {
     this.chartSettings = {
       roseType: 'radius',
-      limitShowNum: 3,
+      limitShowNum: 10,
       dataType: 'KMB',
-      radius: [40, 60],
+      radius: [20, 60],
       offsetY: 100
     }
     this.vChartOptions = {
@@ -50,7 +57,7 @@ export default {
         pageTextStyle: '#00aeff'
       },
       colors: [
-        '#63c2ff', '#2ec7c9', '#c8b2f4', '#ffcb8c', '#ed868c', '#c8b2f4'
+        '#407fff', '#a682e6', '#00cccd', '#db5c6d', '#f59956', '#c8b2f4'
       ],
       series: {
         barMaxWidth: 20
@@ -79,15 +86,15 @@ export default {
     }
   },
   watch: {
-    ringdata(oldValue, newValue) {
+    ringdata (oldValue, newValue) {
       this.getData()
     }
   },
-  created() {
+  created () {
     this.getData()
   },
   methods: {
-    getData() {
+    getData () {
       this.loading = true
       if (this.ringdata.chartData) {
         this.vChartOptions.title.text = this.ringdata.vChartOptions.title.text

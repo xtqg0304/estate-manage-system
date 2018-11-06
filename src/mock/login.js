@@ -32,6 +32,46 @@ const userMap = {
     avatar:
       'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: '用户名 pay'
+  },
+  door: {
+    roles: ['door'],
+    token: 'door',
+    introduction: '我是door',
+    avatar:
+      'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: '用户名 door'
+  },
+  vehicle: {
+    roles: ['vehicle'],
+    token: 'vehicle',
+    introduction: '我是vehicle',
+    avatar:
+      'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: '用户名 vehicle'
+  },
+  statisticalReport: {
+    roles: ['statisticalReport'],
+    token: 'statisticalReport',
+    introduction: '我是statisticalReport',
+    avatar:
+      'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: '用户名 statisticalReport'
+  },
+  groupSetting: {
+    roles: ['groupSetting'],
+    token: 'groupSetting',
+    introduction: '我是groupSetting',
+    avatar:
+      'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: '用户名 groupSetting'
+  },
+  communitySetting: {
+    roles: ['communitySetting'],
+    token: 'communitySetting',
+    introduction: '我是communitySetting',
+    avatar:
+      'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: '用户名 communitySetting'
   }
 }
 

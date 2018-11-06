@@ -3,11 +3,13 @@
     <header>
       <div class="header clearfix">
         <a class="header-logo">
-          <svg-icon icon-class="logo" />智慧社区云
+          <!-- <svg-icon icon-class="logo" />星网物联智慧社区云 -->
+           <img style="width: 40%;vertical-align: middle;"src="@/assets/images/logo-login.png" >
         </a>
         <div class="time">
           <div class="clock">
-            <i id="Date" class="el-icon-time">{{ dateT }}</i>
+            <i id="Date"
+               class="el-icon-time">{{ dateT }}</i>
             <ul>
               <li id="hours">{{ hoursT }} </li>
               <li id="point">:</li>
@@ -19,14 +21,16 @@
           <div class="user-avator">
             <svg-icon icon-class="user" />
           </div>
-          <el-dropdown class="user-name" trigger="click">
+          <el-dropdown class="user-name"
+                       trigger="click">
             <span class="el-dropdown-link">
               {{ name }}
               <i class="el-icon-caret-bottom" />
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item divided>
-                <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
+                <span style="display:block;"
+                      @click="logout">{{ $t('navbar.logOut') }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -45,7 +49,7 @@
           </router-link>
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.paySys }}">
             <li>
-              <a :href="allSysList[2].serverLink " class="to top ">
+              <a class="to top ">
                 <svg-icon icon-class="pay" />
               </a>
               <span>基础缴费</span>
@@ -53,7 +57,7 @@
           </router-link>
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.doorSys }}">
             <li>
-              <a :href="allSysList[3].serverLink " class="to top ">
+              <a class="to top ">
                 <svg-icon icon-class="door" />
               </a>
               <span>门禁管理</span>
@@ -62,7 +66,7 @@
 
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.vehicleSys }}">
             <li>
-              <a :href="allSysList[1].serverLink " class="to top ">
+              <a class="to top ">
                 <svg-icon icon-class="vehicle" />
               </a>
               <span>车辆管理</span>
@@ -70,47 +74,7 @@
           </router-link>
           <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
             <li>
-              <a :href="allSysList[1].serverLink " class="to top ">
-                <svg-icon icon-class="video" />
-              </a>
-              <span>视频系统</span>
-            </li>
-          </router-link>
-          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
-            <li>
-              <a :href="allSysList[1].serverLink " class="to top ">
-                <svg-icon icon-class="device" />
-              </a>
-              <span>设备管理</span>
-            </li>
-          </router-link>
-          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
-            <li>
-              <a :href="allSysList[1].serverLink " class="to top ">
-                <svg-icon icon-class="face" />
-              </a>
-              <span>人脸识别</span>
-            </li>
-          </router-link>
-          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
-            <li>
-              <a :href="allSysList[1].serverLink " class="to top ">
-                <svg-icon icon-class="shop" />
-              </a>
-              <span>社区商城</span>
-            </li>
-          </router-link>
-          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
-            <li>
-              <a :href="allSysList[1].serverLink " class="to top ">
-                <svg-icon icon-class="multiscreen" />
-              </a>
-              <span>多屏互动</span>
-            </li>
-          </router-link>
-          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
-            <li>
-              <a :href="allSysList[1].serverLink " class="to top ">
+              <a class="to top ">
                 <svg-icon icon-class="build" />
               </a>
               <span>更多系统</span>
@@ -123,29 +87,11 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:100%;height:100%;">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
-                <div style="height:33.33%; ">
-                  <histogram :histogramdata="estatePaydata" />
-                </div>
-                <div style="height:33.33%; ">
-                  <histogram :histogramdata="vehiclePaydata" />
-                </div>
-                <div style="height:33.33%; ">
-                  <histogram :histogramdata="tempstopPaydata" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <ul class="dataVisual-con dataVisual-con-center">
-      <li class="dataVisual-item ">
-        <div class="dataVisual-item-t numbox ">
-          <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:100%;height:100%;">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
+
                 <div style="height:50%; ">
                   <linechart :linedata="userActivedata" />
                 </div>
@@ -158,12 +104,15 @@
         </div>
       </li>
     </ul>
-    <ul class="dataVisual-con dataVisual-con-right">
+    <ul class="dataVisual-con dataVisual-con-center">
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:100%;height:100%;">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
+
                 <div style="width:50%;height:50%;float:left;">
                   <ringchart :ringdata="doorAnalysisdata" />
                 </div>
@@ -182,12 +131,37 @@
         </div>
       </li>
     </ul>
+    <ul class="dataVisual-con dataVisual-con-right">
+      <li class="dataVisual-item ">
+        <div class="dataVisual-item-t numbox ">
+          <div class="dataVisual-bgImg numb ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
+                <div style="height:33.33%; ">
+                  <histogram :histogramdata="estatePaydata" />
+                </div>
+                <div style="height:33.33%; ">
+                  <histogram :histogramdata="vehiclePaydata" />
+                </div>
+                <div style="height:33.33%; ">
+                  <histogram :histogramdata="tempstopPaydata" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
     <ul class="dataVisual-con dataVisual-con-table">
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:100%;height:100%;">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="userTabledata" />
               </div>
             </div>
@@ -199,8 +173,10 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:100%;height:100%;">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="doorTabledata" />
               </div>
             </div>
@@ -212,8 +188,10 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box " style="width:100%;height:100%;">
-              <div class="main-box-content " style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="vehicleTabledata" />
               </div>
             </div>
@@ -239,113 +217,125 @@ export default {
     ringchart,
     tablecomponent
   },
-  data() {
+  data () {
     return {
       estatePaydata: {
         chartData: {
-          columns: ['日期', '金额'],
+          columns: ['日期', '应收金额', '已缴金额', '未缴金额'],
           rows: [
-            { '日期': '1/1', '金额': 43 },
-            { '日期': '1/2', '金额': 30 },
-            { '日期': '1/3', '金额': 53 },
-            { '日期': '1/4', '金额': 93 },
-            { '日期': '1/5', '金额': 32 },
-            { '日期': '1/6', '金额': 85 },
-            { '日期': '1/7', '金额': 23 },
-            { '日期': '1/8', '金额': 30 },
-            { '日期': '1/9', '金额': 53 },
-            { '日期': '1/10', '金额': 23 },
-            { '日期': '1/11', '金额': 82 },
-            { '日期': '1/12', '金额': 45 }
+            { '日期': '1/1', '应收金额': 4000, '已缴金额': 2000, '未缴金额': 2000 },
+            { '日期': '1/2', '应收金额': 4000, '已缴金额': 3000, '未缴金额': 1000 },
+            { '日期': '1/3', '应收金额': 4000, '已缴金额': 2500, '未缴金额': 1500 },
+            { '日期': '1/4', '应收金额': 4000, '已缴金额': 100, '未缴金额': 3900 },
+            { '日期': '1/5', '应收金额': 4000, '已缴金额': 500, '未缴金额': 3500 },
+            { '日期': '1/6', '应收金额': 4000, '已缴金额': 2000, '未缴金额': 2000 },
+            { '日期': '1/7', '应收金额': 4000, '已缴金额': 4000, '未缴金额': 0 },
+            { '日期': '1/8', '应收金额': 4000, '已缴金额': 2000, '未缴金额': 2000 },
+            { '日期': '1/9', '应收金额': 4000, '已缴金额': 200, '未缴金额': 3800 },
+            { '日期': '1/10', '应收金额': 4000, '已缴金额': 0, '未缴金额': 4000 },
+            { '日期': '1/11', '应收金额': 4000, '已缴金额': 2000, '未缴金额': 2000 },
+            { '日期': '1/12', '应收金额': 4000, '已缴金额': 1000, '未缴金额': 3000 }
           ]
         },
         vChartOptions: {
           title: {
-            text: '物业缴费'
+            text: '缴费趋势'
           }
         }
       },
       vehiclePaydata: {
         chartData: {
-          columns: ['日期', '金额'],
+          columns: ['日期', '总金额', '临停缴费'],
           rows: [
-            { '日期': '1/1', '金额': 12 },
-            { '日期': '1/2', '金额': 30 },
-            { '日期': '1/3', '金额': 23 },
-            { '日期': '1/4', '金额': 43 },
-            { '日期': '1/5', '金额': 62 },
-            { '日期': '1/6', '金额': 45 },
-            { '日期': '1/7', '金额': 93 },
-            { '日期': '1/8', '金额': 55 },
-            { '日期': '1/9', '金额': 23 },
-            { '日期': '1/10', '金额': 73 },
-            { '日期': '1/11', '金额': 32 },
-            { '日期': '1/12', '金额': 95 }
+            { '日期': '1/1', '总金额': 2000, '临停缴费': 100 },
+            { '日期': '1/2', '总金额': 3000, '临停缴费': 500 },
+            { '日期': '1/3', '总金额': 2300, '临停缴费': 100 },
+            { '日期': '1/4', '总金额': 4300, '临停缴费': 100 },
+            { '日期': '1/5', '总金额': 6200, '临停缴费': 700 },
+            { '日期': '1/6', '总金额': 4500, '临停缴费': 100 },
+            { '日期': '1/7', '总金额': 9300, '临停缴费': 400 },
+            { '日期': '1/8', '总金额': 5500, '临停缴费': 200 },
+            { '日期': '1/9', '总金额': 2300, '临停缴费': 150 },
+            { '日期': '1/10', '总金额': 7030, '临停缴费': 150 },
+            { '日期': '1/11', '总金额': 3200, '临停缴费': 200 },
+            { '日期': '1/12', '总金额': 9500, '临停缴费': 100 }
           ]
         },
         vChartOptions: {
           title: {
-            text: '车位缴费'
+            text: '停车收费'
           }
         }
       },
       tempstopPaydata: {
         chartData: {
-          columns: ['日期', '金额'],
+          columns: ['日期', '报修事件', '已完成', '未完成'],
           rows: [
-            { '日期': '1/1', '金额': 93 },
-            { '日期': '1/2', '金额': 30 },
-            { '日期': '1/3', '金额': 23 },
-            { '日期': '1/4', '金额': 13 },
-            { '日期': '1/5', '金额': 32 },
-            { '日期': '1/6', '金额': 45 },
-            { '日期': '1/7', '金额': 93 },
-            { '日期': '1/8', '金额': 30 },
-            { '日期': '1/9', '金额': 23 },
-            { '日期': '1/10', '金额': 13 },
-            { '日期': '1/11', '金额': 32 },
-            { '日期': '1/12', '金额': 45 }
+            { '日期': '1/1', '报修事件': 93, '已完成': 30, '未完成': 50 },
+            { '日期': '1/2', '报修事件': 30, '已完成': 50, '未完成': 30 },
+            { '日期': '1/3', '报修事件': 23, '已完成': 60, '未完成': 10 },
+            { '日期': '1/4', '报修事件': 13, '已完成': 40, '未完成': 50 },
+            { '日期': '1/5', '报修事件': 32, '已完成': 30, '未完成': 10 },
+            { '日期': '1/6', '报修事件': 45, '已完成': 10, '未完成': 70 },
+            { '日期': '1/7', '报修事件': 93, '已完成': 34, '未完成': 30 },
+            { '日期': '1/8', '报修事件': 30, '已完成': 22, '未完成': 50 },
+            { '日期': '1/9', '报修事件': 23, '已完成': 3, '未完成': 50 },
+            { '日期': '1/10', '报修事件': 13, '已完成': 10, '未完成': 30 },
+            { '日期': '1/11', '报修事件': 32, '已完成': 20, '未完成': 40 },
+            { '日期': '1/12', '报修事件': 45, '已完成': 30, '未完成': 50 }
           ]
         },
         vChartOptions: {
           title: {
-            text: '临停缴费'
+            text: '报修处理'
           }
         }
       },
       userActivedata: {
         chartData: {
-          columns: ['日期', '活跃用户'],
+          columns: ['日期', '晚归', '早出', '正常'],
           rows: [
-            { '日期': '2018-08-08', '活跃用户': 3 },
-            { '日期': '2018-08-09', '活跃用户': 88 },
-            { '日期': '2018-08-10', '活跃用户': 23 },
-            { '日期': '2018-08-11', '活跃用户': 50 },
-            { '日期': '2018-08-12', '活跃用户': 32 },
-            { '日期': '2018-08-13', '活跃用户': 25 }
+            { '日期': '2018-08-08', '晚归': 3, '早出': 2, '正常': 120 },
+            { '日期': '2018-08-09', '晚归': 88, '早出': 5, '正常': 80 },
+            { '日期': '2018-08-10', '晚归': 23, '早出': 0, '正常': 10 },
+            { '日期': '2018-08-11', '晚归': 50, '早出': 1, '正常': 50 },
+            { '日期': '2018-08-12', '晚归': 32, '早出': 10, '正常': 100 },
+            { '日期': '2018-08-13', '晚归': 25, '早出': 20, '正常': 70 },
+            { '日期': '2018-08-14', '晚归': 3, '早出': 2, '正常': 120 },
+            { '日期': '2018-08-15', '晚归': 88, '早出': 5, '正常': 80 },
+            { '日期': '2018-08-16', '晚归': 23, '早出': 0, '正常': 10 },
+            { '日期': '2018-08-17', '晚归': 50, '早出': 1, '正常': 50 },
+            { '日期': '2018-08-18', '晚归': 32, '早出': 10, '正常': 100 },
+            { '日期': '2018-08-19', '晚归': 25, '早出': 20, '正常': 70 }
           ]
         },
         vChartOptions: {
           title: {
-            text: '用户活跃度'
+            text: '进出统计'
           }
         }
       },
       userVisitdata: {
         chartData: {
-          columns: ['日期', '访问用户'],
+          columns: ['日期', '正常进出的访客', '异常进出的访客'],
           rows: [
-            { '日期': '2018-08-08', '访问用户': 93 },
-            { '日期': '2018-08-09', '访问用户': 30 },
-            { '日期': '2018-08-10', '访问用户': 23 },
-            { '日期': '2018-08-11', '访问用户': 13 },
-            { '日期': '2018-08-12', '访问用户': 32 },
-            { '日期': '2018-08-13', '访问用户': 45 }
+            { '日期': '2018-08-08', '正常进出的访客': 2, '异常进出的访客': 120 },
+            { '日期': '2018-08-09', '正常进出的访客': 5, '异常进出的访客': 80 },
+            { '日期': '2018-08-10', '正常进出的访客': 0, '异常进出的访客': 10 },
+            { '日期': '2018-08-11', '正常进出的访客': 1, '异常进出的访客': 50 },
+            { '日期': '2018-08-12', '正常进出的访客': 10, '异常进出的访客': 100 },
+            { '日期': '2018-08-13', '正常进出的访客': 20, '异常进出的访客': 70 },
+            { '日期': '2018-08-14', '正常进出的访客': 2, '异常进出的访客': 120 },
+            { '日期': '2018-08-15', '正常进出的访客': 5, '异常进出的访客': 80 },
+            { '日期': '2018-08-16', '正常进出的访客': 0, '异常进出的访客': 10 },
+            { '日期': '2018-08-17', '正常进出的访客': 1, '异常进出的访客': 50 },
+            { '日期': '2018-08-18', '正常进出的访客': 10, '异常进出的访客': 100 },
+            { '日期': '2018-08-19', '正常进出的访客': 20, '异常进出的访客': 70 }
           ]
         },
         vChartOptions: {
           title: {
-            text: '用户访问量'
+            text: '访客统计'
           }
         }
       },
@@ -369,13 +359,14 @@ export default {
           columns: ['支付类型', '用户数'],
           rows: [
             { '支付类型': '现金', '用户数': 93 },
-            { '支付类型': '手机', '用户数': 30 },
-            { '支付类型': '银联', '用户数': 50 }
+            { '支付类型': '支付宝', '用户数': 30 },
+            { '支付类型': '微信', '用户数': 50 },
+            { '支付类型': '银联', '用户数': 70 }
           ]
         },
         vChartOptions: {
           title: {
-            text: '车场分析'
+            text: '支付分析'
           }
         }
       },
@@ -383,13 +374,16 @@ export default {
         chartData: {
           columns: ['类型', '数值'],
           rows: [
-            { '类型': '户内', '数值': 70 },
-            { '类型': '户外', '数值': 30 }
+            { '类型': '水费', '数值': 70 },
+            { '类型': '电费', '数值': 180 },
+            { '类型': '物业费', '数值': 130 },
+            { '类型': '公摊费', '数值': 50 },
+            { '类型': '停车费', '数值': 30 }
           ]
         },
         vChartOptions: {
           title: {
-            text: '报事分析'
+            text: '缴费分析'
           }
         }
       },
@@ -569,7 +563,9 @@ export default {
         paySys: 'pay',
         doorSys: 'door',
         vehicleSys: 'vehicle',
-        moreSys: 'more'
+        // moreSys: 'statisticalReport',
+        moreSys: 'groupSetting'
+        // moreSys: 'communitySetting'
       },
       dateT: '',
       secT: '',
@@ -697,7 +693,7 @@ export default {
       'name'
     ])
   },
-  mounted() {
+  mounted () {
     const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
     const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
     const newDate = new Date()
@@ -720,24 +716,24 @@ export default {
       self.hoursT = (hours < 10 ? '0' : '') + hours
     }, 1000)
   },
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.SetRoleAdmin()
     })
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave (to, from, next) {
     this.$store.dispatch('ChangeRoles', to.params.systemName).then(() => {
     })
     next()
   },
-  created() {
+  created () {
   },
   methods: {
-    SetRoleAdmin() {
+    SetRoleAdmin () {
       this.$store.dispatch('ChangeRoles', 'admin').then(() => {
       })
     },
-    logout() {
+    logout () {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
@@ -749,10 +745,14 @@ export default {
 <style scoped>
 @import url(../../../static/css/index.css);
 .home-bg {
-  background: #263445;
+  width:100%;
+  height:100%;
+  min-width: 1000px;
+  background-color: #162238;
 }
 .header {
-  background: #263445;
+  background: #1e2c47;
+  margin-bottom: 10px;
 }
 .header-logo {
   float: left;
@@ -846,7 +846,8 @@ header .user-name {
 .container {
   margin: 0;
   font-size: 1.4rem;
-  background: #2d3a4b;
+  background: #1e2c47;
+  margin-bottom: 10px;
 }
 .container ul.navigation {
   padding: 0;
@@ -866,7 +867,7 @@ header .user-name {
 .navigation li {
   list-style: none;
   float: left;
-  width: calc(10% - 2rem);
+  width: calc(20% - 2rem);
   display: inline-block;
   margin: 1rem;
 }
@@ -926,12 +927,16 @@ header .user-name {
   width: 33.33%;
   margin: 0;
 }
+.dataVisual-con-table {
+  width: 33.33%;
+  margin-top: 10px;
+}
 .dataVisual-con-left .dataVisual-item-t,
 .dataVisual-con-center .dataVisual-item-t,
 .dataVisual-con-right .dataVisual-item-t {
   padding-bottom: 72%;
 }
 .dataVisual-con-table .dataVisual-item-t {
-  padding-bottom: 40%;
+  padding-bottom: 50%;
 }
 </style>

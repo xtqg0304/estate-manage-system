@@ -1,15 +1,9 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
     <el-menu :show-timeout="200" :default-active="$route.path" :collapse="isCollapse" mode="vertical" background-color="#304156" text-color="#bfcbd9" active-text-color="#409EFF">
-      <!--<div class="menu-wrapper">
-         <a id="titleLogo">
-          <el-menu-item :class="logoClass">
-            <item :icon="logoIcont" :title="logoTitle" />
-          </el-menu-item>
-        </a>
-      </div> -->
       <router-link id="logo-img" to="/home">
-        <img src="../../../../assets/images/logo.png" alt="">
+        <img src="@/assets/images/logo.png" alt="">
+        <span>仟泰科技</span>
       </router-link>
       <sidebar-item v-for="route in permission_routers" :key="route.name" :item="route" :base-path="route.path" />
     </el-menu>
@@ -25,9 +19,6 @@ export default {
   components: { SidebarItem, Item },
   data() {
     return {
-      logoClass: 'submenu-title-noDropdown',
-      logoIcont: 'logo',
-      logoTitle: '智慧社区云'
     }
   },
   computed: {
@@ -75,28 +66,24 @@ export default {
 }
 </script>
 <style scoped>
+#logo-img{
+  margin:15px 0;
+  margin-left: 13px;
+}
+#logo-img img{
+  width: 30px;
+  margin-right: 15px;
+}
+#logo-img span{
+  font-size:20px;
+  color:#bfcbd9;
+  display:inline-block;
+}
 .el-menu--collapse #logo-img {
-  margin-left: -6px !important;
-  width: 112%;
+  margin:15px 0;
+  margin-left: 3px !important;
 }
-#titleLogo li {
-  padding-left: 5px !important;
-}
-.el-menu--collapse #titleLogo .svg-icon {
-  margin-left: -13px !important;
-}
-#titleLogo .svg-icon {
-  width: 3em !important;
-  height: 3em !important;
-  fill: #f4516c !important;
-  vertical-align: -1.5em;
-  margin-right: 3px;
-}
-#titleLogo span {
-  width: 2em !important;
-  height: 2em !important;
-  fill: #fff !important;
-  vertical-align: -0.5em;
-  font-size: 20px;
+.el-menu--collapse #logo-img span {
+  display:none;
 }
 </style>

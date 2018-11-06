@@ -1,13 +1,16 @@
 import request from '@/utils/request'
-
+import { basicServer } from '@/api/api.js'
 export function loginByUsername(username, password) {
   const data = {
     username,
     password
   }
   return request({
-    url: '/login/login',
+    url: basicServer + '/account/login',
     method: 'post',
+    // headers: {
+    //   'Content-Type': 'application/x-www-form-urlencoded'
+    // },
     data
   })
 }
@@ -26,4 +29,3 @@ export function getUserInfo(token) {
     params: { token }
   })
 }
-

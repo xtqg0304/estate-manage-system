@@ -23,7 +23,8 @@ const createLintingRule = () => ({
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    app: './src/main.js'
+    app: ['babel-polyfill', './src/main.js']
+    // app: './src/main.js'
   },
   output: {
     path: config.build.assetsRoot,
@@ -41,7 +42,7 @@ module.exports = {
   },
   module: {
     rules: [
-      ...(config.dev.useEslint ? [createLintingRule()] : []),
+      // ...(config.dev.useEslint ? [createLintingRule()] : []),
       {
         test: /\.vue$/,
         loader: 'vue-loader',

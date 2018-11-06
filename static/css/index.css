@@ -25,13 +25,13 @@
   list-style: none;
   overflow: hidden;
   float: left;
-  background: #263445;
+  background: #162238;
 }
 .dataVisual-item {
   display: inline-block;
   min-width: 100px;
-  width: calc(100% - 0.4em);
-  margin: 0.2em;
+  width: calc(100% - 10px);
+  margin: 0 5px;
   vertical-align: top;
 }
 .dataVisual-item-t {
@@ -46,8 +46,9 @@
 }
 /*css 背景边框*/
 .numbox {
-  border: #2d3a4b solid 1px;
+  /* border: #2d3a4b solid 1px; */
   position: relative;
+  background: #1e2c47;
 }
 .numbox .line {
   position: absolute;

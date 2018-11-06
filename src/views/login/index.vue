@@ -8,11 +8,17 @@
       </el-col>
       <el-col :span="12">
         <div class="grid-content right-content">
-          <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+          <el-form ref="loginForm"
+                   :model="loginForm"
+                   :rules="loginRules"
+                   class="login-form"
+                   auto-complete="on"
+                   label-position="left">
 
             <div class="title-container">
               <h3 class="title">
-                <svg-icon icon-class="logo" /> 智慧社区云
+                <!-- <svg-icon icon-class="logo" /> 星网物联智慧社区云 -->
+                <img style="width:50%" src="@/assets/images/logo-login.png" >
               </h3>
               <!-- <lang-select class="set-language" /> -->
             </div>
@@ -21,20 +27,33 @@
               <span class="svg-container svg-container_login">
                 <svg-icon icon-class="user" />
               </span>
-              <el-input v-model="loginForm.username" :placeholder="$t('login.username')" name="username" type="text" auto-complete="on" />
+              <el-input v-model="loginForm.username"
+                        :placeholder="$t('login.username')"
+                        name="username"
+                        type="text"
+                        auto-complete="on" />
             </el-form-item>
 
             <el-form-item prop="password">
               <span class="svg-container">
                 <svg-icon icon-class="password" />
               </span>
-              <el-input :type="passwordType" v-model="loginForm.password" :placeholder="$t('login.password')" name="password" auto-complete="on" @keyup.enter.native="handleLogin" />
-              <span class="show-pwd" @click="showPwd">
+              <el-input :type="passwordType"
+                        v-model="loginForm.password"
+                        :placeholder="$t('login.password')"
+                        name="password"
+                        auto-complete="on"
+                        @keyup.enter.native="handleLogin" />
+              <span class="show-pwd"
+                    @click="showPwd">
                 <svg-icon icon-class="eye" />
               </span>
             </el-form-item>
 
-            <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
+            <el-button :loading="loading"
+                       type="primary"
+                       style="width:100%;margin-bottom:30px;"
+                       @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
             <!-- <div class="tips">
               <span>{{ $t('login.username') }} : admin</span>
@@ -69,7 +88,7 @@ import SocialSign from './socialsignin'
 export default {
   name: 'Login',
   components: { LangSelect, SocialSign },
-  data() {
+  data () {
     const validateUsername = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
         callback(new Error('Please enter the correct user name'))
@@ -86,8 +105,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '1111111'
+        username: 'root',
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -98,21 +117,21 @@ export default {
       showDialog: false
     }
   },
-  created() {
+  created () {
     // window.addEventListener('hashchange', this.afterQRScan)
   },
-  destroyed() {
+  destroyed () {
     // window.removeEventListener('hashchange', this.afterQRScan)
   },
   methods: {
-    showPwd() {
+    showPwd () {
       if (this.passwordType === 'password') {
         this.passwordType = ''
       } else {
         this.passwordType = 'password'
       }
     },
-    handleLogin() {
+    handleLogin () {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -128,7 +147,7 @@ export default {
         }
       })
     },
-    afterQRScan() {
+    afterQRScan () {
       // const hash = window.location.hash.slice(1)
       // const hashObj = getQueryObject(hash)
       // const originUrl = window.location.origin

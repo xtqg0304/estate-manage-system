@@ -51,10 +51,11 @@ const user = {
         loginByUsername(username, userInfo.password)
           .then(response => {
             console.log('login response')
-            console.log(response)
-            const data = response.data
+            console.log(response.data.data)
+            const data = response.data.data
+            debugger
             commit('SET_TOKEN', data.token) // 设置vuex里面token的值
-            setToken(response.data.token) // 将token的值存储在cookie或者sessionstorage
+            setToken(response.data.data.token) // 将token的值存储在cookie或者sessionstorage
             resolve()
           })
           .catch(error => {
