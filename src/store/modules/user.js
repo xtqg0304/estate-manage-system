@@ -6,14 +6,26 @@ const user = {
     user: '',
     status: '',
     code: '',
-    token: getToken(),
+    // token: getToken(),
     name: '',
     avatar: '',
     introduction: '',
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    /* 参数 */
+    userId: '',
+    trueName: '',
+    uuid: '',
+    mobile: '',
+    email: '',
+    token: getToken(),
+    platform: '',
+    pushUserId: '',
+    pushChannelId: '',
+    subSystemId: '',
+    permission: []
   },
 
   mutations: {
@@ -40,6 +52,21 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_SUBSYSTEMID: (state, id) => {
+      state.subSystemId = id
+    },
+    SET_USER_INFO: (state, user_info) => {
+      state.userId = user_info.userId
+      state.trueName = user_info.trueName
+      state.uuid = user_info.uuid
+      state.mobile = user_info.mobile
+      state.email = user_info.email
+      // state.token = user_info.token
+      state.platform = user_info.platform
+      state.pushUserId = user_info.pushUserId
+      state.pushChannelId = user_info.pushChannelId
+      state.permission = user_info.permission
     }
   },
 
@@ -51,11 +78,13 @@ const user = {
         loginByUsername(username, userInfo.password)
           .then(response => {
             console.log('login response')
+            /* eslint-disable */
+            console.log(response.headers["x-auth-token"])
             console.log(response.data.data)
             const data = response.data.data
-            debugger
-            commit('SET_TOKEN', data.token) // 设置vuex里面token的值
-            setToken(response.data.data.token) // 将token的值存储在cookie或者sessionstorage
+            commit('SET_TOKEN', response.headers["x-auth-token"]) // 设置vuex里面token的值
+            commit('SET_USER_INFO', data)
+            setToken(response.headers["x-auth-token"]) // 将token的值存储在cookie或者sessionstorage
             resolve()
           })
           .catch(error => {
@@ -63,7 +92,6 @@ const user = {
           })
       })
     },
-
     // 获取用户信息
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {

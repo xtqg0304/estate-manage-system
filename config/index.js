@@ -11,9 +11,13 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/basicServer': {
-        target: 'http://10.18.72.29:8500',
-        changeOrigin: true,
-        // pathRewrite: { '^/basicServer': '' }
+        // target: 'http://10.18.72.29:8401',
+        // pathRewrite: { '^/basicServer': '' },
+        target: 'http://47.94.202.102:8500',
+        pathRewrite: { '^/basicServer': '/basicServer' },
+        changeOrigin: true
+
+
       }
     },
 

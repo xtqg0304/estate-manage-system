@@ -6,6 +6,13 @@
 
     <div class="right-menu">
       <error-log class="errLog-container right-menu-item" />
+      <el-select v-model="selectSysId" placeholder="请选择" @change="handelChange">
+        <el-option
+          v-for="item in permissionSys"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"/>
+      </el-select>
 
       <el-dropdown class="avatar-container right-menu-item">
         <div class="avatar-wrapper">
@@ -34,7 +41,7 @@
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
           <img class="user-avatar">
           <span>
-            <svg-icon icon-class="user">&nbsp;</svg-icon>{{ name }}
+            <svg-icon icon-class="user">&nbsp;</svg-icon>{{ userInfo.trueName }}
           </span>
           <i class="el-icon-caret-bottom" />
         </div>
@@ -73,16 +80,34 @@ export default {
     LangSelect,
     ThemePicker
   },
+  data() {
+    return {
+      selectSysId: ''
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'name',
-      'avatar'
+      'avatar',
+      'userInfo',
+      'permissionSys'
     ])
+  },
+  created() {
+    this.selectSysId = this.userInfo.subSystemId
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
+    },
+    handelChange(value) {
+      console.log(value)
+      this.$store.dispatch('GenerateRoutes', value).then(() => {
+        this.$store.commit('SET_SUBSYSTEMID', value)
+        this.$router.addRoutes(this.$store.getters.addRouters) // 动态添加可访问路由表
+        // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+      })
     },
     logout() {
       this.$store.dispatch('LogOut').then(() => {

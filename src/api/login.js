@@ -14,7 +14,19 @@ export function loginByUsername(username, password) {
     data
   })
 }
-
+export function generateRoutes(appId) {
+  const data = {
+    appId
+  }
+  return request({
+    url: basicServer + '/user/getUserNavPermTree',
+    method: 'post',
+    // headers: {
+    //   'Content-Type': 'application/x-www-form-urlencoded'
+    // },
+    data
+  })
+}
 export function logout() {
   return request({
     url: '/login/logout',

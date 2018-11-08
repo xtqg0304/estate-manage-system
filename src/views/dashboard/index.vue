@@ -25,7 +25,9 @@ export default {
     if (this.$route.params.systemName.includes('pay')) {
       this.currentRole = 'payDashboard'
     }
-    // console.log(this.currentRole)
+    // console.log('this.$route.params.systemName')
+    // console.log(this.$route.params.systemName)
+    // this.$emit("sysId",this.$route.params.systemName)
   },
   methods: {
     checkPermission

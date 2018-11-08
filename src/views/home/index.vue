@@ -1,15 +1,16 @@
 <template>
-  <div class="home-bg">
+  <div class="home-bg" >
     <header>
       <div class="header clearfix">
         <a class="header-logo">
           <!-- <svg-icon icon-class="logo" />星网物联智慧社区云 -->
-           <img style="width: 40%;vertical-align: middle;"src="@/assets/images/logo-login.png" >
+          <img style="width: 40%;vertical-align: middle;" src="@/assets/images/logo-login.png" >
         </a>
         <div class="time">
           <div class="clock">
-            <i id="Date"
-               class="el-icon-time">{{ dateT }}</i>
+            <i
+              id="Date"
+              class="el-icon-time">{{ dateT }}</i>
             <ul>
               <li id="hours">{{ hoursT }} </li>
               <li id="point">:</li>
@@ -21,16 +22,18 @@
           <div class="user-avator">
             <svg-icon icon-class="user" />
           </div>
-          <el-dropdown class="user-name"
-                       trigger="click">
+          <el-dropdown
+            class="user-name"
+            trigger="click">
             <span class="el-dropdown-link">
-              {{ name }}
+              {{ userInfo.trueName }}
               <i class="el-icon-caret-bottom" />
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item divided>
-                <span style="display:block;"
-                      @click="logout">{{ $t('navbar.logOut') }}</span>
+                <span
+                  style="display:block;"
+                  @click="logout">{{ $t('navbar.logOut') }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -87,10 +90,12 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box "
-                 style="width:100%;height:100%;">
-              <div class="main-box-content "
-                   style="width:100%;min-height:300px;height:100%; ">
+            <div
+              class="main-box "
+              style="width:100%;height:100%;">
+              <div
+                class="main-box-content "
+                style="width:100%;min-height:300px;height:100%; ">
 
                 <div style="height:50%; ">
                   <linechart :linedata="userActivedata" />
@@ -108,10 +113,12 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box "
-                 style="width:100%;height:100%;">
-              <div class="main-box-content "
-                   style="width:100%;min-height:300px;height:100%; ">
+            <div
+              class="main-box "
+              style="width:100%;height:100%;">
+              <div
+                class="main-box-content "
+                style="width:100%;min-height:300px;height:100%; ">
 
                 <div style="width:50%;height:50%;float:left;">
                   <ringchart :ringdata="doorAnalysisdata" />
@@ -135,10 +142,12 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box "
-                 style="width:100%;height:100%;">
-              <div class="main-box-content "
-                   style="width:100%;min-height:300px;height:100%; ">
+            <div
+              class="main-box "
+              style="width:100%;height:100%;">
+              <div
+                class="main-box-content "
+                style="width:100%;min-height:300px;height:100%; ">
                 <div style="height:33.33%; ">
                   <histogram :histogramdata="estatePaydata" />
                 </div>
@@ -158,10 +167,12 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box "
-                 style="width:100%;height:100%;">
-              <div class="main-box-content "
-                   style="width:100%;min-height:300px;height:100%; ">
+            <div
+              class="main-box "
+              style="width:100%;height:100%;">
+              <div
+                class="main-box-content "
+                style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="userTabledata" />
               </div>
             </div>
@@ -173,10 +184,12 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box "
-                 style="width:100%;height:100%;">
-              <div class="main-box-content "
-                   style="width:100%;min-height:300px;height:100%; ">
+            <div
+              class="main-box "
+              style="width:100%;height:100%;">
+              <div
+                class="main-box-content "
+                style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="doorTabledata" />
               </div>
             </div>
@@ -188,10 +201,12 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div class="main-box "
-                 style="width:100%;height:100%;">
-              <div class="main-box-content "
-                   style="width:100%;min-height:300px;height:100%; ">
+            <div
+              class="main-box "
+              style="width:100%;height:100%;">
+              <div
+                class="main-box-content "
+                style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="vehicleTabledata" />
               </div>
             </div>
@@ -217,7 +232,7 @@ export default {
     ringchart,
     tablecomponent
   },
-  data () {
+  data() {
     return {
       estatePaydata: {
         chartData: {
@@ -559,7 +574,7 @@ export default {
         vehicleSys 车辆管理系统
         moreSys    更多管理系统
         */
-        estateSys: 'estate',
+        estateSys: 'bec59953d1a049ebb6b1964fdcd74bc8',
         paySys: 'pay',
         doorSys: 'door',
         vehicleSys: 'vehicle',
@@ -690,10 +705,12 @@ export default {
   computed: {
     ...mapGetters([
       'roles',
-      'name'
+      'name',
+      'userInfo',
+      'permissionSys'
     ])
   },
-  mounted () {
+  mounted() {
     const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
     const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
     const newDate = new Date()
@@ -716,24 +733,47 @@ export default {
       self.hoursT = (hours < 10 ? '0' : '') + hours
     }, 1000)
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.SetRoleAdmin()
-    })
-  },
-  beforeRouteLeave (to, from, next) {
-    this.$store.dispatch('ChangeRoles', to.params.systemName).then(() => {
+  // beforeRouteEnter (to, from, next) {
+  //   next(vm => {
+  //     vm.SetRoleAdmin()
+  //   })
+  // },
+  // beforeRouteLeave (to, from, next) {
+  //   this.$store.dispatch('ChangeRoles', to.params.systemName).then(() => {
+  //   })
+  //   next()
+  // },
+  beforeRouteLeave(to, from, next) {
+    this.$store.dispatch('GenerateRoutes', to.params.systemName).then(() => {
+      this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)
+      this.$router.addRoutes(this.$store.getters.addRouters) // 动态添加可访问路由表
+      next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
     })
     next()
   },
-  created () {
+  created() {
+    this.handelPermission()
   },
   methods: {
-    SetRoleAdmin () {
-      this.$store.dispatch('ChangeRoles', 'admin').then(() => {
+    // SetRoleAdmin () {
+    //   this.$store.dispatch('ChangeRoles', 'admin').then(() => {
+    //   })
+    // },
+    handelPermission() {
+      console.log(this.permissionSys)
+      this.permissionSys.forEach((value, index) => {
+        if (value.name === '物管系统') {
+          this.systems.estateSys = value.id
+        } else if (value.name === '缴费系统') {
+          this.systems.paySys = value.id
+        } else if (value.name === '门禁系统') {
+          this.systems.doorSys = value.id
+        } else if (value.name === '车辆系统') {
+          this.systems.vehicleSys = value.id
+        }
       })
     },
-    logout () {
+    logout() {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
