@@ -1,5 +1,5 @@
 import { loginByUsername, logout, getUserInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+// import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
@@ -20,7 +20,7 @@ const user = {
     uuid: '',
     mobile: '',
     email: '',
-    token: getToken(),
+    token: '',
     platform: '',
     pushUserId: '',
     pushChannelId: '',
@@ -62,7 +62,6 @@ const user = {
       state.uuid = user_info.uuid
       state.mobile = user_info.mobile
       state.email = user_info.email
-      // state.token = user_info.token
       state.platform = user_info.platform
       state.pushUserId = user_info.pushUserId
       state.pushChannelId = user_info.pushChannelId
@@ -84,7 +83,7 @@ const user = {
             const data = response.data.data
             commit('SET_TOKEN', response.headers["x-auth-token"]) // 设置vuex里面token的值
             commit('SET_USER_INFO', data)
-            setToken(response.headers["x-auth-token"]) // 将token的值存储在cookie或者sessionstorage
+            // setToken(response.headers["x-auth-token"]) // 将token的值存储在cookie或者sessionstorage
             resolve()
           })
           .catch(error => {
@@ -142,7 +141,7 @@ const user = {
           .then(() => {
             commit('SET_TOKEN', '')
             commit('SET_ROLES', [])
-            removeToken()
+            // removeToken()
             resolve()
           })
           .catch(error => {
@@ -155,7 +154,7 @@ const user = {
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
-        removeToken()
+        // removeToken()
         resolve()
       })
     },

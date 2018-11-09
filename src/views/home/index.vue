@@ -744,8 +744,8 @@ export default {
   //   next()
   // },
   beforeRouteLeave(to, from, next) {
+    this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)
     this.$store.dispatch('GenerateRoutes', to.params.systemName).then(() => {
-      this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)
       this.$router.addRoutes(this.$store.getters.addRouters) // 动态添加可访问路由表
       next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
     })
@@ -770,6 +770,8 @@ export default {
           this.systems.doorSys = value.id
         } else if (value.name === '车辆系统') {
           this.systems.vehicleSys = value.id
+        } else {
+          console.log(this.systems)
         }
       })
     },
