@@ -21,15 +21,12 @@ export function generateRoutes(appId) {
   return request({
     url: basicServer + '/user/getUserNavPermTree',
     method: 'post',
-    // headers: {
-    //   'Content-Type': 'application/x-www-form-urlencoded'
-    // },
     data
   })
 }
 export function logout() {
   return request({
-    url: '/login/logout',
+    url: basicServer + '/account/logout',
     method: 'post'
   })
 }
@@ -41,3 +38,4 @@ export function getUserInfo(token) {
     params: { token }
   })
 }
+

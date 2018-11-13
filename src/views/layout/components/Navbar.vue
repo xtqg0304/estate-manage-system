@@ -6,7 +6,7 @@
 
     <div class="right-menu">
       <error-log class="errLog-container right-menu-item" />
-      <el-select v-model="selectSysId" placeholder="请选择" @change="handelChange">
+      <el-select v-model="selectSysId" style="float:left;" placeholder="请选择" @change="handelChange">
         <el-option
           v-for="item in permissionSys"
           :key="item.id"
@@ -111,6 +111,7 @@ export default {
     },
     logout() {
       this.$store.dispatch('LogOut').then(() => {
+        this.$router.push({ path: '/login' })
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
     }

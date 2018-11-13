@@ -135,14 +135,19 @@ const user = {
     // },
 
     // 登出
-    LogOut({ commit, state }) {
+    LogOut({ commit }) {
       return new Promise((resolve, reject) => {
-        logout(state.token)
-          .then(() => {
-            commit('SET_TOKEN', '')
-            commit('SET_ROLES', [])
-            // removeToken()
-            resolve()
+        logout()
+          .then((response) => {
+            console.log(response)
+            if(response.data.code === 200){
+              commit('SET_TOKEN', '')
+              // commit('SET_ROLES', [])
+              // removeToken()
+              resolve()
+            }else{
+              reject(error)
+            }
           })
           .catch(error => {
             reject(error)

@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
       <el-select v-model="listQuery.statusProperty" placeholder="请选择房产类型" clearable class="filter-item">
-        <el-option v-for="item in statuspropertyOptions" :key="item" :label="$t('table.'+item)" :value="item" />
+        <el-option v-for="item in statuspropertyOptions" :key="item.name" :label="item.value" :value="item" />
       </el-select>
       <el-input v-model="listQuery.keyword" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
@@ -11,22 +11,22 @@
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
       <el-table-column :label="$t('table.building')" min-width="150px">
         <template slot-scope="scope">
-          <span>{{ scope.row.building }}</span>
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.floor')" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.floor }}</span>
+          <span>{{ scope.row.value }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.unit')" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.unit }}</span>
+          <span>{{ scope.row.value }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.roomNumber')" width="200px">
         <template slot-scope="scope">
-          <span>{{ scope.row.roomNumber }}</span>
+          <span>{{ scope.row.value }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -39,18 +39,14 @@
 
 <script>
 import {
-  fetchList
-} from '@/api/propertyInfo'
-import Tinymce from '@/components/Tinymce'
+  fetchEstateTypeList
+} from '@/api/property'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
-import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 export default {
   name: 'ComplexTable',
   directives: {
     waves
   },
-  components: { Tinymce, UploadExcelComponent },
   data() {
     return {
       tableData: [],
@@ -65,24 +61,24 @@ export default {
         statusProperty: undefined,
         keyword: undefined
       },
-      statuspropertyOptions: ['house', 'shops', 'shop', 'other'],
+      statuspropertyOptions: [],
       downloadLoading: false
     }
   },
   created() {
-    this.getList()
+    this.getTypeList()
   },
   methods: {
-    getList() {
+    getTypeList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+      fetchEstateTypeList().then(response => {
+        console.log(response)
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.statuspropertyOptions = response.data.data
+            this.listLoading = false
+          }
+        }
       })
     },
     handleFilter() {
@@ -100,49 +96,6 @@ export default {
       // 显示第几页的数据
       this.listQuery.page = val
       this.getList()
-    },
-    handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
-      // 请求后台接口将状态传给后台，如果成功，前端修改数据
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        })
-      )
     }
   }
 }

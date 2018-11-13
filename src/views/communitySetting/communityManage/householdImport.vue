@@ -9,9 +9,9 @@
       </div>
       <div class="component-item">
         <p><strong>使用说明: </strong> 请参照下图说明填写Excel模板</p>
-        <p><img src="../../../assets/images/householdImport.png" /></p>
+        <p><img src="../../../assets/images/householdImport.png" ></p>
         <p>
-          <el-button v-waves type="primary"> 模版下载 </el-button>
+          <el-button v-waves type="primary" > 模版下载 </el-button>
           <el-button v-waves type="default"> 模板生成 </el-button>
           <span>如有更新需重新生成模版,上次生成时间：2018-11-04 07:38:36</span>
         </p>
@@ -22,11 +22,9 @@
 
 <script>
 import {
-  fetchList
 } from '@/api/estatePaybill'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 export default {
   name: 'ComplexTable',
@@ -71,6 +69,9 @@ export default {
       // 将数据传给后台，后台存入数据库成功，则重新获取数据列表
       // this.list = results
       // this.total = results.length
+    },
+    propertyModule() {
+
     }
   }
 }
