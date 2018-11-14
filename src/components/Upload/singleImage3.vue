@@ -1,6 +1,6 @@
 <template>
   <div class="upload-container">
-    <el-upload v-show="imageUrl.length<=1" :data="dataObj" :multiple="false" :show-file-list="false" :on-success="handleImageSuccess" class="image-uploader" drag action="https://httpbin.org/post">
+    <el-upload v-show="imageUrl.length<=1" :data="dataObj" :multiple="false" :show-file-list="false" :on-success="handleImageSuccess" :http-request="submitUpload" class="image-uploader" drag action="">
       <i class="el-icon-upload" />
       <div class="el-upload__text">
         <em>点击上传</em>
@@ -47,23 +47,52 @@ export default {
       this.$emit('input', val)
     },
     handleImageSuccess(file) {
-      this.emitInput(file.files.file)
+      this.emitInput(file.data.data)
     },
     beforeUpload() {
-      const _self = this
-      return new Promise((resolve, reject) => {
-        getToken().then(response => {
-          const key = response.data.qiniu_key
-          const token = response.data.qiniu_token
-          _self._data.dataObj.token = token
-          _self._data.dataObj.key = key
-          this.tempUrl = response.data.qiniu_url
-          resolve(true)
-        }).catch(err => {
-          console.log(err)
-          reject(false)
+      // const _self = this
+      // return new Promise((resolve, reject) => {
+      //   getToken().then(response => {
+      //     debugger
+      //     const key = response.data.qiniu_key
+      //     const token = response.data.qiniu_token
+      //     _self._data.dataObj.token = token
+      //     _self._data.dataObj.key = key
+      //     this.tempUrl = response.data.qiniu_url
+      //     resolve(true)
+      //   }).catch(err => {
+      //     console.log(err)
+      //     reject(false)
+      //   })
+      // })
+    },
+    /* 导入图片*/
+    submitUpload(content) { // 自定义的上传方法
+      const formdata = new FormData()
+      formdata.append('file', content.file)
+      getToken(formdata)
+        .then(response => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              this.handleImageSuccess(response)
+              this.$notify({
+                title: '成功',
+                message: '图片上传成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          }
         })
-      })
+        .catch(function(error) {
+          console.log(error)
+        })
     }
   }
 }

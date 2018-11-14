@@ -3,7 +3,17 @@
     <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">上传图片
     </el-button>
     <el-dialog :visible.sync="dialogVisible" append-to-body >
-      <el-upload :multiple="true" :file-list="fileList" :show-file-list="true" :on-remove="handleRemove" :on-success="handleSuccess" :before-upload="beforeUpload" class="editor-slide-upload" action="https://httpbin.org/post" list-type="picture-card">
+      <el-upload
+        :multiple="true"
+        :file-list="fileList"
+        :show-file-list="true"
+        :on-remove="handleRemove"
+        :on-success="handleSuccess"
+        :before-upload="beforeUpload"
+        :http-request="submitUpload"
+        class="editor-slide-upload"
+        action=""
+        list-type="picture-card">
         <el-button size="small" type="primary">点击上传</el-button>
       </el-upload>
       <el-button @click="dialogVisible = false">取 消</el-button>
@@ -13,7 +23,7 @@
 </template>
 
 <script>
-// import { getToken } from 'api/qiniu'
+import { getToken } from '@/api/upload'
 
 export default {
   name: 'EditorSlideUpload',
@@ -51,7 +61,8 @@ export default {
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
-          this.listObj[objKeyArr[i]].url = response.files.file
+          // this.listObj[objKeyArr[i]].url = response.files.file
+          this.listObj[objKeyArr[i]].url = response.data.data
           this.listObj[objKeyArr[i]].hasSuccess = true
           return
         }
@@ -81,6 +92,34 @@ export default {
         }
         resolve(true)
       })
+    },
+    /* 导入图片*/
+    submitUpload(content) { // 自定义的上传方法
+      const formdata = new FormData()
+      formdata.append('file', content.file)
+      getToken(formdata)
+        .then(response => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              this.handleSuccess(response, content.file)
+              this.$notify({
+                title: '成功',
+                message: '图片上传成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          }
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
     }
   }
 }

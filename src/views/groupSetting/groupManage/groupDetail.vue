@@ -1,200 +1,219 @@
 <template>
   <div class="app-container">
     <el-card class="box-card">
-        <div slot="header" class="clearfix">
-            <span> 基本信息</span>
-            <span class="pullRight">
-                <i class="el-icon-edit">修改</i>
-                <i class="el-icon-document">保存</i>
-                <i class="el-icon-close">取消</i>
-            </span>
-        </div>
-        <div class="component-item">
-            <el-form  label-width="80px">
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="集团编码">
-                            G003
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="所属城市">
-                            <el-cascader
-                                :options="options"
-                                placeholder="请选择所属城市"
-                                class="filter-item"
-                                expand-trigger="hover" style="width: 100%;"/>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="集团简称">
-                        <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="总部地址">
-                        <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="邮编">
-                        <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="集团全名">
-                        <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="联系人">
-                        <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="联系电话">
-                        <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <!-- <el-col :span="8">
-                        <el-button type="primary" @click="onSubmit">保存</el-button>
-                        <el-button>取消</el-button>
-                    </el-col> -->
-                </el-row>
-            </el-form>
-            <el-form  label-width="80px">
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="集团编码">
-                            G003
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="所属城市">
-                            福建省/福州市/闽侯
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="集团简称">
-                        我家物业
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="总部地址">
-                        福州
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="邮编">
-                        350000
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="集团全名">
-                        我家物业
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="联系人">
-                        福州
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="联系电话">
-                        350000
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
-        </div>
+      <div slot="header" class="clearfix">
+        <span> 基本信息</span>
+        <span class="pullRight">
+          <i v-if="!editdialog" class="el-icon-edit" @click="handelEdit">修改</i>
+          <i v-if="editdialog" class="el-icon-document" @click="handelSave">保存</i>
+          <i v-if="editdialog" class="el-icon-close" @click="editdialog=false">取消</i>
+        </span>
+      </div>
+      <div class="component-item">
+        <el-form v-if="editdialog" label-width="80px">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="集团编码">
+                {{ tempGroupInfo.code }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="16">
+              <el-form-item label="所属城市">
+                <el-select v-model="tempGroupInfo.province" filterable placeholder="请选择省" @change="getCityOfProvince">
+                  <el-option
+                    v-for="item in provinceOptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"/>
+                </el-select>
+                <el-select v-model="tempGroupInfo.city" placeholder="请选择市" @change="getCountyOfCity">
+                  <el-option
+                    v-for="item in cityOptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"/>
+                </el-select>
+                <el-select v-model="tempGroupInfo.county" placeholder="请选择区/县">
+                  <el-option
+                    v-for="item in countyOptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"/>
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="集团简称">
+                <el-input v-model="tempGroupInfo.shortName"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="总部地址">
+                <el-input v-model="tempGroupInfo.site"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="邮编">
+                <el-input v-model="tempGroupInfo.zipCode"/>
+              </el-form-item>
+            </el-col>
+
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="集团全名">
+                <el-input v-model="tempGroupInfo.name"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="联系人">
+                <el-input v-model="tempGroupInfo.contact"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="联系电话">
+                <el-input v-model="tempGroupInfo.telephone"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-form v-if="!editdialog" label-width="80px">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="集团编码">
+                {{ groupInfo.code }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="16">
+              <el-form-item label="所属城市">
+                {{ groupInfo.province }}/ {{ groupInfo.city }}/{{ groupInfo.country }}
+              </el-form-item>
+            </el-col>
+
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="集团简称">
+                {{ groupInfo.shortName }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="总部地址">
+                {{ groupInfo.site }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="邮编">
+                {{ groupInfo.zipCode }}
+              </el-form-item>
+            </el-col>
+
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="集团全名">
+                {{ groupInfo.name }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="联系人">
+                {{ groupInfo.contact }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="联系电话">
+                {{ groupInfo.telephone }}
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
     </el-card>
     <el-card class="box-card">
-        <div slot="header" class="clearfix">
-            <span> 页面设置 </span>
-            <span class="pullRight">
-                <i class="el-icon-edit">修改</i>
-                <i class="el-icon-document">保存</i>
-                <i class="el-icon-close">取消</i>
-            </span>
-        </div>
-        <div class="component-item">
-            <el-form  label-width="80px">
-                <el-form-item label="集团logo">
-                    <img src="../../../assets/images/logo.png">
-                </el-form-item>
-                <el-form-item label="集团图标">
-                    <img src="../../../assets/images/logo.png">
-                </el-form-item>
-            </el-form>
-            <el-form  label-width="80px">
-                <el-form-item label="集团logo">
-                    <Upload v-model="temp.uploadimg" />
-                </el-form-item>
-                <el-form-item label="集团图标">
-                    <Upload v-model="temp.uploadimg" />
-                </el-form-item>
-            </el-form>
-        </div>
+      <div slot="header" class="clearfix">
+        <span> 页面设置 </span>
+        <span class="pullRight">
+          <i v-if="!editLogoImg" class="el-icon-edit" @click="handelEditLogo">修改</i>
+          <i v-if="editLogoImg" class="el-icon-document" @click="handelSaveLogo">保存</i>
+          <i v-if="editLogoImg" class="el-icon-close" @click="editLogoImg=false">取消</i>
+        </span>
+      </div>
+      <div class="component-item">
+        <el-form v-if="!editLogoImg" label-width="80px">
+          <el-form-item label="集团logo">
+            <img :src="groupInfo.logo">
+          </el-form-item>
+          <el-form-item label="集团图标">
+            <img :src="groupInfo.icon">
+          </el-form-item>
+        </el-form>
+        <el-form v-if="editLogoImg" label-width="80px">
+          <el-form-item label="集团logo">
+            <Upload v-model="tempGroupInfo.logo" />
+          </el-form-item>
+          <el-form-item label="集团图标">
+            <Upload v-model="tempGroupInfo.icon" />
+          </el-form-item>
+        </el-form>
+      </div>
     </el-card>
     <el-card class="box-card">
-        <div slot="header" class="clearfix">
-            <span> 系统管理员 </span>
+      <div slot="header" class="clearfix">
+        <span> 系统管理员 </span>
+      </div>
+      <div class="component-item">
+        <div class="icon-item">
+          <i class="el-icon-close"/>
+          <p>
+            <svg-icon icon-class="user" />
+            <span>张华</span>
+          </p>
+          <p>
+            <svg-icon icon-class="phone" />
+            <span>17777778828 </span>
+          </p>
+
         </div>
-        <div class="component-item">
-          <div class="icon-item">
-            <i class="el-icon-close"></i>
-            <p>
-              <svg-icon icon-class="user" />
-              <span>张华</span>
-            </p>
-            <p>
-              <svg-icon icon-class="phone" />
-              <span>17777778828 </span>
-            </p>
+        <div class="icon-item">
+          <i class="el-icon-close"/>
+          <p>
+            <svg-icon icon-class="user" />
+            <span>张华</span>
+          </p>
+          <p>
+            <svg-icon icon-class="phone" />
+            <span>17777778828 </span>
+          </p>
 
-          </div>
-           <div class="icon-item">
-            <i class="el-icon-close"></i>
-            <p>
-              <svg-icon icon-class="user" />
-              <span>张华</span>
-            </p>
-            <p>
-              <svg-icon icon-class="phone" />
-              <span>17777778828 </span>
-            </p>
-
-          </div>
-           <div class="icon-item">
-            <i class="el-icon-close"></i>
-            <p>
-              <svg-icon icon-class="user" />
-              <span>张华</span>
-            </p>
-            <p>
-              <svg-icon icon-class="phone" />
-              <span>17777778828 </span>
-            </p>
-
-          </div>
         </div>
+        <div class="icon-item">
+          <i class="el-icon-close"/>
+          <p>
+            <svg-icon icon-class="user" />
+            <span>张华</span>
+          </p>
+          <p>
+            <svg-icon icon-class="phone" />
+            <span>17777778828 </span>
+          </p>
+
+        </div>
+      </div>
     </el-card>
   </div>
 </template>
 <script>
 import {
-  fetchList
-} from '@/api/estatePaybill'
+  fetchGroupInfo,
+  updateGroupInfo,
+  fetchProvince,
+  fetchCounty,
+  fetchCity
+} from '@/api/groupManage'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
 import Upload from '@/components/Upload/singleImage3'
 export default {
   name: 'ComplexTable',
@@ -204,170 +223,187 @@ export default {
   components: { Upload },
   data() {
     return {
-      form: undefined,
-      options: [
-        {
-          value: 'B1',
-          label: 'B1座',
-          children: [
-            {
-              value: '01',
-              label: '01单元',
-              children: [{
-                value: '0101',
-                label: '0101'
-              },
-              {
-                value: '0102',
-                label: '0102'
-              },
-              {
-                value: '0103',
-                label: '0103'
-              },
-              {
-                value: '0104',
-                label: '0104'
-              }
-              ]
-            },
-            {
-              value: '02',
-              label: '02单元',
-              children: [{
-                value: '0201',
-                label: '0201'
-              }, {
-                value: '0202',
-                label: '0202'
-              }]
-            }
-          ]
-        },
-        {
-          value: 'B2',
-          label: 'B2座',
-          children: [
-            {
-              value: '01',
-              label: '01单元',
-              children: [{
-                value: '0101',
-                label: '0101'
-              },
-              {
-                value: '0102',
-                label: '0102'
-              },
-              {
-                value: '0103',
-                label: '0103'
-              },
-              {
-                value: '0104',
-                label: '0104'
-              }
-              ]
-            },
-            {
-              value: '02',
-              label: '02单元',
-              children: [{
-                value: '0201',
-                label: '0201'
-              }, {
-                value: '0202',
-                label: '0202'
-              }]
-            }
-          ]
-        },
-        {
-          value: 'C1',
-          label: 'C1座',
-          children: [
-            {
-              value: '01',
-              label: '01单元',
-              children: [{
-                value: '0101',
-                label: '0101'
-              },
-              {
-                value: '0102',
-                label: '0102'
-              },
-              {
-                value: '0103',
-                label: '0103'
-              },
-              {
-                value: '0104',
-                label: '0104'
-              }
-              ]
-            },
-            {
-              value: '02',
-              label: '02单元',
-              children: [{
-                value: '0201',
-                label: '0201'
-              }, {
-                value: '0202',
-                label: '0202'
-              }]
-            }
-          ]
-        },
-        {
-          value: 'D1',
-          label: 'D1座',
-          children: [
-            {
-              value: '01',
-              label: '01单元',
-              children: [{
-                value: '0101',
-                label: '0101'
-              },
-              {
-                value: '0102',
-                label: '0102'
-              },
-              {
-                value: '0103',
-                label: '0103'
-              },
-              {
-                value: '0104',
-                label: '0104'
-              }
-              ]
-            },
-            {
-              value: '02',
-              label: '02单元',
-              children: [{
-                value: '0201',
-                label: '0201'
-              }, {
-                value: '0202',
-                label: '0202'
-              }]
-            }
-          ]
-        }
+      groupInfo: {},
+      tempGroupInfo: {},
+      editdialog: false,
+      editLogoImg: false,
+      provinceOptions: [],
+      cityOptions: [],
+      countyOptions: []
 
-      ],
-      temp: {
-        uploadimg: ''
-      },
     }
   },
   created() {
+    this.getGroup()
+    this.getProvinceList()
   },
   methods: {
+    getGroup() {
+      this.listLoading = true
+      fetchGroupInfo().then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.groupInfo = Object.assign({}, response.data.data)
+            this.tempGroupInfo = Object.assign({}, response.data.data)
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    handelEdit() {
+      this.editdialog = true
+    },
+    handelEditLogo() {
+      this.editLogoImg = true
+    },
+    handelSaveLogo() {
+      this.listLoading = true
+      updateGroupInfo(this.tempGroupInfo).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            Object.assign(this.groupInfo, this.tempGroupInfo)
+            this.listLoading = false
+            this.editLogoImg = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    handelSave() {
+      this.listLoading = true
+      updateGroupInfo(this.tempGroupInfo).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            Object.assign(this.groupInfo, this.tempGroupInfo)
+            this.listLoading = false
+            this.editdialog = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    getProvinceList() {
+      this.listLoading = true
+      fetchProvince({ name: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            console.log(response)
+            this.provinceOptions = response.data.data
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    getCityOfProvince(id) {
+      this.listLoading = true
+      fetchCity({ parentId: id, name: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.cityOptions = response.data.data
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    getCountyOfCity(id) {
+      this.listLoading = true
+      fetchCounty({ parentId: id, name: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.countyOptions = response.data.data
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    }
   }
 }
 </script>

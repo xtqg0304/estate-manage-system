@@ -1,8 +1,13 @@
 import request from '@/utils/request'
+import { basicServer } from '@/api/api.js'
 
-export function getToken() {
+export function getToken(data) {
   return request({
-    url: '/qiniu/upload/token', // 假地址 自行替换
-    method: 'get'
+    url: basicServer + '/file/uploadImg',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/multipart/form-data; charset=UTF-8'
+    },
+    data
   })
 }

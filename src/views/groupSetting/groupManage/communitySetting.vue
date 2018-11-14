@@ -286,7 +286,14 @@ export default {
         i.value = i.id
         i.label = i.name
         // 有子数据的先遍历子数据
-        i.children && this.traverse(i.children)
+        if (i.children) {
+          if (i.children.length > 0) {
+            this.traverse(i.children)
+          } else {
+            delete i.children
+          }
+        }
+        // i.children && this.traverse(i.children)
       })
       return aeraTree
     },
