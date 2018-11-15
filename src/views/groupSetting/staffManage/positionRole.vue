@@ -75,7 +75,7 @@
           <el-button
             type="primary"
             size="mini"
-            @click="handleUpdateRoleAuth(scope.row)">权限</el-button>
+            @click="handleRoleAuth(scope.row)">权限</el-button>
           <el-button
             type="danger"
             size="mini"
@@ -132,13 +132,19 @@
       </div>
     </el-dialog>
     <el-dialog
-      :visible.sync="dialogAuthVisible"
-      title="Reading statistics">
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogAuthVisible">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <el-form label-width="80px">
+          <el-form
+            ref="dataForm"
+            :rules="rules"
+            :model="temp"
+            label-position="left"
+            label-width="70px"
+            style="width: 400px; margin-left:50px;">
             <el-form-item label="岗位：" style="margin-bottom:0;">
-              <el-select placeholder="请选择岗位">
+              <el-select v-model="temp.id" placeholder="请选择岗位" @change="handleSelectChange">
                 <el-option
                   v-for="item in roleList"
                   :key="item.id"
@@ -164,7 +170,10 @@
         class="dialog-footer">
         <el-button
           type="primary"
-          @click="dialogAuthVisible = false">{{ $t('table.confirm') }}</el-button>
+          @click="dialogAuthVisible = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="updateRoleAuthData">{{ $t('table.confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -176,7 +185,9 @@ import {
   fetchRole,
   fetchRoleList,
   deleteRole,
-  editRole
+  editRole,
+  setRolePermission,
+  getRoleAppPermList
 } from '@/api/role'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
@@ -201,7 +212,8 @@ export default {
         roleName: '',
         description: '',
         status: '',
-        roleTag: ''
+        roleTag: '',
+        permissionList: []
       },
       dialogFormVisible: false,
       dialogAuthVisible: false,
@@ -238,6 +250,7 @@ export default {
     this.getList()
   },
   methods: {
+    /* 获取页面初始化数据 table表格数据  角色列表  权限树*/
     getList() {
       this.listLoading = true
       fetchRoleList(this.listQuery).then(response => {
@@ -342,7 +355,8 @@ export default {
         roleName: '',
         description: '',
         status: '',
-        roleTag: ''
+        roleTag: '',
+        permissionList: []
       }
     },
     handleCreate() {
@@ -357,7 +371,7 @@ export default {
     createData() {
       console.log(this.temp)
       this.temp.status = 'ENABLED'
-      this.temp.roleTag = 'iiii'
+      this.temp.roleTag = parseInt(Math.random() * 100) + 1024
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
@@ -470,30 +484,122 @@ export default {
         }
       })
     },
-    handleNodeClick(data) {
+    handleCheck(data) {
       console.log(data)
     },
-    handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate)
-      data.isChecked = checked
-      console.log(data, checked, indeterminate)
-      debugger
-    },
-    handleCheck(data, checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys) {
-      console.log(data, checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys)
-    },
     handleRoleAuth(row) {
+      if (row.id !== undefined) {
+        this.temp = Object.assign({}, row) // copy obj
+        getRoleAppPermList({ id: this.temp.id }).then((response) => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              this.temp.permissionList = response.data.data
+              const permissionList = []
+              this.temp.permissionList.forEach(value => {
+                permissionList.push(value.id)
+              })
+              console.log(this.temp.permissionList)
+              this.$refs.tree.setCheckedKeys(permissionList)
+              this.$notify({
+                title: '成功',
+                message: response.data.msg,
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        })
+      }
       this.dialogStatus = 'update'
       this.dialogAuthVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate() // 清除表单的校验
       })
     },
-    handleUpdateRoleAuth() {
-      this.dialogAuthVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate() // 清除表单的校验
-      // })
+    updateRoleAuthData() {
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          this.temp.permissionList = this.$refs.tree.getCheckedNodes()
+          const tempData = Object.assign({}, this.temp)
+          setRolePermission({ roleId: tempData.id, permList: tempData.permissionList }).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogAuthVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
+        }
+      })
+    },
+    handleSelectChange(roleId) {
+      console.log(roleId)
+      this.temp.id = roleId
+      getRoleAppPermList({ id: roleId }).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.temp.permissionList = response.data.data
+            const permissionList = []
+            this.temp.permissionList.forEach(value => {
+              permissionList.push(value.id)
+            })
+            console.log(this.temp.permissionList)
+            this.$refs.tree.setCheckedKeys(permissionList)
+            this.$notify({
+              title: '成功',
+              message: response.data.msg,
+              duration: 2000
+            })
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
     }
   }
 }

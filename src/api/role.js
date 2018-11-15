@@ -40,3 +40,19 @@ export function fetchAppNavTree(data) {
     data
   })
 }
+/* 修改或设置角色对应的菜单权限 */
+export function setRolePermission(data) {
+  return request({
+    url: basicServer + '/app/setRolePerm',
+    method: 'post',
+    data
+  })
+}
+/* 获取角色拥有的应用权限列表 */
+export function getRoleAppPermList(data) {
+  return request({
+    url: basicServer + '/app/getRoleAppPermList',
+    method: 'post',
+    data
+  })
+}
