@@ -1,40 +1,9 @@
 import request from '@/utils/request'
+import { estateServer } from '@/api/api.js'
 
-export function fetchList(query) {
+export function fetchList(data) {
   return request({
-    url: '/notice/list',
-    method: 'get',
-    params: query
-  })
-}
-
-export function fetchNotice(id) {
-  return request({
-    url: '/notice/detail',
-    method: 'get',
-    params: { id }
-  })
-}
-
-export function fetchTable(pv) {
-  return request({
-    url: '/notice/pv',
-    method: 'get',
-    params: { pv }
-  })
-}
-
-export function createNotice(data) {
-  return request({
-    url: '/notice/create',
-    method: 'post',
-    data
-  })
-}
-
-export function updateNotice(data) {
-  return request({
-    url: '/notice/update',
+    url: estateServer + '/notice/getNoticePage',
     method: 'post',
     data
   })

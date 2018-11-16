@@ -16,8 +16,11 @@ module.exports = {
         target: 'http://47.94.202.102:8500',
         pathRewrite: { '^/basicServer': '/basicServer' },
         changeOrigin: true
-
-
+      },
+      '/estateServer': {
+        target: 'http://10.18.72.28:8099',
+        pathRewrite: { '^/estateServer': '' },
+        changeOrigin: true
       }
     },
 
