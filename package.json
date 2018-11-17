@@ -33,6 +33,7 @@
     "url": "https://github.com/PanJiaChen/vue-element-admin/issues"
   },
   "dependencies": {
+    "@riophae/vue-treeselect": "0.0.37",
     "axios": "0.18.0",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",

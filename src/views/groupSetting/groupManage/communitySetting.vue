@@ -173,9 +173,12 @@
 import {
   fetchList,
   deleteCommunity,
-  fetchAreaList,
+  // fetchAreaList,
   handelAddCommunity
 } from '@/api/communityManage'
+import {
+  fetchRegionTree
+} from '@/api/areaSetting'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
   name: 'ComplexTable',
@@ -264,7 +267,7 @@ export default {
     getAreaList() {
       this.listLoading = true
       const _this = this
-      fetchAreaList().then(response => {
+      fetchRegionTree().then(response => {
         console.log(response)
         if (response.status === 200) {
           if (response.data.code === 200) {

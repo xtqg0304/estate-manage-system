@@ -1,5 +1,9 @@
-import { loginByUsername, logout, getUserInfo } from '@/api/login'
+import { loginByUsername, logout } from '@/api/login'
+import { setToken, removeToken } from '@/utils/auth'
 // import { getToken, setToken, removeToken } from '@/utils/auth'
+import {
+  getUserCommunity
+} from '@/api/communityManage'
 
 const user = {
   state: {
@@ -25,7 +29,9 @@ const user = {
     pushUserId: '',
     pushChannelId: '',
     subSystemId: '',
-    permission: []
+    permission: [],
+    communityList: [],
+    selectCommunity: ''
   },
 
   mutations: {
@@ -66,6 +72,12 @@ const user = {
       state.pushUserId = user_info.pushUserId
       state.pushChannelId = user_info.pushChannelId
       state.permission = user_info.permission
+    },
+    SET_COMMUNITYLIST: (state, communityList) => {
+      state.communityList = communityList
+    },
+    SET_SELECTCOMMUNITY: (state, selectCommunity) => {
+      state.selectCommunity = selectCommunity
     }
   },
 
@@ -83,8 +95,32 @@ const user = {
             const data = response.data.data
             commit('SET_TOKEN', response.headers["x-auth-token"]) // 设置vuex里面token的值
             commit('SET_USER_INFO', data)
-            // setToken(response.headers["x-auth-token"]) // 将token的值存储在cookie或者sessionstorage
+            setToken(response.headers["x-auth-token"]) // 将token的值存储在cookie或者sessionstorage
             resolve()
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    // 获取用户小区列表
+    GetUserCommunity({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        getUserCommunity({id: state.userId})
+          .then(response => {
+            if(response.status === 200){
+              if(response.data.code === 200){
+                const communityList = response.data.data
+                if (communityList && communityList.length > 0) {
+                  // 验证返回的communityList是否是一个非空数组
+                  commit('SET_COMMUNITYLIST', communityList) // 设置vuex的用户绑定的小区列表值
+                  commit('SET_SELECTCOMMUNITY', communityList[0].id) // 设置vuex的默认选中绑定小区的值
+                } else {
+                  reject('getCommunityList: communityList must be a non-null array !')
+                }
+              }
+            }
+            resolve(response)
           })
           .catch(error => {
             reject(error)
@@ -143,7 +179,7 @@ const user = {
             if(response.data.code === 200){
               commit('SET_TOKEN', '')
               // commit('SET_ROLES', [])
-              // removeToken()
+              removeToken()
               resolve()
             }else{
               reject(error)

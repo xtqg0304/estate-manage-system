@@ -13,11 +13,19 @@
           :label="item.name"
           :value="item.id"/>
       </el-select>
+      <!-- <treeselect class="treeSelect" v-model="selectSysId" :multiple="false" :options="permission" placeholder="切换子系统"/> -->
+      <el-select v-if="!showCommunity" v-model="selectCommunity" style="float:left;" placeholder="请选择" @change="handelChangeCommunity" >
+        <el-option
+          v-for="item in userInfo.communityList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"/>
+      </el-select>
 
-      <el-dropdown class="avatar-container right-menu-item">
+      <el-dropdown v-if="showCommunity" class="avatar-container right-menu-item">
         <div class="avatar-wrapper">
-          <span>
-            <svg-icon icon-class="mapLabel1">&nbsp;</svg-icon>仟泰科技·仟泰演示小区
+          <span @click="handelShow">
+            <svg-icon icon-class="mapLabel1">&nbsp;</svg-icon>{{ selectCommunityText }}
           </span>
         </div>
       </el-dropdown>
@@ -69,6 +77,10 @@ import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
+// import the component
+import Treeselect from '@riophae/vue-treeselect'
+// import the styles
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
   components: {
@@ -78,11 +90,16 @@ export default {
     Screenfull,
     SizeSelect,
     LangSelect,
-    ThemePicker
+    ThemePicker,
+    Treeselect
   },
   data() {
     return {
-      selectSysId: ''
+      selectSysId: '',
+      selectCommunity: '',
+      showCommunity: true,
+      selectCommunityText: '',
+      permission: []
     }
   },
   computed: {
@@ -96,11 +113,66 @@ export default {
   },
   created() {
     this.selectSysId = this.userInfo.subSystemId
+    this.selectCommunity = this.userInfo.selectCommunity
+    this.getCommunityText()
+    // this.handelResetPermission()
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
+    /* 将父子关系的数组转成树结构的数据 */
+    handelResetPermission() {
+      const attr = {
+        id: 'id',
+        parentId: 'parentId',
+        name: 'name',
+        rootId: '#'
+      }
+      const toTreeData = (data, attr) => {
+        const tree = []
+        const resData = data
+        for (let i = 0; i < resData.length; i++) {
+          if (resData[i].parentId === attr.rootId) {
+            const obj = {
+              id: resData[i][attr.id],
+              name: resData[i][attr.name],
+              label: resData[i][attr.name],
+              children: []
+            }
+            tree.push(obj)
+            resData.splice(i, 1)
+            i--
+          }
+        }
+        var run = function(treeArrs) {
+          if (resData.length > 0) {
+            for (let i = 0; i < treeArrs.length; i++) {
+              for (let j = 0; j < resData.length; j++) {
+                if (treeArrs[i].id === resData[j][attr.parentId]) {
+                  const obj = {
+                    id: resData[j][attr.id],
+                    name: resData[j][attr.name],
+                    label: resData[j][attr.name],
+                    children: []
+                  }
+                  treeArrs[i].children.push(obj)
+                  resData.splice(j, 1)
+                  j--
+                }
+              }
+              run(treeArrs[i].children)
+            }
+          }
+        }
+        run(tree)
+        return tree
+      }
+      this.permission = toTreeData(this.permissionSys, attr)
+      console.log('permission')
+      console.log(this.permission)
+    },
+    /** 子系统切换 */
     handelChange(value) {
       console.log(value)
       this.$store.commit('SET_SUBSYSTEMID', value)
@@ -109,12 +181,33 @@ export default {
         // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
       })
     },
+    /** 退出登录 */
     logout() {
       this.$store.dispatch('LogOut').then(() => {
         this.$router.push({ path: '/login' })
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
+    },
+    /** 切换小区 */
+    handelChangeCommunity(value) {
+      console.log(value)
+      this.$store.commit('SET_SELECTCOMMUNITY', value)
+      this.getCommunityText()
+      this.showCommunity = true
+    },
+    /** 控制显示 小区文字/选择小区下拉 */
+    handelShow() {
+      this.showCommunity = false
+    },
+    /** 根据小区id 获取对应小区的名字 */
+    getCommunityText() {
+      for (let i = 0; i < this.userInfo.communityList.length; i++) {
+        if (this.userInfo.communityList[i].id === this.selectCommunity) {
+          this.selectCommunityText = this.userInfo.communityList[i].name
+        }
+      }
     }
+
   }
 }
 </script>
@@ -143,6 +236,12 @@ export default {
     &:focus {
       outline: none;
     }
+    // .treeSelect{
+    //   width: 200px;
+    //   float: left;
+    //   line-height: 35px;
+    //   top: 6px;
+    // }
     .right-menu-item {
       display: inline-block;
       margin: 0 8px;

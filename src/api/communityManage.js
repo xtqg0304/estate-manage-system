@@ -25,19 +25,27 @@ export function handelAddCommunity(data) {
   })
 }
 /*  获取区域（例如：华南，华东）列表 */
-export function fetchAreaList(data) {
+// export function fetchAreaList(data) {
+//   return request({
+//     url: basicServer + '/region/getRegionTree',
+//     method: 'post',
+//     data
+//   })
+// }
+/*  获取小区列表 */
+export function fetchCommunity(data) {
   return request({
-    url: basicServer + '/region/getRegionTree',
+    url: basicServer + '/community/getCommunityList',
     method: 'post',
     data
   })
 }
-
-// export function fetchTable(pv) {
-//   return request({
-//     url: '/phone/pv',
-//     method: 'get',
-//     params: { pv }
-//   })
-// }
+/*  获取用户绑定的小区列表 */
+export function getUserCommunity(data) {
+  return request({
+    url: basicServer + '/comm/link/getUserBindCommList',
+    method: 'post',
+    data
+  })
+}
 
