@@ -7,29 +7,39 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-checkbox
-        v-model="showReviewer"
-        class="filter-item"
-        style="margin-left:15px;"
-        @change="tableKey=tableKey+1">{{ $t('table.reviewer') }}</el-checkbox>
-      <el-date-picker
+      <!-- <el-date-picker
         v-model="listQuery.starttoendimestamp"
         :picker-options="pickerOptions"
         class="filter-item-rangedate"
         type="daterange"
         range-separator="至"
         start-placeholder="开始时间"
-        end-placeholder="结束时间" />
+        end-placeholder="结束时间" /> -->
+      <el-date-picker
+        v-model="listQuery.beginTime"
+        :picker-options="timePickerOptions"
+        class="filter-item-rangedate"
+        type="datetime"
+        placeholder="开始时间"
+        align="right"/>
+      <el-date-picker
+        v-model="listQuery.endTime"
+        :picker-options="timePickerOptions"
+        class="filter-item-rangedate"
+        type="datetime"
+        placeholder="结束时间"
+        align="right"/>
       <el-select
-        v-model="listQuery.statusnotice"
+        v-model="listQuery.status"
         placeholder="公告状态"
         clearable
         class="filter-item">
         <el-option
-          v-for="item in statusOptions"
-          :key="item"
-          :label="$t('table.'+item)"
-          :value="item" />
+          label="已下架"
+          value="PUBLISHED" />
+        <el-option
+          label="已发布"
+          value="PUBLISHED1" />
       </el-select>
       <el-input
         v-model="listQuery.keyword"
@@ -53,86 +63,57 @@
       highlight-current-row
       style="width: 100%;min-height:500px;">
       <el-table-column
-        :label="$t('table.id')"
+        label="公告标题"
         align="center"
         width="65">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.head }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.date')"
+        label="发布时间"
         width="150px"
         align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.publishTime }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.title')"
-        min-width="150px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.title }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.content')"
+        label="发布内容"
         min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.author')"
-        width="110px"
-        align="center">
+        label="发布者"
+        min-width="150px">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.announcer }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        v-if="showReviewer"
-        :label="$t('table.reviewer')"
-        width="110px"
-        align="center">
-        <template slot-scope="scope">
-          <span style="color:red;">{{ scope.row.reviewer }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.importance')"
-        width="80px">
-        <template slot-scope="scope">
-          <svg-icon
-            v-for="n in +scope.row.importance"
-            :key="n"
-            icon-class="star"
-            class="meta-item__icon" />
-        </template>
-        <!-- <el-switch
-          v-model="value3"
-          active-text="按月付费"
-          inactive-text="按年付费">
-        </el-switch> -->
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.readings')"
+        label="阅读数"
         align="center"
         width="95">
         <template slot-scope="scope">
           <span
-            v-if="scope.row.pageviews"
+            v-if="scope.row.readTimes"
             class="link-type"
-            @click="handleFetchPv(scope.row.pageviews)">{{ scope.row.pageviews }}</span>
+            @click="handleFetchPv(scope.row.readTimes)">{{ scope.row.readTimes }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.status')"
+        label="公告状态"
         class-name="status-col"
-        width="100">
+        width="200">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
+          <el-switch
+            v-model="scope.row.status"
+            active-text="已发布"
+            inactive-text="已下架"
+            @change="handleChangeStatus(scope.row)"/>
         </template>
       </el-table-column>
       <el-table-column
@@ -144,24 +125,11 @@
           <el-button
             type="primary"
             size="mini"
-            @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+            @click="handleUpdate(scope.row)">修改</el-button>
           <el-button
-            v-if="scope.row.status!='published'"
             size="mini"
             type="success"
-            @click="handleModifyStatus(scope.row,'published')">{{ $t('table.publish') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.status!='draft'"
-            size="mini"
-            @click="handleModifyStatus(scope.row,'draft')">{{ $t('table.draft') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.status!='deleted'"
-            size="mini"
-            type="danger"
-            @click="handleModifyStatus(scope.row,'deleted')">{{ $t('table.delete') }}
-          </el-button>
+            @click="handleReCreate(scope.row)">再发布</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -189,47 +157,20 @@
         label-width="70px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
-          :label="$t('table.date')"
-          prop="timestamp">
-          <el-date-picker
-            v-model="temp.timestamp"
-            type="datetime"
-            placeholder="Please pick a date" />
-        </el-form-item>
-        <el-form-item
-          :label="$t('table.title')"
+          label="标题"
           prop="title">
-          <el-input v-model="temp.title" />
+          <el-input v-model="temp.head" />
         </el-form-item>
         <el-form-item
-          :label="$t('table.content')"
+          label="公告内容"
           prop="content"
           style="width:650px;">
           <tinymce v-model="temp.content" />
         </el-form-item>
         <el-form-item
-          :label="$t('table.author')"
-          prop="author">
-          <el-input v-model="temp.author" />
-        </el-form-item>
-        <el-form-item :label="$t('table.status')">
-          <el-select
-            v-model="temp.status"
-            class="filter-item"
-            placeholder="Please select">
-            <el-option
-              v-for="item in statusOptions"
-              :key="item"
-              :label="item"
-              :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('table.importance')">
-          <el-rate
-            v-model="temp.importance"
-            :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-            :max="3"
-            style="margin-top:8px;" />
+          label="发布者"
+          prop="announcer">
+          <el-input v-model="temp.announcer" />
         </el-form-item>
       </el-form>
       <div
@@ -241,43 +182,22 @@
           type="primary"
           @click="createData">{{ $t('table.confirm') }}</el-button>
         <el-button
-          v-else
+          v-if="dialogStatus=='update'"
           type="primary"
           @click="updateData">{{ $t('table.confirm') }}</el-button>
+        <el-button
+          v-else
+          type="primary"
+          @click="reCreateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
-
-    <el-dialog
-      :visible.sync="dialogPvVisible"
-      title="Reading statistics">
-      <el-table
-        :data="pvData"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%">
-        <el-table-column
-          prop="key"
-          label="Channel" />
-        <el-table-column
-          prop="pv"
-          label="Pv" />
-      </el-table>
-      <span
-        slot="footer"
-        class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
-      </span>
-    </el-dialog>
-
   </div>
 </template>
 
 <script>
 import {
-  fetchList
+  fetchList,
+  editNotice
 } from '@/api/notice'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
@@ -287,43 +207,55 @@ export default {
   directives: {
     waves
   },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   components: { Tinymce },
   data() {
     return {
-      pickerOptions: {
+      // pickerOptions: {
+      //   shortcuts: [{
+      //     text: '最近一周',
+      //     onClick(picker) {
+      //       const end = new Date()
+      //       const start = new Date()
+      //       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      //       picker.$emit('pick', [start, end])
+      //     }
+      //   }, {
+      //     text: '最近一个月',
+      //     onClick(picker) {
+      //       const end = new Date()
+      //       const start = new Date()
+      //       start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      //       picker.$emit('pick', [start, end])
+      //     }
+      //   }, {
+      //     text: '最近三个月',
+      //     onClick(picker) {
+      //       const end = new Date()
+      //       const start = new Date()
+      //       start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      //       picker.$emit('pick', [start, end])
+      //     }
+      //   }]
+      // },
+      timePickerOptions: {
         shortcuts: [{
-          text: '最近一周',
+          text: '今天',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
+            picker.$emit('pick', new Date())
           }
         }, {
-          text: '最近一个月',
+          text: '昨天',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
           }
         }, {
-          text: '最近三个月',
+          text: '一周前',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
           }
         }]
       },
@@ -333,48 +265,38 @@ export default {
       listLoading: true,
       listQuery: {
         currentPage: 1,
-        pageSize: 20
+        pageSize: 20,
+        status: '',
+        beginTime: '',
+        endTime: '',
+        keyword: '',
+        qryInfoData: [
+          {
+            status: '',
+            content: ''
+          }
+        ]
       },
-      noticeOptions: ['已发布', '未发布'],
-      sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
-      ],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
       temp: {
-        id: undefined,
-        importance: 1,
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
+        id: '',
+        head: '',
         content: '',
-        author: ''
-
+        publishTime: '',
+        announcer: '',
+        imageUrl: '',
+        status: '',
+        communityId: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
-        create: '新建'
+        create: '新建',
+        reCreate: '再发布'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [
-          { required: true, message: 'type is required', trigger: 'change' }
-        ],
-        timestamp: [
-          {
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
-        ],
-        title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
-        ]
       },
       downloadLoading: false
     }
@@ -386,26 +308,43 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        console.log(response)
-        debugger
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryInfoData
+            for (let i = 0; i < this.list.length; i++) {
+              if (this.list[i].status === 'PUBLISHED') {
+                this.list[i].status = true
+              } else {
+                this.list[i].status = false
+              }
+            }
+            this.total = response.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
       })
     },
     handleFilter() {
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
-      this.listQuery.limit = val
+      this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
@@ -413,27 +352,17 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
-    handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
-      // 请求后台接口将状态传给后台，如果成功，前端修改数据
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
-    },
     resetTemp() {
       // 重新初始化新建对象的默认值
       this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        id: '',
+        head: '',
+        content: '',
+        publishTime: '',
+        announcer: '',
+        imageUrl: '',
+        status: '',
+        communityId: ''
       }
     },
     handleCreate() {
@@ -449,26 +378,40 @@ export default {
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          // createNotice(this.temp).then(() => {
-          //   // 新建成功后的回调
-          //   this.list.unshift(this.temp)
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '创建成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
+          this.temp.publishTime = parseTime(new Date())
+          editNotice(this.temp).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                // 新建成功后的回调
+                this.list.unshift(response.data.data)
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '创建成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
         }
       })
     },
     handleUpdate(row) {
       // 修改/编辑事件
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -480,77 +423,133 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          // updateNotice(tempData).then(() => {
-          //   for (const v of this.list) {
-          //     // 更新后的值插入原来数据的位置
-          //     if (v.id === this.temp.id) {
-          //       const index = this.list.indexOf(v)
-          //       this.list.splice(index, 1, this.temp)
-          //       break
-          //     }
-          //   }
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '更新成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
+          editNotice(tempData).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '更新成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
         }
       })
     },
-    handleDelete(row) {
-      // 在列表中删除 （将当前id传给后台）
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      // 获取阅读数据表格
-      // fetchTable(pv).then(response => {
-      //   console.log(response.data.pvData)
-      //   this.pvData = response.data.pvData
-      //   this.dialogPvVisible = true
-      // })
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
+    handleChangeStatus(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      if (this.temp.status === true) {
+        this.temp.status === 'PUBLISHED'
+      } else {
+        this.temp.status === 'PUBLISHED1'
+      }
+      editNotice(this.temp).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            for (const v of this.list) {
+              // 更新后的值插入原来数据的位置
+              if (v.id === this.temp.id) {
+                const index = this.list.indexOf(v)
+                this.list.splice(index, 1, this.temp)
+                break
+              }
+            }
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '更新成功',
+              type: 'success',
+              duration: 2000
+            })
           } else {
-            return v[j]
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
           }
-        })
-      )
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+    },
+    handleReCreate(row) {
+      // 修改/编辑事件
+      this.temp = Object.assign({}, row) // copy obj
+      this.dialogStatus = 'reCreate'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    reCreateData() {
+      // 修改/编辑 确认事件
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          tempData.id = ''
+          editNotice(tempData).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '更新成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
+        }
+      })
     }
   }
 }
