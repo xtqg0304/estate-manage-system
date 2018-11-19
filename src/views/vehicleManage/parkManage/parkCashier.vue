@@ -126,10 +126,10 @@
 
 <script>
 import {
-  fetchList,
-  fetchTable,
-  createNotice,
-  updateNotice
+// fetchList,
+// fetchTable,
+// createNotice,
+// updateNotice
 } from '@/api/advise.js'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
@@ -242,16 +242,16 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        console.log(response.data.items)
-        this.list = response.data.items
-        this.total = response.data.total
+      // fetchList(this.listQuery).then(response => {
+      //   console.log(response.data.items)
+      //   this.list = response.data.items
+      //   this.total = response.data.total
 
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
+      //   // Just to simulate the time of the request
+      //   setTimeout(() => {
+      //     this.listLoading = false
+      //   }, 1.5 * 1000)
+      // })
     },
     handleFilter() {
       console.log(this.listQuery)
@@ -307,17 +307,17 @@ export default {
         if (valid) {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
-          createNotice(this.temp).then(() => {
-            // 新建成功后的回调
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
+          // createNotice(this.temp).then(() => {
+          //   // 新建成功后的回调
+          //   this.list.unshift(this.temp)
+          //   this.dialogFormVisible = false
+          //   this.$notify({
+          //     title: '成功',
+          //     message: '创建成功',
+          //     type: 'success',
+          //     duration: 2000
+          //   })
+          // })
         }
       })
     },
@@ -337,23 +337,23 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateNotice(tempData).then(() => {
-            for (const v of this.list) {
-              // 更新后的值插入原来数据的位置
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
-                break
-              }
-            }
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '更新成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
+          // updateNotice(tempData).then(() => {
+          //   for (const v of this.list) {
+          //     // 更新后的值插入原来数据的位置
+          //     if (v.id === this.temp.id) {
+          //       const index = this.list.indexOf(v)
+          //       this.list.splice(index, 1, this.temp)
+          //       break
+          //     }
+          //   }
+          //   this.dialogFormVisible = false
+          //   this.$notify({
+          //     title: '成功',
+          //     message: '更新成功',
+          //     type: 'success',
+          //     duration: 2000
+          //   })
+          // })
         }
       })
     },
@@ -370,11 +370,11 @@ export default {
     },
     handleFetchPv(pv) {
       // 获取阅读数据表格
-      fetchTable(pv).then(response => {
-        console.log(response.data.pvData)
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
+      // fetchTable(pv).then(response => {
+      //   console.log(response.data.pvData)
+      //   this.pvData = response.data.pvData
+      //   this.dialogPvVisible = true
+      // })
     },
     handleDownload() {
       // 导出数据

@@ -1,41 +1,20 @@
 import request from '@/utils/request'
+import { estateServer } from '@/api/api.js'
 
-export function fetchList(query) {
+/* 获取公告信息列表 */
+export function fetchList(data) {
   return request({
-    url: '/advise/list',
-    method: 'get',
-    params: query
-  })
-}
-
-export function fetchNotice(id) {
-  return request({
-    url: '/advise/detail',
-    method: 'get',
-    params: { id }
-  })
-}
-
-export function fetchTable(pv) {
-  return request({
-    url: '/advise/pv',
-    method: 'get',
-    params: { pv }
-  })
-}
-
-export function createNotice(data) {
-  return request({
-    url: '/advise/create',
+    url: estateServer + '/report/getReportElementPage',
     method: 'post',
     data
   })
 }
 
-export function updateNotice(data) {
-  return request({
-    url: '/advise/update',
-    method: 'post',
-    data
-  })
-}
+// /* 添加或修改 公告 */
+// export function editNotice(data) {
+//   return request({
+//     url: estateServer + '/notice/mergeNotice',
+//     method: 'post',
+//     data
+//   })
+// }

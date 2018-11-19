@@ -14,49 +14,39 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column :label="$t('table.id')" align="center" width="65">
+      <el-table-column label="投诉房号" align="center" width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.username')" width="110px">
+      <el-table-column label="用户名称" width="110px">
         <template slot-scope="scope">
-          <span>{{ scope.row.username }}</span>
+          <span>{{ scope.row.announcer }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showroomnumber" :label="$t('table.roomnumber')" width="110px" align="center">
+      <el-table-column label="电话号码" width="110px" align="center">
         <template slot-scope="scope">
-          <span style="color:red;">{{ scope.row.roomnumber }}</span>
+          <span >{{ scope.row.telephone }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.phonenumber')" width="110px" align="center">
+      <el-table-column label="投诉类型" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.phonenumber }}</span>
+          <span>{{ scope.row.telephone }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('table.content')" min-width="150px">
+      <el-table-column label="投诉内容" min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('table.importance')" width="80px">
+      <el-table-column label="投诉时间" width="80px">
         <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
+          <span>{{ scope.row.publishTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.statustype')" class-name="status-col" width="150">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.statustype | statusFilter">{{ $t('table.'+scope.row.statustype) }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.date')" width="150px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.status')" class-name="status-col" width="100">
+      <el-table-column label="投诉状态" class-name="status-col" width="100">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusFilter">{{ $t('table.'+scope.row.status) }}</el-tag>
         </template>
@@ -115,27 +105,27 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDetailVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item :label="$t('table.date')" prop="timestamp">
-          {{temp.timestamp}}
+          {{ temp.timestamp }}
         </el-form-item>
         <el-form-item :label="$t('table.title')" prop="title">
-          {{temp.title}}
+          {{ temp.title }}
         </el-form-item>
         <el-form-item :label="$t('table.content')" prop="content" style="width:650px;">
-          {{temp.content}}
+          {{ temp.content }}
         </el-form-item>
         <el-form-item :label="$t('table.author')" prop="author">
-          {{temp.author}}
+          {{ temp.author }}
         </el-form-item>
         <el-form-item :label="$t('table.status')">
-          {{temp.status}}
+          {{ temp.status }}
         </el-form-item>
         <el-form-item :label="$t('table.importance')">
-          {{temp.importance}}
+          {{ temp.importance }}
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDetailVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button @click="dialogDetailVisible = false" type="primary">{{ $t('table.confirm') }}</el-button>
+        <el-button type="primary" @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
 
@@ -154,10 +144,7 @@
 
 <script>
 import {
-  fetchList,
-  fetchTable,
-  createNotice,
-  updateNotice
+  fetchList
 } from '@/api/advise.js'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
@@ -214,12 +201,24 @@ export default {
       total: null,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20,
-        starttoendimestamp: undefined,
-        statusAdvise: undefined,
-        statusType: undefined,
-        keyword: undefined
+        currentPage: 1,
+        pageSize: 20,
+        status: undefined,
+        beginTime: undefined,
+        endTime: undefined,
+        keyword: undefined,
+        qryComplaintElementData: [
+          {
+            id: '',
+            content: '',
+            publishTime: '',
+            communityId: '',
+            announcer: '',
+            telephone: '',
+            operateUserId: '',
+            imageUrl: ''
+          }
+        ]
       },
       sortOptions: [
         { label: 'ID Ascending', key: '+id' },
@@ -273,14 +272,33 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        console.log(response.data.items)
-        this.list = response.data.items
-        this.total = response.data.total
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryComplaintElementData
 
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+            for (let i = 0; i < this.list.length; i++) {
+              if (this.list[i].status === 'PUBLISHED') {
+                this.list[i].status = true
+              } else {
+                this.list[i].status = false
+              }
+            }
+            this.total = response.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
       })
     },
     handleFilter() {
@@ -337,17 +355,17 @@ export default {
         if (valid) {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
-          createNotice(this.temp).then(() => {
-            // 新建成功后的回调
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
+          // createNotice(this.temp).then(() => {
+          //   // 新建成功后的回调
+          //   this.list.unshift(this.temp)
+          //   this.dialogFormVisible = false
+          //   this.$notify({
+          //     title: '成功',
+          //     message: '创建成功',
+          //     type: 'success',
+          //     duration: 2000
+          //   })
+          // })
         }
       })
     },
@@ -367,27 +385,27 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateNotice(tempData).then(() => {
-            for (const v of this.list) {
-              // 更新后的值插入原来数据的位置
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
-                break
-              }
-            }
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '更新成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
+          // updateNotice(tempData).then(() => {
+          //   for (const v of this.list) {
+          //     // 更新后的值插入原来数据的位置
+          //     if (v.id === this.temp.id) {
+          //       const index = this.list.indexOf(v)
+          //       this.list.splice(index, 1, this.temp)
+          //       break
+          //     }
+          //   }
+          //   this.dialogFormVisible = false
+          //   this.$notify({
+          //     title: '成功',
+          //     message: '更新成功',
+          //     type: 'success',
+          //     duration: 2000
+          //   })
+          // })
         }
       })
     },
-    handleShowDetail (row) {
+    handleShowDetail(row) {
       // 显示详情事件
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'detail'
@@ -406,11 +424,11 @@ export default {
     },
     handleFetchPv(pv) {
       // 获取阅读数据表格
-      fetchTable(pv).then(response => {
-        console.log(response.data.pvData)
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
+      // fetchTable(pv).then(response => {
+      //   console.log(response.data.pvData)
+      //   this.pvData = response.data.pvData
+      //   this.dialogPvVisible = true
+      // })
     },
     handleDownload() {
       // 导出数据

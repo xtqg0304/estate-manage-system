@@ -36,7 +36,7 @@
         class="filter-item">
         <el-option
           label="已下架"
-          value="PUBLISHED" />
+          value="REMOVED" />
         <el-option
           label="已发布"
           value="PUBLISHED1" />
@@ -186,7 +186,7 @@
           type="primary"
           @click="updateData">{{ $t('table.confirm') }}</el-button>
         <el-button
-          v-else
+          v-if="dialogStatus=='reCreate'"
           type="primary"
           @click="reCreateData">{{ $t('table.confirm') }}</el-button>
       </div>
@@ -202,6 +202,7 @@ import {
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
   directives: {
@@ -210,33 +211,6 @@ export default {
   components: { Tinymce },
   data() {
     return {
-      // pickerOptions: {
-      //   shortcuts: [{
-      //     text: '最近一周',
-      //     onClick(picker) {
-      //       const end = new Date()
-      //       const start = new Date()
-      //       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      //       picker.$emit('pick', [start, end])
-      //     }
-      //   }, {
-      //     text: '最近一个月',
-      //     onClick(picker) {
-      //       const end = new Date()
-      //       const start = new Date()
-      //       start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      //       picker.$emit('pick', [start, end])
-      //     }
-      //   }, {
-      //     text: '最近三个月',
-      //     onClick(picker) {
-      //       const end = new Date()
-      //       const start = new Date()
-      //       start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      //       picker.$emit('pick', [start, end])
-      //     }
-      //   }]
-      // },
       timePickerOptions: {
         shortcuts: [{
           text: '今天',
@@ -273,7 +247,8 @@ export default {
         qryInfoData: [
           {
             status: '',
-            content: ''
+            content: '',
+            communityId: ''
           }
         ]
       },
@@ -294,12 +269,14 @@ export default {
         create: '新建',
         reCreate: '再发布'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
-      },
-      downloadLoading: false
+      }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   created() {
     this.getList()
@@ -338,16 +315,25 @@ export default {
     },
     handleFilter() {
       console.log(this.listQuery)
+      this.listQuery.qryInfoData[0].communityId = this.userInfo.selectCommunity
+      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = parseTime(this.listQuery.endTime)
       // 搜索数据（默认请求第一页数据）
       this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
+      this.listQuery.qryInfoData[0].communityId = this.userInfo.selectCommunity
+      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = parseTime(this.listQuery.endTime)
       // 每页显示多少条数据
       this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
+      this.listQuery.qryInfoData[0].communityId = this.userInfo.selectCommunity
+      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = parseTime(this.listQuery.endTime)
       // 显示第几页的数据
       this.listQuery.page = val
       this.getList()
@@ -464,7 +450,7 @@ export default {
       if (this.temp.status === true) {
         this.temp.status === 'PUBLISHED'
       } else {
-        this.temp.status === 'PUBLISHED1'
+        this.temp.status === 'REMOVED'
       }
       editNotice(this.temp).then((response) => {
         if (response.status === 200) {
@@ -518,18 +504,12 @@ export default {
           editNotice(tempData).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
-                for (const v of this.list) {
-                  // 更新后的值插入原来数据的位置
-                  if (v.id === this.temp.id) {
-                    const index = this.list.indexOf(v)
-                    this.list.splice(index, 1, this.temp)
-                    break
-                  }
-                }
+                // 新建成功后的回调
+                this.list.unshift(response.data.data)
                 this.dialogFormVisible = false
                 this.$notify({
                   title: '成功',
-                  message: '更新成功',
+                  message: response.data.msg,
                   type: 'success',
                   duration: 2000
                 })
