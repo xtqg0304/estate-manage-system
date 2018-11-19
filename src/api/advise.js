@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import { estateServer } from '@/api/api.js'
 
-/* 获取公告信息列表 */
+/* 获取投诉建议信息列表 */
 export function fetchList(data) {
   return request({
     url: estateServer + '/report/getReportElementPage',
@@ -10,11 +10,11 @@ export function fetchList(data) {
   })
 }
 
-// /* 添加或修改 公告 */
-// export function editNotice(data) {
-//   return request({
-//     url: estateServer + '/notice/mergeNotice',
-//     method: 'post',
-//     data
-//   })
-// }
+/* 添加或修改 投诉建议 */
+export function editReport(data) {
+  return request({
+    url: estateServer + '/report/mergeReport',
+    method: 'post',
+    data
+  })
+}

@@ -1,20 +1,28 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">{{ $t('table.add') }}</el-button> -->
-      <el-checkbox v-model="showroomnumber" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">{{ $t('table.roomnumber') }}</el-checkbox>
-      <el-select v-model="listQuery.statusType" placeholder="投诉类型" clearable class="filter-item">
-        <el-option v-for="item in statustypeOptions" :key="item" :label="$t('table.'+item)" :value="item" />
-      </el-select>
-      <el-date-picker v-model="listQuery.starttoendimestamp" :picker-options="pickerOptions" class="filter-item-rangedate" type="daterange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" />
-      <el-select v-model="listQuery.statusAdvise" placeholder="投诉状态" clearable class="filter-item">
-        <el-option v-for="item in statusOptions" :key="item" :label="$t('table.'+item)" :value="item" />
+      <el-date-picker
+        v-model="listQuery.beginTime"
+        :picker-options="timePickerOptions"
+        class="filter-item-rangedate"
+        type="datetime"
+        placeholder="开始时间"
+        align="right"/>
+      <el-date-picker
+        v-model="listQuery.endTime"
+        :picker-options="timePickerOptions"
+        class="filter-item-rangedate"
+        type="datetime"
+        placeholder="结束时间"
+        align="right"/>
+      <el-select v-model="listQuery.status" placeholder="投诉状态" clearable class="filter-item">
+        <el-option v-for="item in statusOptions" :key="item.id" :label="item.label" :value="item.id" />
       </el-select>
       <el-input v-model="listQuery.keyword" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column label="投诉房号" align="center" width="65">
+      <el-table-column label="投诉房号" align="center" width="300px">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
@@ -41,27 +49,22 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="投诉时间" width="80px">
+      <el-table-column label="投诉时间" width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.publishTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="投诉状态" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ $t('table.'+scope.row.status) }}</el-tag>
+          <span>{{ scope.row.status | statusFilter }}</span>
         </template>
       </el-table-column>
 
       <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <!-- <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button> -->
-          <el-button v-if="scope.row.status!='replyed'&&scope.row.status!='finished'" size="mini" type="success" @click="handleModifyStatus(scope.row,'replyed')">{{ $t('table.reply') }}
+          <el-button :disabled="scope.row.status === 'Reply'||scope.row.status === 'PROCESSED'" size="mini" type="primary" @click="handleModifyStatus(scope.row,'Reply')">回复
           </el-button>
-          <el-button v-if="scope.row.status=='replyed'||scope.row.status=='finished'" disabled size="mini">{{ $t('table.replyed') }}
-          </el-button>
-          <el-button v-if="scope.row.status!='finished'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'finished')">{{ $t('table.finish') }}
-          </el-button>
-          <el-button v-if="scope.row.status=='finished'" disabled size="mini">{{ $t('table.finished') }}
+          <el-button :disabled="scope.row.status === 'PROCESSED'" size="mini" type="primary" @click="updateStatusData(scope.row,'PROCESSED')">完成
           </el-button>
           <el-button size="mini" type="primary" @click="handleShowDetail(scope.row)">{{ $t('table.detail') }}
           </el-button>
@@ -75,80 +78,58 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item :label="$t('table.date')" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
-        </el-form-item>
-        <el-form-item :label="$t('table.title')" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item :label="$t('table.content')" prop="content" style="width:650px;">
-          <tinymce v-model="temp.content" />
-        </el-form-item>
-        <el-form-item :label="$t('table.author')" prop="author">
-          <el-input v-model="temp.author" />
-        </el-form-item>
-        <el-form-item :label="$t('table.status')">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('table.importance')">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
+        <el-form-item label="回复内容" prop="reContent">
+          <el-input v-model="temp.reContent" type="textarea" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">{{ $t('table.confirm') }}</el-button>
-        <el-button v-else type="primary" @click="updateData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus==='update'" type="primary" @click="updateStatusData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDetailVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item :label="$t('table.date')" prop="timestamp">
-          {{ temp.timestamp }}
+        <el-form-item label="投诉房产" prop="id">
+          {{ temp.id }}
         </el-form-item>
-        <el-form-item :label="$t('table.title')" prop="title">
-          {{ temp.title }}
+        <el-form-item label="投诉人" prop="announcer">
+          {{ temp.announcer }}
         </el-form-item>
-        <el-form-item :label="$t('table.content')" prop="content" style="width:650px;">
+        <el-form-item label="投诉人电话" prop="telephone">
+          {{ temp.telephone }}
+        </el-form-item>
+        <el-form-item label="投诉时间" prop="author">
+          {{ temp.publishTime }}
+        </el-form-item>
+        <el-form-item label="投诉状态">
+          {{ temp.status | statusFilter }}
+        </el-form-item>
+        <el-form-item label="投诉内容)">
           {{ temp.content }}
         </el-form-item>
-        <el-form-item :label="$t('table.author')" prop="author">
-          {{ temp.author }}
-        </el-form-item>
-        <el-form-item :label="$t('table.status')">
+        <!-- <el-form-item label="处理时间">
           {{ temp.status }}
         </el-form-item>
-        <el-form-item :label="$t('table.importance')">
+        <el-form-item label="完成时间)">
           {{ temp.importance }}
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDetailVisible = false">{{ $t('table.cancel') }}</el-button>
         <el-button type="primary" @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
-      </span>
-    </el-dialog>
-
   </div>
 </template>
 
 <script>
 import {
-  fetchList
+  fetchList,
+  editReport
 } from '@/api/advise.js'
-import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
   directives: {
@@ -157,42 +138,34 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        replyed: 'success',
-        wait: 'info',
-        finished: 'danger',
-        service: 'success',
-        project: 'danger'
+        PROCESSED: '已完成',
+        WAITING: '待回复',
+        Reply: '已回复'
       }
       return statusMap[status]
     }
   },
-  components: { Tinymce },
   data() {
     return {
-      pickerOptions: {
+      timePickerOptions: {
         shortcuts: [{
-          text: '最近一周',
+          text: '今天',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
+            picker.$emit('pick', new Date())
           }
         }, {
-          text: '最近一个月',
+          text: '昨天',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
           }
         }, {
-          text: '最近三个月',
+          text: '一周前',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
           }
         }]
       },
@@ -207,7 +180,7 @@ export default {
         beginTime: undefined,
         endTime: undefined,
         keyword: undefined,
-        qryComplaintElementData: [
+        qryReportElementData: [
           {
             id: '',
             content: '',
@@ -220,21 +193,32 @@ export default {
           }
         ]
       },
-      sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
+      statusOptions: [
+        {
+          id: 'WAITING',
+          label: '待回复'
+        },
+        {
+          id: 'Reply',
+          label: '已回复'
+        },
+        {
+          id: 'PROCESSED',
+          label: '已完成'
+        }
       ],
-      statusOptions: ['replyed', 'wait', 'finished'],
-      statustypeOptions: ['service', 'project'],
-      showroomnumber: false,
       temp: {
-        id: undefined,
-        importance: 1,
-        timestamp: new Date(),
-        title: '',
-        status: 'reply',
+        id: '',
         content: '',
-        author: ''
+        publishTime: '',
+        communityId: '',
+        announcer: '',
+        telephone: '',
+        operateUserId: '',
+        imageUrl: '',
+        status: '',
+        clickStatus: '',
+        reContent: ''
       },
       dialogFormVisible: false,
       dialogDetailVisible: false,
@@ -244,8 +228,6 @@ export default {
         create: '新建',
         detail: '详情'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         type: [
           { required: true, message: 'type is required', trigger: 'change' }
@@ -261,9 +243,13 @@ export default {
         title: [
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
-      },
-      downloadLoading: false
+      }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   created() {
     this.getList()
@@ -274,15 +260,7 @@ export default {
       fetchList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            this.list = response.data.data.qryComplaintElementData
-
-            for (let i = 0; i < this.list.length; i++) {
-              if (this.list[i].status === 'PUBLISHED') {
-                this.list[i].status = true
-              } else {
-                this.list[i].status = false
-              }
-            }
+            this.list = response.data.data.qryReportElementData
             this.total = response.data.totalCount
             this.listLoading = false
           } else {
@@ -302,6 +280,9 @@ export default {
       })
     },
     handleFilter() {
+      this.listQuery.qryReportElementData[0].communityId = this.userInfo.selectCommunity
+      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = parseTime(this.listQuery.endTime)
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
       this.listQuery.page = 1
@@ -318,15 +299,65 @@ export default {
       this.getList()
     },
     handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
-      // 请求后台接口将状态传给后台，如果成功，前端修改数据
-      this.$message({
-        message: '操作成功',
-        type: 'success'
+      this.temp = Object.assign({}, row) // copy obj
+      this.temp.temStatus = status
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
       })
-      row.status = status
+    },
+    updateStatusData(row, status) {
+      // 修改/编辑 确认事件
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          let tempData
+          if (row.id === undefined) {
+            tempData = Object.assign({}, this.temp)
+            tempData.status = tempData.temStatus
+            this.temp.status = this.temp.temStatus
+            delete tempData.temStatus
+            delete this.temp.temStatus
+          } else {
+            this.temp = Object.assign({}, row)
+            this.temp.status = status
+            tempData = Object.assign({}, this.temp)
+          }
+          editReport(tempData).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '更新成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
+        }
+      })
     },
     resetTemp() {
       // 重新初始化新建对象的默认值
@@ -340,127 +371,11 @@ export default {
         type: ''
       }
     },
-    handleCreate() {
-      // 新建一条信息
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate() // 清除表单的校验
-      })
-    },
-    createData() {
-      // 新建 提交确认
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          // createNotice(this.temp).then(() => {
-          //   // 新建成功后的回调
-          //   this.list.unshift(this.temp)
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '创建成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
-        }
-      })
-    },
-    handleUpdate(row) {
-      // 修改/编辑事件
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      // 修改/编辑 确认事件
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          // updateNotice(tempData).then(() => {
-          //   for (const v of this.list) {
-          //     // 更新后的值插入原来数据的位置
-          //     if (v.id === this.temp.id) {
-          //       const index = this.list.indexOf(v)
-          //       this.list.splice(index, 1, this.temp)
-          //       break
-          //     }
-          //   }
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '更新成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
-        }
-      })
-    },
     handleShowDetail(row) {
       // 显示详情事件
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'detail'
       this.dialogDetailVisible = true
-    },
-    handleDelete(row) {
-      // 在列表中删除 （将当前id传给后台）
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      // 获取阅读数据表格
-      // fetchTable(pv).then(response => {
-      //   console.log(response.data.pvData)
-      //   this.pvData = response.data.pvData
-      //   this.dialogPvVisible = true
-      // })
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        })
-      )
     }
   }
 }
