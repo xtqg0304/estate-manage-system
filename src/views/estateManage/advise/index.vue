@@ -308,39 +308,40 @@ export default {
       })
     },
     updateStatusData(row, status) {
-      // 修改/编辑 确认事件
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          let tempData
-          if (row.id === undefined) {
-            tempData = Object.assign({}, this.temp)
-            tempData.status = tempData.temStatus
-            this.temp.status = this.temp.temStatus
-            delete tempData.temStatus
-            delete this.temp.temStatus
-          } else {
-            this.temp = Object.assign({}, row)
-            this.temp.status = status
-            tempData = Object.assign({}, this.temp)
-          }
-          editReport(tempData).then((response) => {
-            if (response.status === 200) {
-              if (response.data.code === 200) {
-                for (const v of this.list) {
-                  // 更新后的值插入原来数据的位置
-                  if (v.id === this.temp.id) {
-                    const index = this.list.indexOf(v)
-                    this.list.splice(index, 1, this.temp)
-                    break
+      let tempData
+      if (row.id === undefined) {
+        tempData = Object.assign({}, this.temp)
+        tempData.status = tempData.temStatus
+        this.temp.status = this.temp.temStatus
+        delete tempData.temStatus
+        delete this.temp.temStatus
+        this.$refs['dataForm'].validate(valid => {
+          if (valid) {
+            editReport(tempData).then((response) => {
+              if (response.status === 200) {
+                if (response.data.code === 200) {
+                  for (const v of this.list) {
+                    // 更新后的值插入原来数据的位置
+                    if (v.id === this.temp.id) {
+                      const index = this.list.indexOf(v)
+                      this.list.splice(index, 1, this.temp)
+                      break
+                    }
                   }
+                  this.dialogFormVisible = false
+                  this.$notify({
+                    title: '成功',
+                    message: '更新成功',
+                    type: 'success',
+                    duration: 2000
+                  })
+                } else {
+                  this.$notify.error({
+                    title: '失败',
+                    message: response.data.msg,
+                    duration: 2000
+                  })
                 }
-                this.dialogFormVisible = false
-                this.$notify({
-                  title: '成功',
-                  message: '更新成功',
-                  type: 'success',
-                  duration: 2000
-                })
               } else {
                 this.$notify.error({
                   title: '失败',
@@ -348,6 +349,32 @@ export default {
                   duration: 2000
                 })
               }
+            })
+          }
+        })
+      } else {
+        debugger
+        this.temp = Object.assign({}, row)
+        this.temp.status = status
+        tempData = Object.assign({}, this.temp)
+        editReport(tempData).then((response) => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              for (const v of this.list) {
+                // 更新后的值插入原来数据的位置
+                if (v.id === this.temp.id) {
+                  const index = this.list.indexOf(v)
+                  this.list.splice(index, 1, this.temp)
+                  break
+                }
+              }
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '更新成功',
+                type: 'success',
+                duration: 2000
+              })
             } else {
               this.$notify.error({
                 title: '失败',
@@ -355,9 +382,17 @@ export default {
                 duration: 2000
               })
             }
-          })
-        }
-      })
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        })
+      }
+
+      // 修改/编辑 确认事件
     },
     resetTemp() {
       // 重新初始化新建对象的默认值

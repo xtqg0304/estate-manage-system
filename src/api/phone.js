@@ -1,40 +1,27 @@
 import request from '@/utils/request'
+import { estateServer } from '@/api/api.js'
 
-export function fetchList(query) {
+/* 获取便民电话信息列表 */
+export function fetchList(data) {
   return request({
-    url: '/phone/list',
-    method: 'get',
-    params: query
-  })
-}
-
-export function fetchNotice(id) {
-  return request({
-    url: '/phone/detail',
-    method: 'get',
-    params: { id }
-  })
-}
-
-export function fetchTable(pv) {
-  return request({
-    url: '/phone/pv',
-    method: 'get',
-    params: { pv }
-  })
-}
-
-export function createNotice(data) {
-  return request({
-    url: '/phone/create',
+    url: estateServer + '/telephone/getTelephonePage',
     method: 'post',
     data
   })
 }
 
-export function updateNotice(data) {
+/* 添加或修改 便民电话 */
+export function editTelephone(data) {
   return request({
-    url: '/phone/update',
+    url: estateServer + '/telephone/mergeTelephone',
+    method: 'post',
+    data
+  })
+}
+/* 删除 便民电话 */
+export function deleteTelephone(data) {
+  return request({
+    url: estateServer + '/telephone/deleteTelephone ',
     method: 'post',
     data
   })
