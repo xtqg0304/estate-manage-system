@@ -21,6 +21,11 @@ module.exports = {
         target: 'http://10.18.72.28:8099',
         pathRewrite: { '^/estateServer': '' },
         changeOrigin: true
+      },
+      '/vehicleServer': {
+        target: 'http://10.18.72.240:8600',
+        pathRewrite: { '^/vehicleServer': '' },
+        changeOrigin: true
       }
     },
 

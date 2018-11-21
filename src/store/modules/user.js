@@ -31,7 +31,8 @@ const user = {
     subSystemId: '',
     permission: [],
     communityList: [],
-    selectCommunity: ''
+    selectCommunity: '',
+    selectCommunityName: ''
   },
 
   mutations: {
@@ -78,6 +79,9 @@ const user = {
     },
     SET_SELECTCOMMUNITY: (state, selectCommunity) => {
       state.selectCommunity = selectCommunity
+    },
+    SET_SELECTCOMMUNITYNAME: (state, selectCommunityName) => {
+      state.selectCommunityName = selectCommunityName
     }
   },
 

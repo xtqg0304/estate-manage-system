@@ -27,27 +27,4 @@ export function fetchEstateTypeList(data) {
     data
   })
 }
-/* 获取房产table列表 */
-export function fetchList(data) {
-  return request({
-    url: basicServer + '/estate/getEstatePage',
-    method: 'post',
-    data
-  })
-}
-/* 添加/修改房产列表 */
-export function editEstate(data) {
-  return request({
-    url: basicServer + '/estate/mergeEstate',
-    method: 'post',
-    data
-  })
-}
-/* 删除房产列表 */
-export function deleteEstate(data) {
-  return request({
-    url: basicServer + '/estate/deleteEstateById',
-    method: 'post',
-    data
-  })
-}
+

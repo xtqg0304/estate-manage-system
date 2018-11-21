@@ -204,6 +204,7 @@ export default {
       for (let i = 0; i < this.userInfo.communityList.length; i++) {
         if (this.userInfo.communityList[i].id === this.selectCommunity) {
           this.selectCommunityText = this.userInfo.communityList[i].name
+          this.$store.commit('SET_SELECTCOMMUNITYNAME', this.selectCommunityText)
         }
       }
     }

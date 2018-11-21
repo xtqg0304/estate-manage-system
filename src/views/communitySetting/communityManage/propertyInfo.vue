@@ -39,6 +39,9 @@
 
 <script>
 import {
+  fetchList,
+  // editEstate,
+  // deleteEstate,
   fetchEstateTypeList
 } from '@/api/property'
 import waves from '@/directive/waves' // 水波纹指令
@@ -56,8 +59,8 @@ export default {
       total: null,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20,
+        currentPage: 1,
+        pageSize: 20,
         statusProperty: undefined,
         keyword: undefined
       },
@@ -76,8 +79,28 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.statuspropertyOptions = response.data.data
-            this.listLoading = false
           }
+        }
+      })
+      fetchList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryList
+            this.total = response.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
         }
       })
     },

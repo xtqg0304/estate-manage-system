@@ -3,33 +3,9 @@
     <div class="filter-container">
       <el-button
         class="filter-item"
-        style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-select
-        v-model="listQuery.statusservice"
-        placeholder="服务类型"
-        clearable
-        class="filter-item">
-        <el-option
-          v-for="item in statusserviceOptions"
-          :key="item"
-          :label="$t('table.'+item)"
-          :value="item" />
-      </el-select>
-      <el-input
-        v-model="listQuery.keyword"
-        placeholder="关键字"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter" />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
     <el-table
       v-loading="listLoading"
@@ -40,7 +16,7 @@
       highlight-current-row
       style="width: 100%;min-height:500px;">
       <el-table-column
-        :label="$t('table.id')"
+        label="车场编码"
         align="center"
         width="65">
         <template slot-scope="scope">
@@ -48,63 +24,33 @@
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.date')"
+        label="车场名称"
         width="150px"
         align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.carparkName }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.servicename')"
+        label="车位总数"
         width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.servicename }}</span>
+          <span>{{ scope.row.parkingLotNum }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.servicephone')"
+        label="在线状态"
         width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.servicephone }}</span>
+          <span>{{ scope.row.status | statusFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.remarks')"
+        label="详细地址"
         min-width="150px"
         align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.remarks }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.uploadimg')"
-        align="center"
-        width="120">
-        <template slot-scope="scope">
-          <span class="link-type">
-            <el-popover
-              placement="left"
-              trigger="hover">
-              <!-- <img  :src="scope.row.uploadimg" style="max-height:200px;"  >
-              <img  :src="scope.row.uploadimg" slot="reference" style="max-height:23px;vertical-align: bottom;"  > -->
-              <img
-                src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                style="max-height:200px;">
-              <img
-                slot="reference"
-                src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                style="max-height:23px;vertical-align: bottom;">
-            </el-popover>
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.statusservice')"
-        class-name="status-col"
-        width="150">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.statusservice | statusFilter">{{ $t('table.'+scope.row.statusservice) }}</el-tag>
+          <span>{{ scope.row.address }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -118,25 +64,16 @@
             size="mini"
             @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
           <el-button
+            type="success"
+            size="mini"
+            @click="handleDetail(scope.row)">{{ $t('table.detail') }}</el-button>
+          <el-button
             type="danger"
             size="mini"
             @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
-
-    <div class="pagination-container">
-      <el-pagination
-        :current-page="listQuery.page"
-        :page-sizes="[10,20,30, 50]"
-        :page-size="listQuery.limit"
-        :total="total"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
-    </div>
-
     <el-dialog
       :title="textMap[dialogStatus]"
       :visible.sync="dialogFormVisible">
@@ -148,45 +85,50 @@
         label-width="70px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
-          :label="$t('table.date')"
-          prop="timestamp">
-          <el-date-picker
-            v-model="temp.timestamp"
-            type="datetime"
-            placeholder="Please pick a date" />
+          label="车场ID"
+          prop="id">
+          {{ temp.id }}
         </el-form-item>
         <el-form-item
-          :label="$t('table.statusservice')"
-          prop="statusservice">
-          <el-select
-            v-model="temp.statusservice"
-            class="filter-item"
-            placeholder="请选择">
-            <el-option
-              v-for="item in statusserviceOptions"
-              :key="item"
-              :label="$t('table.'+item)"
-              :value="item" />
-          </el-select>
+          label="车场编码"
+          prop="carparkKey ">
+          <el-input v-model="temp.carparkKey " />
         </el-form-item>
         <el-form-item
-          :label="$t('table.servicename')"
-          prop="servicename">
-          <el-input v-model="temp.servicename" />
+          label="隶属小区"
+          prop="selectCommunityName">
+          {{ userInfo.selectCommunityName }}
         </el-form-item>
         <el-form-item
-          :label="$t('table.servicephone')"
-          prop="servicephone">
-          <el-input v-model="temp.servicephone" />
+          label="车场名称"
+          prop="carparkName ">
+          <el-input v-model="temp.carparkName " />
         </el-form-item>
         <el-form-item
-          :label="$t('table.remarks')"
-          prop="remarks"
-          style="width:650px;">
-          <tinymce v-model="temp.remarks" />
+          label="车场总数"
+          prop="parkingLotNum">
+          <el-input v-model="temp.parkingLotNum" />
         </el-form-item>
-        <el-form-item :label="$t('table.uploadimg')">
-          <Upload v-model="temp.uploadimg" />
+        <el-form-item
+          label="联系电话"
+          prop="contactNumber">
+          <el-input v-model="temp.contactNumber" />
+        </el-form-item>
+        <el-form-item
+          label="经纬度"
+          prop="remarks">
+          <el-col :span="11">
+            <el-input v-model="temp.lon" />
+          </el-col>
+          <el-col :span="2" class="line" style="text-align:center">-</el-col>
+          <el-col :span="11">
+            <el-input v-model="temp.lat" />
+          </el-col>
+        </el-form-item>
+        <el-form-item
+          label="详细地址"
+          prop="address">
+          <el-input v-model="temp.address" type="textarea" />
         </el-form-item>
       </el-form>
       <div
@@ -203,46 +145,93 @@
           @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
-
     <el-dialog
-      :visible.sync="dialogPvVisible"
-      title="Reading statistics">
-      <el-table
-        :data="pvData"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%">
-        <el-table-column
-          prop="key"
-          label="Channel" />
-        <el-table-column
-          prop="pv"
-          label="Pv" />
-      </el-table>
-      <span
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogDetailVisible">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="tempDetail"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;">
+        <el-form-item
+          label="车场ID"
+          prop="id">
+          {{ tempDetail.id }}
+        </el-form-item>
+        <el-form-item
+          label="车场编码"
+          prop="carparkKey ">
+          {{ tempDetail.carparkKey }}
+        </el-form-item>
+        <el-form-item
+          label="隶属小区"
+          prop="selectCommunityName">
+          {{ userInfo.selectCommunityName }}
+        </el-form-item>
+        <el-form-item
+          label="车场名称"
+          prop="carparkName ">
+          {{ tempDetail.carparkName }}
+        </el-form-item>
+        <el-form-item
+          label="车场总数"
+          prop="parkingLotNum">
+          {{ tempDetail.parkingLotNum }}
+        </el-form-item>
+        <el-form-item
+          label="联系电话"
+          prop="contactNumber">
+          {{ tempDetail.contactNumber }}
+        </el-form-item>
+        <el-form-item
+          label="经纬度"
+          prop="remarks">
+          <el-col :span="11">
+            {{ tempDetail.lon }}
+          </el-col>
+          <el-col :span="2" class="line" style="text-align:center">-</el-col>
+          <el-col :span="11">
+            {{ tempDetail.lat }}
+          </el-col>
+        </el-form-item>
+        <el-form-item
+          label="详细地址"
+          prop="address">
+          {{ tempDetail.address }}
+        </el-form-item>
+        <el-form-item
+          label="车场密钥"
+          prop="address">
+          {{ tempDetail.secretKey }}
+        </el-form-item>
+      </el-form>
+      <div
         slot="footer"
         class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
-      </span>
+        <el-button @click="dialogDetailVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button type="primary" @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
+      </div>
     </el-dialog>
 
   </div>
 </template>
 
 <script>
-// import {
-//   fetchList,
-//   fetchTable,
-//   createNotice,
-//   updateNotice
-// } from '@/api/phone'
+import {
+  fetchList,
+  addCarpark,
+  editCarpark,
+  deleteCarpark,
+  getKey
+  // getCarparkDetail
+} from '@/api/parkManage'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
+// import { parseTime } from '@/utils'
 import Upload from '@/components/Upload/singleImage3'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
   directives: {
@@ -251,8 +240,8 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        estate: 'info',
-        periphery: 'danger'
+        0: '离线',
+        1: '在线'
       }
       return statusMap[status]
     }
@@ -260,67 +249,30 @@ export default {
   components: { Tinymce, Upload },
   data() {
     return {
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
       tableKey: 0,
       list: null,
       total: null,
       listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 20,
-        statusservice: undefined,
-        keyword: undefined
-      },
-      sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
-      ],
-      statusserviceOptions: ['estate', 'periphery'],
-      showReviewer: false,
       temp: {
         id: undefined,
-        timestamp: new Date(),
-        servicename: '',
-        statusservice: 'estate',
-        remarks: '',
-        servicephone: '',
-        uploadimg: ''
+        carparkName: '',
+        servicparkingLotNum: '',
+        lon: '',
+        lat: '',
+        communityId: '',
+        contactNumber: '',
+        address: '',
+        carparkKey: '',
+        status: ''
 
       },
       dialogFormVisible: false,
+      dialogDetailVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
         create: '新建'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         type: [
           { required: true, message: 'type is required', trigger: 'change' }
@@ -337,8 +289,13 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      downloadLoading: false
+      tempDetail: {}
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   created() {
     this.getList()
@@ -346,53 +303,42 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      // fetchList(this.listQuery).then(response => {
-      //   this.list = response.data.items
-      //   this.total = response.data.total
-
-      //   // Just to simulate the time of the request
-      //   setTimeout(() => {
-      //     this.listLoading = false
-      //   }, 1.5 * 1000)
-      // })
-    },
-    handleFilter() {
-      console.log(this.listQuery)
-      // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
-      this.getList()
-    },
-    handleSizeChange(val) {
-      // 每页显示多少条数据
-      this.listQuery.limit = val
-      this.getList()
-    },
-    handleCurrentChange(val) {
-      // 显示第几页的数据
-      this.listQuery.page = val
-      this.getList()
-    },
-    handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
-      // 请求后台接口将状态传给后台，如果成功，前端修改数据
-      this.$message({
-        message: '操作成功',
-        type: 'success'
+      const formdata = new FormData()
+      formdata.append('communityId', this.userInfo.selectCommunity)
+      fetchList(formdata).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
       })
-      row.status = status
     },
     resetTemp() {
       // 重新初始化新建对象的默认值
       this.temp = {
         id: undefined,
-        remarks: '',
-        timestamp: new Date(),
-        servicename: '',
-        statusservice: 'estate',
-        servicephone: '',
-        uploadimg: ''
+        carparkName: '',
+        servicparkingLotNum: '',
+        lon: '',
+        lat: '',
+        communityId: '',
+        contactNumber: '',
+        address: '',
+        carparkKey: '',
+        status: ''
       }
     },
     handleCreate() {
@@ -409,26 +355,40 @@ export default {
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          // createNotice(this.temp).then(() => {
-          //   // 新建成功后的回调
-          //   this.list.unshift(this.temp)
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '创建成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
+          this.temp.communityId = this.userInfo.selectCommunity
+          addCarpark(this.temp).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                // 新建成功后的回调
+                this.list.unshift(response.data.data)
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '创建成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
         }
       })
     },
     handleUpdate(row) {
       // 修改/编辑事件
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -440,77 +400,98 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          // updateNotice(tempData).then(() => {
-          //   for (const v of this.list) {
-          //     // 更新后的值插入原来数据的位置
-          //     if (v.id === this.temp.id) {
-          //       const index = this.list.indexOf(v)
-          //       this.list.splice(index, 1, this.temp)
-          //       break
-          //     }
-          //   }
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '更新成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
+          editCarpark(tempData).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '更新成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
         }
       })
     },
     handleDelete(row) {
       // 在列表中删除 （将当前id传给后台）
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      // 获取阅读数据表格
-      // fetchTable(pv).then(response => {
-      //   console.log(response.data.pvData)
-      //   this.pvData = response.data.pvData
-      //   this.dialogPvVisible = true
-      // })
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
+      const formdata = new FormData()
+      formdata.append('carparkId', row.id)
+      deleteCarpark(formdata).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const index = this.list.indexOf(row)
+            this.list.splice(index, 1)
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success',
+              duration: 2000
+            })
           } else {
-            return v[j]
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
           }
-        })
-      )
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+    },
+    handleDetail(row) {
+      this.tempDetail = Object.assign({}, row)
+      const formdata = new FormData()
+      formdata.append('carparkKey', row.carparkKey)
+      getKey(formdata).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.tempDetail.secretKey = response.data.data
+            this.dialogStatus = 'detail'
+            this.dialogDetailVisible = true
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
     }
   }
 }
@@ -527,6 +508,9 @@ export default {
 .filter-container,
 .pagination-container {
   text-align: right;
+}
+.filter-container{
+  text-align: left;
 }
 .editor-custom-btn-container {
   top: 0 !important;

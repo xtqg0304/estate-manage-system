@@ -35,71 +35,31 @@
       highlight-current-row
       style="width: 100%;min-height:500px;">
       <el-table-column
-        :label="$t('table.id')"
+        label="部门编码"
         align="center"
-        width="65">
+        width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.date')"
+        label="岗位名称"
         width="150px"
         align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.roleName }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('table.servicename')"
+        label="岗位描述"
         width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.servicename }}</span>
+          <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('table.servicephone')"
-        width="120px">
+      <el-table-column label="岗位职员">
         <template slot-scope="scope">
-          <span>{{ scope.row.servicephone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.remarks')"
-        min-width="150px"
-        align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.remarks }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.uploadimg')"
-        align="center"
-        width="120">
-        <template slot-scope="scope">
-          <span class="link-type">
-            <el-popover
-              placement="left"
-              trigger="hover">
-              <!-- <img  :src="scope.row.uploadimg" style="max-height:200px;"  >
-              <img  :src="scope.row.uploadimg" slot="reference" style="max-height:23px;vertical-align: bottom;"  > -->
-              <img
-                src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                style="max-height:200px;">
-              <img
-                slot="reference"
-                src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                style="max-height:23px;vertical-align: bottom;">
-            </el-popover>
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.statusservice')"
-        class-name="status-col"
-        width="150">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.statusservice | statusFilter">{{ $t('table.'+scope.row.statusservice) }}</el-tag>
+          <span>{{ scope.row.roleTag }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -115,7 +75,7 @@
           <el-button
             type="primary"
             size="mini"
-            @click="handleUpdateRoleAuth(scope.row)">权限</el-button>
+            @click="handleRoleAuth(scope.row)">权限</el-button>
           <el-button
             type="danger"
             size="mini"
@@ -147,15 +107,14 @@
         label-width="70px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
-          :label="$t('table.servicename')"
-          prop="servicename">
-          <el-input v-model="temp.servicename" />
+          label="岗位名称"
+          prop="roleName">
+          <el-input v-model="temp.roleName" />
         </el-form-item>
         <el-form-item
-          :label="$t('table.remarks')"
-          prop="remarks"
-          style="width:650px;">
-          <tinymce v-model="temp.remarks" />
+          label="岗位描述"
+          prop="description">
+          <el-input v-model="temp.description" type="textarea"/>
         </el-form-item>
       </el-form>
       <div
@@ -172,27 +131,38 @@
           @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
-
     <el-dialog
-      :visible.sync="dialogPvVisible"
-      title="Reading statistics">
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogAuthVisible">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <el-form label-width="80px">
+          <el-form
+            ref="dataForm"
+            :rules="rules"
+            :model="temp"
+            label-position="left"
+            label-width="70px"
+            style="width: 400px; margin-left:50px;">
             <el-form-item label="岗位：" style="margin-bottom:0;">
-              <el-select placeholder="请选择岗位">
-                <el-option label="公告管理员" value="shanghai"/>
-                <el-option label="缴费管理员" value="beijing"/>
+              <el-select v-model="temp.id" placeholder="请选择岗位" @change="handleSelectChange">
+                <el-option
+                  v-for="item in roleList"
+                  :key="item.id"
+                  :label="item.roleName"
+                  :value="item.id"/>
               </el-select>
             </el-form-item>
           </el-form>
         </div>
         <div class="component-item" style="height:300px;overflow-y: scroll;">
           <el-tree
-            :data="data2"
+            ref="tree"
+            :data="navTreeList"
+            :props="defaultProps"
             show-checkbox
-            @node-click="handleNodeClick"
-            @check-change="handleCheckChange"/>
+            node-key="id"
+            highlight-current
+            @check="handleCheck"/>
         </div>
       </el-card>
       <span
@@ -200,141 +170,58 @@
         class="dialog-footer">
         <el-button
           type="primary"
-          @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
+          @click="dialogAuthVisible = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="updateRoleAuthData">{{ $t('table.confirm') }}</el-button>
       </span>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
-// import {
-//   fetchList,
-//   fetchTable,
-//   createNotice,
-//   updateNotice
-// } from '@/api/phone'
-import Tinymce from '@/components/Tinymce'
+import {
+  fetchAppNavTree,
+  fetchRole,
+  fetchRoleList,
+  deleteRole,
+  editRole,
+  setRolePermission,
+  getRoleAppPermList
+} from '@/api/role'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
-import Upload from '@/components/Upload/singleImage3'
 export default {
   name: 'ComplexTable',
   directives: {
     waves
   },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        estate: 'info',
-        periphery: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
-  components: { Tinymce, Upload },
   data() {
     return {
-      data2: [{
-        id: 1,
-        label: '一级 1',
-        children: [{
-          id: 4,
-          label: '二级 1-1',
-          children: [{
-            id: 9,
-            label: '三级 1-1-1'
-          }, {
-            id: 10,
-            label: '三级 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: '一级 2',
-        children: [{
-          id: 5,
-          label: '二级 2-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      }, {
-        id: 3,
-        label: '一级 3',
-        children: [{
-          id: 7,
-          label: '二级 3-1'
-        }, {
-          id: 8,
-          label: '二级 3-2'
-        }]
-      }],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
       tableKey: 0,
       list: null,
       total: null,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20,
-        statusservice: undefined,
-        keyword: undefined
+        currentPage: 1,
+        pageSize: 20,
+        roleName: '',
+        roleTag: ''
       },
-      sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
-      ],
-      statusserviceOptions: ['estate', 'periphery'],
-      showReviewer: false,
       temp: {
-        id: undefined,
-        timestamp: new Date(),
-        servicename: '',
-        statusservice: 'estate',
-        remarks: '',
-        servicephone: '',
-        uploadimg: ''
-
+        id: '',
+        roleName: '',
+        description: '',
+        status: '',
+        roleTag: '',
+        permissionList: []
       },
       dialogFormVisible: false,
+      dialogAuthVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
         create: '新建'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         type: [
           { required: true, message: 'type is required', trigger: 'change' }
@@ -351,24 +238,99 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      downloadLoading: false
+      roleList: [],
+      navTreeList: [],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   created() {
     this.getList()
   },
   methods: {
+    /* 获取页面初始化数据 table表格数据  角色列表  权限树*/
     getList() {
       this.listLoading = true
-      // fetchList(this.listQuery).then(response => {
-      //   this.list = response.data.items
-      //   this.total = response.data.total
-
-      //   // Just to simulate the time of the request
-      //   setTimeout(() => {
-      //     this.listLoading = false
-      //   }, 1.5 * 1000)
-      // })
+      fetchRoleList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryRoleData
+            this.total = response.data.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+      fetchRole().then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.roleList = response.data.data
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+      fetchAppNavTree().then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.navTreeList = this.traverse(response.data.data)
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+    },
+    /* 转换树形结构数据 */
+    traverse(aeraTree) {
+      aeraTree.forEach(i => {
+        i.value = i.id
+        i.label = i.name
+        // 有子数据的先遍历子数据
+        if (i.children) {
+          if (i.children.length > 0) {
+            this.traverse(i.children)
+          } else {
+            delete i.children
+          }
+        }
+        // i.children && this.traverse(i.children)
+      })
+      return aeraTree
     },
     handleFilter() {
       console.log(this.listQuery)
@@ -386,27 +348,15 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
-    handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
-      // 请求后台接口将状态传给后台，如果成功，前端修改数据
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
-    },
     resetTemp() {
       // 重新初始化新建对象的默认值
       this.temp = {
-        id: undefined,
-        remarks: '',
-        timestamp: new Date(),
-        servicename: '',
-        statusservice: 'estate',
-        servicephone: '',
-        uploadimg: ''
+        id: '',
+        roleName: '',
+        description: '',
+        status: '',
+        roleTag: '',
+        permissionList: []
       }
     },
     handleCreate() {
@@ -418,43 +368,46 @@ export default {
         this.$refs['dataForm'].clearValidate() // 清除表单的校验
       })
     },
-    handleRoleAuth() {
-      this.dialogPvVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate() // 清除表单的校验
-      })
-    },
-    handleUpdateRoleAuth() {
-      this.dialogPvVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate() // 清除表单的校验
-      // })
-    },
     createData() {
       console.log(this.temp)
+      this.temp.status = 'ENABLED'
+      this.temp.roleTag = parseInt(Math.random() * 100) + 1024
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          // createNotice(this.temp).then(() => {
-          //   // 新建成功后的回调
-          //   this.list.unshift(this.temp)
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '创建成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
+          editRole(this.temp).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                // 新建成功后的回调
+                this.list.unshift(response.data.data)
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '创建成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
         }
       })
     },
     handleUpdate(row) {
       // 修改/编辑事件
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -466,85 +419,188 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          // updateNotice(tempData).then(() => {
-          //   for (const v of this.list) {
-          //     // 更新后的值插入原来数据的位置
-          //     if (v.id === this.temp.id) {
-          //       const index = this.list.indexOf(v)
-          //       this.list.splice(index, 1, this.temp)
-          //       break
-          //     }
-          //   }
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '更新成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
+          editRole(tempData).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '更新成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
         }
       })
     },
     handleDelete(row) {
       // 在列表中删除 （将当前id传给后台）
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      // 获取阅读数据表格
-      // fetchTable(pv).then(response => {
-      //   console.log(response.data.pvData)
-      //   this.pvData = response.data.pvData
-      //   this.dialogPvVisible = true
-      // })
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
+      deleteRole({ id: row.id }).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const index = this.list.indexOf(row)
+            this.list.splice(index, 1)
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success',
+              duration: 2000
+            })
           } else {
-            return v[j]
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
           }
-        })
-      )
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
     },
-    handleNodeClick(data) {
+    handleCheck(data) {
       console.log(data)
     },
-    handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate)
+    handleRoleAuth(row) {
+      if (row.id !== undefined) {
+        this.temp = Object.assign({}, row) // copy obj
+        getRoleAppPermList({ id: this.temp.id }).then((response) => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              this.temp.permissionList = response.data.data
+              const permissionList = []
+              this.temp.permissionList.forEach(value => {
+                permissionList.push(value.id)
+              })
+              console.log(this.temp.permissionList)
+              this.$refs.tree.setCheckedKeys(permissionList)
+              this.$notify({
+                title: '成功',
+                message: response.data.msg,
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        })
+      }
+      this.dialogStatus = 'update'
+      this.dialogAuthVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate() // 清除表单的校验
+      })
+    },
+    updateRoleAuthData() {
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          this.temp.permissionList = this.$refs.tree.getCheckedNodes()
+          const tempData = Object.assign({}, this.temp)
+          setRolePermission({ roleId: tempData.id, permList: tempData.permissionList }).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogAuthVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
+        }
+      })
+    },
+    handleSelectChange(roleId) {
+      console.log(roleId)
+      this.temp.id = roleId
+      getRoleAppPermList({ id: roleId }).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.temp.permissionList = response.data.data
+            const permissionList = []
+            this.temp.permissionList.forEach(value => {
+              permissionList.push(value.id)
+            })
+            console.log(this.temp.permissionList)
+            this.$refs.tree.setCheckedKeys(permissionList)
+            this.$notify({
+              title: '成功',
+              message: response.data.msg,
+              duration: 2000
+            })
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
     }
-
   }
 }
 </script>
