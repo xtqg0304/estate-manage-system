@@ -36,8 +36,8 @@
 <script>
 import {
   exportModule,
-  importEstate
-} from '@/api/property'
+  importHousehold
+} from '@/api/houseHold'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
   name: 'ComplexTable',
@@ -86,7 +86,7 @@ export default {
       const formdata = new FormData()
       formdata.append('file', content.file)
       formdata.append('communityId', '1111') // 获取小区id
-      importEstate(formdata)
+      importHousehold(formdata)
         .then(response => {
           if (response.status === 200) {
             if (response.data.code === 200) {

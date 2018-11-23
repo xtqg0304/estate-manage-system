@@ -1,5 +1,8 @@
 export default {
   route: {
+    appManage: '应用管理',
+    appSet: '应用设置',
+    navDefine: '导航定义',
     communityManage: '小区管理',
     propertyImport: '房产导入',
     propertyInfo: '房产资料',

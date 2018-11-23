@@ -99,6 +99,40 @@ export default new Router({
 
 export const asyncRouterMap = [
   {
+    path: '/cloudControl/appManage',
+    component: Layout,
+    redirect: '/cloudControl/appManage/appSet.vue',
+    meta: {
+      title: 'appManage',
+      icon: 'guide',
+      roles: ['admin', 'estate', 'editor']
+    },
+    children: [
+      {
+        path: 'appSet',
+        component: () => import('@/views/cloudControl/appManage/appSet.vue'),
+        name: 'appSet',
+        meta: {
+          title: 'appSet',
+          icon: 'guide',
+          noCache: true,
+          roles: ['estate']
+        }
+      },
+      {
+        path: 'navDefine',
+        component: () => import('@/views/cloudControl/appManage/navDefine.vue'),
+        name: 'navDefine',
+        meta: {
+          title: 'navDefine',
+          icon: 'guide',
+          noCache: true,
+          roles: ['estate']
+        }
+      }
+    ]
+  },
+  {
     path: '/estateManage/notice',
     component: Layout,
     redirect: '/estateManage/notice/index',

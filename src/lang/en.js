@@ -1,5 +1,8 @@
 export default {
   route: {
+    appManage: 'AppManage',
+    appSet: 'AppSet',
+    navDefine: 'NavDefine',
     communityManage: 'CommunityManage',
     propertyImport: 'PropertyImport',
     propertyInfo: 'PropertyInfo',
