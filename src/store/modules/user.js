@@ -62,6 +62,7 @@ const user = {
     },
     SET_SUBSYSTEMID: (state, id) => {
       state.subSystemId = id
+      sessionStorage.setItem('subSystemId', id)
     },
     SET_USER_INFO: (state, user_info) => {
       state.userId = user_info.userId
@@ -73,15 +74,64 @@ const user = {
       state.pushUserId = user_info.pushUserId
       state.pushChannelId = user_info.pushChannelId
       state.permission = user_info.permission
+      sessionStorage.setItem('userId', user_info.userId)
+      sessionStorage.setItem('trueName', user_info.trueName)
+      sessionStorage.setItem('uuid', user_info.uuid)
+      sessionStorage.setItem('mobile', user_info.mobile)
+      sessionStorage.setItem('email', user_info.email)
+      sessionStorage.setItem('platform', user_info.platform)
+      sessionStorage.setItem('pushUserId', user_info.pushUserId)
+      sessionStorage.setItem('pushChannelId', user_info.pushChannelId)
+      sessionStorage.setItem('permission', JSON.stringify(user_info.permission))
+      // sessionStorage.setItem('user_info', JSON.stringify(user_info))
+    },
+    SET_USERID: (state, userId) => {
+      state.userId = userId
+      sessionStorage.setItem('userId', userId)
+    },
+    SET_TRUENAME: (state, trueName) => {
+      state.trueName = trueName
+      sessionStorage.setItem('trueName', trueName)
+    },
+    SET_UUID: (state, uuid) => {
+      state.uuid = uuid
+      sessionStorage.setItem('uuid', uuid)
+    },
+    SET_MOBILE: (state, mobile) => {
+      state.mobile = mobile
+      sessionStorage.setItem('mobile', mobile)
+    },
+    SET_EMAIL: (state, email) => {
+      state.email = email
+      sessionStorage.setItem('email', email)
+    },
+    SET_PLATFORM: (state, platform) => {
+      state.platform = platform
+      sessionStorage.setItem('platform', platform)
+    },
+    SET_PUSHUSERID: (state, pushUserId) => {
+      state.pushUserId = pushUserId
+      sessionStorage.setItem('pushUserId', pushUserId)
+    },
+    SET_PUSHCHANNELID: (state, pushChannelId) => {
+      state.pushChannelId = pushChannelId
+      sessionStorage.setItem('pushChannelId', pushChannelId)
+    },
+    SET_PERMISSION: (state, permission) => {
+      state.permission = permission
+      sessionStorage.setItem('permission', JSON.stringify(permission))
     },
     SET_COMMUNITYLIST: (state, communityList) => {
       state.communityList = communityList
+      sessionStorage.setItem('communityList', JSON.stringify(communityList))
     },
     SET_SELECTCOMMUNITY: (state, selectCommunity) => {
       state.selectCommunity = selectCommunity
+      sessionStorage.setItem('selectCommunity', selectCommunity)
     },
     SET_SELECTCOMMUNITYNAME: (state, selectCommunityName) => {
       state.selectCommunityName = selectCommunityName
+      sessionStorage.setItem('selectCommunityName', selectCommunityName)
     }
   },
 
@@ -92,15 +142,20 @@ const user = {
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password)
           .then(response => {
-            console.log('login response')
+            // console.log('login response')
+            // console.log(response.headers["x-auth-token"])
+            // console.log(response.data.data)
             /* eslint-disable */
-            console.log(response.headers["x-auth-token"])
-            console.log(response.data.data)
-            const data = response.data.data
-            commit('SET_TOKEN', response.headers["x-auth-token"]) // 设置vuex里面token的值
-            commit('SET_USER_INFO', data)
-            setToken(response.headers["x-auth-token"]) // 将token的值存储在cookie或者sessionstorage
-            resolve()
+            if(response.status === 200){
+              if(response.data.code === 200){
+                const data = response.data.data
+                commit('SET_TOKEN', response.headers["x-auth-token"]) // 设置vuex里面token的值
+                commit('SET_USER_INFO', data)
+                setToken(response.headers["x-auth-token"]) // 将token的值存储在cookie或者sessionstorage
+                sessionStorage.setItem('x-auth-token', response.headers["x-auth-token"])
+              }
+            }
+            resolve(response)
           })
           .catch(error => {
             reject(error)
@@ -119,6 +174,7 @@ const user = {
                   // 验证返回的communityList是否是一个非空数组
                   commit('SET_COMMUNITYLIST', communityList) // 设置vuex的用户绑定的小区列表值
                   commit('SET_SELECTCOMMUNITY', communityList[0].id) // 设置vuex的默认选中绑定小区的值
+                  commit('SET_SELECTCOMMUNITYNAME', communityList[0].name)
                 } else {
                   reject('getCommunityList: communityList must be a non-null array !')
                 }
@@ -148,7 +204,6 @@ const user = {
             } else {
               reject('getUserInfo: roles must be a non-null array !')
             }
-
             commit('SET_NAME', data.name)
             commit('SET_AVATAR', data.avatar)
             commit('SET_INTRODUCTION', data.introduction)
@@ -179,12 +234,14 @@ const user = {
       return new Promise((resolve, reject) => {
         logout()
           .then((response) => {
+            debugger
             console.log(response)
             if(response.data.code === 200){
               commit('SET_TOKEN', '')
               // commit('SET_ROLES', [])
               removeToken()
-              resolve()
+              sessionStorage.clear()
+              resolve(response)
             }else{
               reject(error)
             }

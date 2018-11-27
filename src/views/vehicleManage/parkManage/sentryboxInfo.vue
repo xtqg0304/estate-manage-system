@@ -9,31 +9,16 @@
       highlight-current-row
       style="width: 100%;min-height:500px;">
       <el-table-column
-        label="车道名称"
-        width="150px"
-        align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.carRoadName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="车道类型"
+        label="岗亭Ip"
         width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.carRoadType | statusFilter }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="所属车场名称"
-        width="120px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.ownCarparkNoName }}</span>
+          <span>{{ scope.row.postComputerIp }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="岗亭名称">
         <template slot-scope="scope">
-          <span>{{ scope.row.manageComputerName }}</span>
+          <span>{{ scope.row.postComputerName }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -43,21 +28,12 @@
 
 <script>
 import {
-  fetchLaneList
+  fetchSentryboxList
 } from '@/api/parkManage'
 // import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        0: '入口',
-        1: '出口'
-      }
-      return statusMap[status]
-    }
-  },
   data() {
     return {
       tableKey: 0,
@@ -77,7 +53,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchLaneList({ serviceId: '2018111500', searchType: 0 }).then(response => {
+      fetchSentryboxList({ serviceId: '2018111500', searchType: 0 }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data

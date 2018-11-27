@@ -3,22 +3,9 @@
     <div class="filter-container">
       <el-button
         class="filter-item"
-        style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-input
-        v-model="listQuery.keyword"
-        placeholder="关键字"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter" />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
     <el-table
       v-loading="listLoading"
@@ -29,7 +16,7 @@
       highlight-current-row
       style="width: 100%;min-height:500px;">
       <el-table-column
-        label="ID"
+        label="车场编码"
         align="center"
         width="65">
         <template slot-scope="scope">
@@ -37,49 +24,33 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="微信公众号开发者ID"
-        align="center"
-        width="65">
-        <template slot-scope="scope">
-          <span>{{ scope.row.appid }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="开发者秘钥"
+        label="车场名称"
         width="150px"
         align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.appsecret }}</span>
+          <span>{{ scope.row.carparkName }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="商户ID"
+        label="车位总数"
         width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.mchid }}</span>
+          <span>{{ scope.row.parkingLotNum }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="商户秘钥"
+        label="在线状态"
         width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.mchkey }}</span>
+          <span>{{ scope.row.status | statusFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="公众号名称"
+        label="详细地址"
         min-width="150px"
         align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.appname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="有效token"
-        align="center"
-        width="120">
-        <template slot-scope="scope">
-          <span>{{ scope.row.token }}</span>
+          <span>{{ scope.row.address }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -89,13 +60,13 @@
         class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            type="success"
-            size="mini"
-            @click="handleBind(scope.row)">小区</el-button>
-          <el-button
             type="primary"
             size="mini"
             @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button
+            type="success"
+            size="mini"
+            @click="handleDetail(scope.row)">{{ $t('table.detail') }}</el-button>
           <el-button
             type="danger"
             size="mini"
@@ -103,19 +74,6 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <div class="pagination-container">
-      <el-pagination
-        :current-page="listQuery.page"
-        :page-sizes="[10,20,30, 50]"
-        :page-size="listQuery.limit"
-        :total="total"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
-    </div>
-
     <el-dialog
       :title="textMap[dialogStatus]"
       :visible.sync="dialogFormVisible">
@@ -127,39 +85,50 @@
         label-width="70px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
-          label="ID"
+          label="车场ID"
           prop="id">
-          <el-input v-model="temp.id" />
+          {{ temp.id }}
         </el-form-item>
         <el-form-item
-          label="开发ID"
-          prop="appid">
-          <el-input v-model="temp.appid" />
+          label="车场编码"
+          prop="carparkKey ">
+          <el-input v-model="temp.carparkKey " />
         </el-form-item>
         <el-form-item
-          label="开发秘钥"
-          prop="appsecret ">
-          <el-input v-model="temp.appsecret" />
+          label="隶属小区"
+          prop="selectCommunityName">
+          {{ userInfo.selectCommunityName }}
         </el-form-item>
         <el-form-item
-          label="商户号"
-          prop="mchid ">
-          <el-input v-model="temp.mchid" />
+          label="车场名称"
+          prop="carparkName ">
+          <el-input v-model="temp.carparkName " />
         </el-form-item>
         <el-form-item
-          label="商户秘钥"
-          prop="mchkey">
-          <el-input v-model="temp.mchkey" />
+          label="车场总数"
+          prop="parkingLotNum">
+          <el-input v-model="temp.parkingLotNum" />
         </el-form-item>
         <el-form-item
-          label="公众号名"
-          prop="appname">
-          <el-input v-model="temp.appname" />
+          label="联系电话"
+          prop="contactNumber">
+          <el-input v-model="temp.contactNumber" />
         </el-form-item>
         <el-form-item
-          label="token"
-          prop="token">
-          <el-input v-model="temp.token" />
+          label="经纬度"
+          prop="remarks">
+          <el-col :span="11">
+            <el-input v-model="temp.lon" />
+          </el-col>
+          <el-col :span="2" class="line" style="text-align:center">-</el-col>
+          <el-col :span="11">
+            <el-input v-model="temp.lat" />
+          </el-col>
+        </el-form-item>
+        <el-form-item
+          label="详细地址"
+          prop="address">
+          <el-input v-model="temp.address" type="textarea" />
         </el-form-item>
       </el-form>
       <div
@@ -176,46 +145,73 @@
           @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
-
     <el-dialog
       :title="textMap[dialogStatus]"
-      :visible.sync="dialogBindVisible">
+      :visible.sync="dialogDetailVisible">
       <el-form
         ref="dataForm"
         :rules="rules"
-        :model="temp"
+        :model="tempDetail"
         label-position="left"
         label-width="70px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
-          label="公众号ID"
+          label="车场ID"
           prop="id">
-          <el-input v-model="temp.id" />
+          {{ tempDetail.id }}
         </el-form-item>
         <el-form-item
-          label="绑定小区"
-          prop="communityId">
-          <el-select
-            v-model="temp.communityId"
-            class="filter-item"
-            placeholder="请选择小区"
-            style="width:100%" >
-            <el-option
-              v-for="item in communityOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id" />
-          </el-select>
+          label="车场编码"
+          prop="carparkKey ">
+          {{ tempDetail.carparkKey }}
+        </el-form-item>
+        <el-form-item
+          label="隶属小区"
+          prop="selectCommunityName">
+          {{ userInfo.selectCommunityName }}
+        </el-form-item>
+        <el-form-item
+          label="车场名称"
+          prop="carparkName ">
+          {{ tempDetail.carparkName }}
+        </el-form-item>
+        <el-form-item
+          label="车场总数"
+          prop="parkingLotNum">
+          {{ tempDetail.parkingLotNum }}
+        </el-form-item>
+        <el-form-item
+          label="联系电话"
+          prop="contactNumber">
+          {{ tempDetail.contactNumber }}
+        </el-form-item>
+        <el-form-item
+          label="经纬度"
+          prop="remarks">
+          <el-col :span="11">
+            {{ tempDetail.lon }}
+          </el-col>
+          <el-col :span="2" class="line" style="text-align:center">-</el-col>
+          <el-col :span="11">
+            {{ tempDetail.lat }}
+          </el-col>
+        </el-form-item>
+        <el-form-item
+          label="详细地址"
+          prop="address">
+          {{ tempDetail.address }}
+        </el-form-item>
+        <el-form-item
+          label="车场密钥"
+          prop="address">
+          {{ tempDetail.secretKey }}
         </el-form-item>
       </el-form>
       <div
         slot="footer"
         class="dialog-footer">
-        <el-button @click="dialogBindVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='bind'"
-          type="primary"
-          @click="bindData">{{ $t('table.confirm') }}</el-button>
+        <el-button @click="dialogDetailVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button type="primary" @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
 
@@ -225,52 +221,57 @@
 <script>
 import {
   fetchList,
-  editPublicAccount,
-  deletePublicAccount,
-  bindCommunity
-} from '@/api/wechat'
-import {
-  fetchCommunity
-} from '@/api/communityManage'
+  addCarpark,
+  editCarpark,
+  deleteCarpark,
+  getKey
+  // getCarparkDetail
+} from '@/api/parkManage'
+import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
+// import { parseTime } from '@/utils'
+import Upload from '@/components/Upload/singleImage3'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
   directives: {
     waves
   },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        0: '离线',
+        1: '在线'
+      }
+      return statusMap[status]
+    }
+  },
+  components: { Tinymce, Upload },
   data() {
     return {
       tableKey: 0,
       list: null,
       total: null,
       listLoading: true,
-      listQuery: {
-        currentPage: 1,
-        pageSize: 20,
-        appname: '',
-        appid: '',
-        appsecret: '',
-        mchid: '',
-        mchkey: '',
-        keyword: ''
-      },
-      showReviewer: false,
       temp: {
-        id: '',
-        appid: '',
-        appsecret: '',
-        mchid: '',
-        mchkey: '',
-        appname: '',
-        token: ''
+        id: undefined,
+        carparkName: '',
+        servicparkingLotNum: '',
+        lon: '',
+        lat: '',
+        communityId: '',
+        contactNumber: '',
+        address: '',
+        carparkKey: '',
+        status: ''
+
       },
       dialogFormVisible: false,
-      dialogBindVisible: false,
+      dialogDetailVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
-        create: '新建',
-        bind: '绑定小区'
+        create: '新建'
       },
       rules: {
         type: [
@@ -288,21 +289,26 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      communityOptions: []
+      tempDetail: {}
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   created() {
     this.getList()
-    this.getCommunityList()
   },
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
+      const formdata = new FormData()
+      formdata.append('communityId', this.userInfo.selectCommunity)
+      fetchList(formdata).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            this.list = response.data.data.qryList
-            this.total = response.data.totalCount
+            this.list = response.data.data
             this.listLoading = false
           } else {
             this.$notify.error({
@@ -320,53 +326,19 @@ export default {
         }
       })
     },
-    getCommunityList() {
-      fetchCommunity({}).then(response => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            this.communityOptions = response.data.data
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
-          }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
-      })
-    },
-    handleFilter() {
-      console.log(this.listQuery)
-      // 搜索数据（默认请求第一页数据）
-      this.listQuery.currentPage = 1
-      this.getList()
-    },
-    handleSizeChange(val) {
-      // 每页显示多少条数据
-      this.listQuery.pageSize = val
-      this.getList()
-    },
-    handleCurrentChange(val) {
-      // 显示第几页的数据
-      this.listQuery.currentPage = val
-      this.getList()
-    },
     resetTemp() {
       // 重新初始化新建对象的默认值
       this.temp = {
-        id: '',
-        appid: '',
-        appsecret: '',
-        mchid: '',
-        mchkey: '',
-        appname: '',
-        token: ''
+        id: undefined,
+        carparkName: '',
+        servicparkingLotNum: '',
+        lon: '',
+        lat: '',
+        communityId: '',
+        contactNumber: '',
+        address: '',
+        carparkKey: '',
+        status: ''
       }
     },
     handleCreate() {
@@ -383,7 +355,8 @@ export default {
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          editPublicAccount(this.temp).then((response) => {
+          this.temp.communityId = this.userInfo.selectCommunity
+          addCarpark(this.temp).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 // 新建成功后的回调
@@ -427,7 +400,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          editPublicAccount(tempData).then((response) => {
+          editCarpark(tempData).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 for (const v of this.list) {
@@ -465,7 +438,9 @@ export default {
     },
     handleDelete(row) {
       // 在列表中删除 （将当前id传给后台）
-      deletePublicAccount({ id: row.id }).then((response) => {
+      const formdata = new FormData()
+      formdata.append('carparkId', row.id)
+      deleteCarpark(formdata).then((response) => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             const index = this.list.indexOf(row)
@@ -492,52 +467,28 @@ export default {
         }
       })
     },
-    handleBind(row) {
-      // 绑定事件
-      this.temp = Object.assign({}, row) // copy obj
-      this.dialogStatus = 'bind'
-      this.dialogBindVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    bindData() {
-      // 绑定 确认事件
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          bindCommunity({ wechatId: tempData.id, communityId: tempData.communityId }).then((response) => {
-            if (response.status === 200) {
-              if (response.data.code === 200) {
-                for (const v of this.list) {
-                  // 更新后的值插入原来数据的位置
-                  if (v.id === this.temp.id) {
-                    const index = this.list.indexOf(v)
-                    this.list.splice(index, 1, this.temp)
-                    break
-                  }
-                }
-                this.dialogBindVisible = false
-                this.$notify({
-                  title: '成功',
-                  message: response.data.msg,
-                  type: 'success',
-                  duration: 2000
-                })
-              } else {
-                this.$notify.error({
-                  title: '失败',
-                  message: response.data.msg,
-                  duration: 2000
-                })
-              }
-            } else {
-              this.$notify.error({
-                title: '失败',
-                message: response.data.msg,
-                duration: 2000
-              })
-            }
+    handleDetail(row) {
+      this.tempDetail = Object.assign({}, row)
+      const formdata = new FormData()
+      formdata.append('carparkKey', row.carparkKey)
+      getKey(formdata).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.tempDetail.secretKey = response.data.data
+            this.dialogStatus = 'detail'
+            this.dialogDetailVisible = true
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
           })
         }
       })
@@ -557,6 +508,9 @@ export default {
 .filter-container,
 .pagination-container {
   text-align: right;
+}
+.filter-container{
+  text-align: left;
 }
 .editor-custom-btn-container {
   top: 0 !important;

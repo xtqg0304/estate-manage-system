@@ -37,7 +37,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="微信公众号开发者ID"
+        label="开发者ID"
         align="center"
         width="65">
         <template slot-scope="scope">
@@ -67,19 +67,11 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="公众号名称"
+        label="小程序名称"
         min-width="150px"
         align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.appname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="有效token"
-        align="center"
-        width="120">
-        <template slot-scope="scope">
-          <span>{{ scope.row.token }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -91,7 +83,7 @@
           <el-button
             type="success"
             size="mini"
-            @click="handleBind(scope.row)">小区</el-button>
+            @click="handleBind(scope.row)">公众号</el-button>
           <el-button
             type="primary"
             size="mini"
@@ -152,14 +144,9 @@
           <el-input v-model="temp.mchkey" />
         </el-form-item>
         <el-form-item
-          label="公众号名"
+          label="小程序名"
           prop="appname">
           <el-input v-model="temp.appname" />
-        </el-form-item>
-        <el-form-item
-          label="token"
-          prop="token">
-          <el-input v-model="temp.token" />
         </el-form-item>
       </el-form>
       <div
@@ -188,23 +175,23 @@
         label-width="70px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
-          label="公众号ID"
+          label="小程序ID"
           prop="id">
           <el-input v-model="temp.id" />
         </el-form-item>
         <el-form-item
-          label="绑定小区"
-          prop="communityId">
+          label="公众号"
+          prop="wechatMpId">
           <el-select
-            v-model="temp.communityId"
+            v-model="temp.wechatMpId"
             class="filter-item"
-            placeholder="请选择小区"
+            placeholder="请选择公众号"
             style="width:100%" >
-            <el-option
-              v-for="item in communityOptions"
+            <!-- <el-option
+              v-for="item in statusserviceOptions"
               :key="item.id"
-              :label="item.name"
-              :value="item.id" />
+              :label="item.label"
+              :value="item.id" /> -->
           </el-select>
         </el-form-item>
       </el-form>
@@ -224,14 +211,11 @@
 
 <script>
 import {
-  fetchList,
-  editPublicAccount,
-  deletePublicAccount,
-  bindCommunity
+  fetchsmallList,
+  editSmallProject,
+  deleteSmallProject,
+  bindPublicAccount
 } from '@/api/wechat'
-import {
-  fetchCommunity
-} from '@/api/communityManage'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
   name: 'ComplexTable',
@@ -250,8 +234,6 @@ export default {
         appname: '',
         appid: '',
         appsecret: '',
-        mchid: '',
-        mchkey: '',
         keyword: ''
       },
       showReviewer: false,
@@ -261,8 +243,7 @@ export default {
         appsecret: '',
         mchid: '',
         mchkey: '',
-        appname: '',
-        token: ''
+        appname: ''
       },
       dialogFormVisible: false,
       dialogBindVisible: false,
@@ -270,61 +251,31 @@ export default {
       textMap: {
         update: '编辑',
         create: '新建',
-        bind: '绑定小区'
+        bind: '绑定公众号'
       },
       rules: {
         type: [
           { required: true, message: 'type is required', trigger: 'change' }
         ],
-        timestamp: [
-          {
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
-        ],
         title: [
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      communityOptions: []
+      downloadLoading: false
     }
   },
   created() {
     this.getList()
-    this.getCommunityList()
   },
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
+      fetchsmallList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryList
             this.total = response.data.totalCount
             this.listLoading = false
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
-          }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
-      })
-    },
-    getCommunityList() {
-      fetchCommunity({}).then(response => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            this.communityOptions = response.data.data
           } else {
             this.$notify.error({
               title: '失败',
@@ -365,8 +316,7 @@ export default {
         appsecret: '',
         mchid: '',
         mchkey: '',
-        appname: '',
-        token: ''
+        appname: ''
       }
     },
     handleCreate() {
@@ -383,7 +333,7 @@ export default {
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          editPublicAccount(this.temp).then((response) => {
+          editSmallProject(this.temp).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 // 新建成功后的回调
@@ -427,7 +377,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          editPublicAccount(tempData).then((response) => {
+          editSmallProject(tempData).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 for (const v of this.list) {
@@ -465,7 +415,7 @@ export default {
     },
     handleDelete(row) {
       // 在列表中删除 （将当前id传给后台）
-      deletePublicAccount({ id: row.id }).then((response) => {
+      deleteSmallProject({ id: row.id }).then((response) => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             const index = this.list.indexOf(row)
@@ -506,7 +456,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          bindCommunity({ wechatId: tempData.id, communityId: tempData.communityId }).then((response) => {
+          bindPublicAccount({ wechatMaId: tempData.id, wechatMpId: tempData.wechatMpId }).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 for (const v of this.list) {

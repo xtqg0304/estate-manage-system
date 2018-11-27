@@ -26,7 +26,7 @@
             class="user-name"
             trigger="click">
             <span class="el-dropdown-link">
-              {{ userInfo.trueName }}
+              {{ trueName }}
               <i class="el-icon-caret-bottom" />
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -705,10 +705,24 @@ export default {
   computed: {
     ...mapGetters([
       'roles',
-      'name',
-      'userInfo',
-      'permissionSys'
-    ])
+      'name'
+      // 'userInfo',
+      // 'permissionSys'
+    ]),
+    trueName() {
+      const sessionData = sessionStorage.getItem('trueName')
+      if (this.$store.getters.trueName === '' && sessionData) {
+        this.$store.commit('SET_TRUENAME', sessionData)// 同步操作
+      }
+      return this.$store.getters.trueName
+    },
+    permissionSys() {
+      const sessionData = JSON.parse(sessionStorage.getItem('permission'))
+      if (this.$store.getters.permission.length === 0 && sessionData) {
+        this.$store.commit('SET_PERMISSION', sessionData)// 同步操作
+      }
+      return this.$store.getters.permission
+    }
   },
   mounted() {
     const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']

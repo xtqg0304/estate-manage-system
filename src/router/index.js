@@ -554,6 +554,17 @@ export const asyncRouterMap = [
     },
     children: [
       {
+        path: 'parkSetting',
+        component: () => import('@/views/vehicleManage/parkManage/parkSetting.vue'),
+        name: 'parkSetting',
+        meta: {
+          title: 'parkSetting',
+          icon: 'parkManage',
+          noCache: true,
+          roles: ['vehicle']
+        }
+      },
+      {
         path: 'parkInfo',
         component: () => import('@/views/vehicleManage/parkManage/parkInfo.vue'),
         name: 'parkInfo',
@@ -582,6 +593,17 @@ export const asyncRouterMap = [
         meta: {
           title: 'parkCashier',
           icon: 'parkCashier',
+          noCache: true,
+          roles: ['vehicle']
+        }
+      },
+      {
+        path: 'sentryboxInfo',
+        component: () => import('@/views/vehicleManage/parkManage/sentryboxInfo.vue'),
+        name: 'sentryboxInfo',
+        meta: {
+          title: 'sentryboxInfo',
+          icon: 'parkInfo',
           noCache: true,
           roles: ['vehicle']
         }
@@ -842,7 +864,7 @@ export const asyncRouterMap = [
     redirect: '/groupSetting/wechatManage/publicAccount.vue',
     meta: {
       title: 'wechatManage',
-      icon: 'wechatManage',
+      icon: 'publicAccount',
       roles: ['groupSetting']
     },
     children: [
@@ -852,6 +874,17 @@ export const asyncRouterMap = [
         name: 'publicAccount',
         meta: {
           title: 'publicAccount',
+          icon: 'publicAccount',
+          noCache: true,
+          roles: ['groupSetting']
+        }
+      },
+      {
+        path: 'smallProject',
+        component: () => import('@/views/groupSetting/wechatManage/smallProject.vue'),
+        name: 'smallProject',
+        meta: {
+          title: 'smallProject',
           icon: 'publicAccount',
           noCache: true,
           roles: ['groupSetting']

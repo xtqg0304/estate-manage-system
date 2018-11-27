@@ -49,7 +49,7 @@
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
           <img class="user-avatar">
           <span>
-            <svg-icon icon-class="user">&nbsp;</svg-icon>{{ userInfo.trueName }}
+            <svg-icon icon-class="user">&nbsp;</svg-icon>{{ trueName }}
           </span>
           <i class="el-icon-caret-bottom" />
         </div>
@@ -95,27 +95,60 @@ export default {
   },
   data() {
     return {
-      selectSysId: '',
-      selectCommunity: '',
-      showCommunity: true,
-      selectCommunityText: '',
-      permission: []
+      showCommunity: true
     }
   },
   computed: {
     ...mapGetters([
       'sidebar',
       'name',
-      'avatar',
-      'userInfo',
-      'permissionSys'
-    ])
+      'avatar'
+    ]),
+    trueName() {
+      const sessionData = sessionStorage.getItem('trueName')
+      if (this.$store.getters.trueName === '' && sessionData) {
+        this.$store.commit('SET_TRUENAME', sessionData)// 同步操作
+      }
+      return this.$store.getters.trueName
+    },
+    selectSysId() {
+      const sessionData = sessionStorage.getItem('subSystemId')
+      if (this.$store.getters.subSystemId === '' && sessionData) {
+        this.$store.commit('SET_SUBSYSTEMID', sessionData)// 同步操作
+      }
+      return this.$store.getters.subSystemId
+    },
+    selectCommunityText() {
+      const sessionData = sessionStorage.getItem('selectCommunityName')
+      if (this.$store.getters.selectCommunityName === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITYNAME', sessionData)// 同步操作
+      }
+      return this.$store.getters.selectCommunityName
+    },
+    selectCommunity() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.getters.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.getters.selectCommunity
+    },
+    permissionSys() {
+      const sessionData = JSON.parse(sessionStorage.getItem('permission'))
+      if (this.$store.getters.permission.length === 0 && sessionData) {
+        this.$store.commit('SET_PERMISSION', sessionData)// 同步操作
+      }
+      return this.$store.getters.permission
+    },
+    communityList() {
+      const sessionData = JSON.parse(sessionStorage.getItem('communityList'))
+      if (this.$store.getters.communityList.length === 0 && sessionData) {
+        this.$store.commit('SET_COMMUNITYLIST', sessionData)// 同步操作
+      }
+      return this.$store.getters.communityList
+    }
+
   },
   created() {
-    this.selectSysId = this.userInfo.subSystemId
-    this.selectCommunity = this.userInfo.selectCommunity
-    this.getCommunityText()
-    // this.handelResetPermission()
   },
   methods: {
     toggleSideBar() {
@@ -183,6 +216,7 @@ export default {
     },
     /** 退出登录 */
     logout() {
+      debugger
       this.$store.dispatch('LogOut').then(() => {
         this.$router.push({ path: '/login' })
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
@@ -201,9 +235,9 @@ export default {
     },
     /** 根据小区id 获取对应小区的名字 */
     getCommunityText() {
-      for (let i = 0; i < this.userInfo.communityList.length; i++) {
-        if (this.userInfo.communityList[i].id === this.selectCommunity) {
-          this.selectCommunityText = this.userInfo.communityList[i].name
+      for (let i = 0; i < this.communityList.length; i++) {
+        if (this.communityList[i].id === this.selectCommunity) {
+          this.selectCommunityText = this.communityList[i].name
           this.$store.commit('SET_SELECTCOMMUNITYNAME', this.selectCommunityText)
         }
       }

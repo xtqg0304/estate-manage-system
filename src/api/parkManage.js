@@ -50,3 +50,51 @@ export function getCarparkDetail(data) {
     data
   })
 }
+/* 车场信息列表 table*/
+export function fetchCommunityParkList(data) {
+  return request({
+    url: vehicleServer + '/communityParkInfo/getCommunityParkInfo',
+    method: 'post',
+    data
+  })
+}
+/* 车道信息列表 table*/
+export function fetchLaneList(data) {
+  return request({
+    url: vehicleServer + '/communityParkInfo/getCommunityRoadnfo',
+    method: 'post',
+    data
+  })
+}
+/* 岗亭信息列表 table*/
+export function fetchSentryboxList(data) {
+  return request({
+    url: vehicleServer + '/communityParkInfo/getCommunityPostnfo',
+    method: 'post',
+    data
+  })
+}
+/* 操作员信息列表 table*/
+export function fetchOperatorList(data) {
+  return request({
+    url: vehicleServer + '/communityParkInfo/getCommunityOperatorInfo',
+    method: 'post',
+    data
+  })
+}
+/* 包月会员信息列表 table*/
+export function fetchMonthlyMembersList(data) {
+  return request({
+    url: vehicleServer + '/communityParkInfo/getCommunityMemberWalletInfo',
+    method: 'post',
+    data
+  })
+}
+/* 包月套餐信息列表 table*/
+export function fetchMonthlyPackagesList(data) {
+  return request({
+    url: vehicleServer + '/communityParkInfo/getCommunityMemberInfo',
+    method: 'post',
+    data
+  })
+}

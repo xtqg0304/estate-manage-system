@@ -23,11 +23,18 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'permission_routers',
+      // 'permission_routers',
       'sidebar'
     ]),
     isCollapse() {
       return !this.sidebar.opened
+    },
+    permission_routers() {
+      const sessionData = JSON.parse(sessionStorage.getItem('addRouters'))
+      if (this.$store.getters.addRouters.length === 0 && sessionData) {
+        this.$store.commit('SET_ROUTERS', sessionData)// 同步操作
+      }
+      return this.$store.getters.permission_routers
     }
   },
 

@@ -24,3 +24,19 @@ export function deleteUser(data) {
     data
   })
 }
+/*  修改 用户密码 */
+export function modifyPwd(data) {
+  return request({
+    url: basicServer + '/user/changeUserPwd',
+    method: 'post',
+    data
+  })
+}
+/*  用户 绑定 小区 */
+export function userBindCommunity(data) {
+  return request({
+    url: basicServer + '/comm/link/userLink',
+    method: 'post',
+    data
+  })
+}

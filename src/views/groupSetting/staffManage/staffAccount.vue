@@ -69,9 +69,17 @@
       <el-table-column
         :label="$t('table.actions')"
         align="center"
-        width="230"
+        width="300"
         class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            type="success"
+            size="mini"
+            @click="handleBind(scope.row)">小区</el-button>
+          <el-button
+            type="success"
+            size="mini"
+            @click="handleUpdatePwd(scope.row)">改密码</el-button>
           <el-button
             type="primary"
             size="mini"
@@ -173,6 +181,81 @@
           @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogBindVisible">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;">
+        <el-form-item
+          label="用户ID"
+          prop="id">
+          <el-input v-model="temp.id" />
+        </el-form-item>
+        <el-form-item
+          label="绑定小区"
+          prop="communityIdList">
+          <el-select
+            v-model="temp.communityIdList"
+            class="filter-item"
+            placeholder="请选择小区"
+            multiple
+            style="width:100%" >
+            <el-option
+              v-for="item in communityOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer">
+        <el-button @click="dialogBindVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button
+          v-if="dialogStatus=='bind'"
+          type="primary"
+          @click="bindData">{{ $t('table.confirm') }}</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogPwdVisible">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;">
+        <el-form-item
+          label="旧密码"
+          prop="userPwd">
+          <el-input v-model="temp.userPwd" />
+        </el-form-item>
+        <el-form-item
+          label="新密码"
+          prop="userPwdNew">
+          <el-input v-model="temp.userPwdNew" />
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer">
+        <el-button @click="dialogPwdVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button
+          v-if="dialogStatus=='updatePwd'"
+          type="primary"
+          @click="updatePwdData">{{ $t('table.confirm') }}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -180,11 +263,16 @@
 import {
   fetchUserList,
   editUser,
-  deleteUser
+  deleteUser,
+  modifyPwd,
+  userBindCommunity
 } from '@/api/user'
 import {
   fetchRole
 } from '@/api/role'
+import {
+  fetchCommunity
+} from '@/api/communityManage'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
   name: 'ComplexTable',
@@ -223,10 +311,14 @@ export default {
         roleIds: []
       },
       dialogFormVisible: false,
+      dialogBindVisible: false,
+      dialogPwdVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
-        create: '新建'
+        create: '新建',
+        bind: '绑定小区',
+        updatePwd: '修改密码'
       },
       rules: {
         type: [
@@ -244,12 +336,14 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      roleList: []
+      roleList: [],
+      communityOptions: []
     }
   },
   created() {
     this.getList()
     this.getRoleList()
+    this.getCommunityList()
   },
   methods: {
     getRoleList() {
@@ -282,6 +376,27 @@ export default {
             this.list = response.data.data.qryUserData
             this.total = response.data.data.totalCount
             this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+    },
+    getCommunityList() {
+      fetchCommunity({}).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.communityOptions = response.data.data
           } else {
             this.$notify.error({
               title: '失败',
@@ -451,6 +566,106 @@ export default {
             title: '失败',
             message: response.data.msg,
             duration: 2000
+          })
+        }
+      })
+    },
+    handleBind(row) {
+      // 绑定事件
+      this.temp = Object.assign({}, row) // copy obj
+      this.dialogStatus = 'bind'
+      this.dialogBindVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    bindData() {
+      // 绑定 确认事件
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          userBindCommunity({ userId: tempData.id, communityIdList: tempData.communityIdList }).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogBindVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: response.data.msg,
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          })
+        }
+      })
+    },
+    handleUpdatePwd(row) {
+      // 绑定事件
+      this.temp = Object.assign({}, row) // copy obj
+      this.dialogStatus = 'updatePwd'
+      this.dialogPwdVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    updatePwdData() {
+      // 绑定 确认事件
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          modifyPwd({ userId: tempData.id, oldPwd: tempData.userPwd, newPwd: tempData.userPwdNew }).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogPwdVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: response.data.msg,
+                  type: 'success',
+                  duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: response.data.msg,
+                  duration: 2000
+                })
+              }
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
           })
         }
       })

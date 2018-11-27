@@ -52,6 +52,8 @@ const permission = {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+      sessionStorage.setItem('addRouters', JSON.stringify(routers))
+      sessionStorage.setItem('permission_routers', JSON.stringify(state.routers))
     },
     CLEAR_ROUTERS: state => {
       state.addRouters.length = 0
