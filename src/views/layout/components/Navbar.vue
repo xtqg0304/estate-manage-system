@@ -1,9 +1,7 @@
 <template>
   <el-menu class="navbar" mode="horizontal">
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container" />
-
     <breadcrumb class="breadcrumb-container" />
-
     <div class="right-menu">
       <error-log class="errLog-container right-menu-item" />
       <el-select v-model="selectSysId" style="float:left;" placeholder="请选择" @change="handelChange">
@@ -16,20 +14,25 @@
       <!-- <treeselect class="treeSelect" v-model="selectSysId" :multiple="false" :options="permission" placeholder="切换子系统"/> -->
       <el-select v-if="!showCommunity" v-model="selectCommunity" style="float:left;" placeholder="请选择" @change="handelChangeCommunity" >
         <el-option
-          v-for="item in userInfo.communityList"
+          v-for="item in communityList"
           :key="item.id"
           :label="item.name"
           :value="item.id"/>
       </el-select>
-
-      <el-dropdown v-if="showCommunity" class="avatar-container right-menu-item">
+      <!-- <el-dropdown v-if="showCommunity" class="avatar-container right-menu-item">
         <div class="avatar-wrapper">
           <span @click="handelShow">
             <svg-icon icon-class="mapLabel1">&nbsp;</svg-icon>{{ selectCommunityText }}
           </span>
         </div>
-      </el-dropdown>
-
+      </el-dropdown> -->
+      <div v-if="showCommunity" class="avatar-container right-menu-item" style="margin-left:30px;color:#606266;font-size:14px;">
+        <div class="avatar-wrapper">
+          <span @click="handelShow">
+            <svg-icon icon-class="mapLabel1">&nbsp;</svg-icon>{{ selectCommunityText }}
+          </span>
+        </div>
+      </div>
       <!-- <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
         <screenfull class="screenfull right-menu-item" />
       </el-tooltip> -->
@@ -77,10 +80,6 @@ import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
-// import the component
-import Treeselect from '@riophae/vue-treeselect'
-// import the styles
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
   components: {
@@ -90,8 +89,7 @@ export default {
     Screenfull,
     SizeSelect,
     LangSelect,
-    ThemePicker,
-    Treeselect
+    ThemePicker
   },
   data() {
     return {

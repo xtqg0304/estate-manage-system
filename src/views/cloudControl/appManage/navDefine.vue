@@ -4,57 +4,57 @@
       <el-col :span="8">
         <h5>菜单树</h5>
         <el-menu
+          :unique-opened="true"
           class="el-menu-demo"
           mode="vertical"
-          unique-opened="true"
           @open="handleOpen"
           @select="handleSelect">
           <!-- 一级菜单没有子菜单 -->
-          <el-menu-item v-for="child in navData" v-if="!child.children" :key="child.id" :index="child">
+          <el-menu-item v-for="child in navData" v-if="!child.children" :key="child.id" :index="JSON.stringify(child)">
             <i class="el-icon-menu"/>
             <span slot="title">{{ child.name }}</span>
           </el-menu-item>
           <!-- 一级菜单有子菜单 -->
-          <el-submenu v-for="child in navData" v-if="child.children" :key="child.id" :index="child">
+          <el-submenu v-for="child in navData" v-if="child.children" :key="child.id" :index="JSON.stringify(child)">
             <template slot="title">
               <i class="el-icon-location"/>
               <span>{{ child.name }}</span>
             </template>
             <!-- 二级菜单没有子菜单 -->
-            <el-menu-item v-for="child1 in child.children" v-if="!child1.children" :key="child1.id" :index="child1">
+            <el-menu-item v-for="child1 in child.children" v-if="!child1.children" :key="child1.id" :index="JSON.stringify(child1)">
               <i class="el-icon-menu"/>
               <span slot="title">{{ child1.name }}</span>
             </el-menu-item>
             <!-- 二级菜单有子菜单 -->
-            <el-submenu v-for="child1 in child.children" v-if="child1.children" :key="child1.id" :index="child1">
+            <el-submenu v-for="child1 in child.children" v-if="child1.children" :key="child1.id" :index="JSON.stringify(child1)">
               <template slot="title">
                 <i class="el-icon-location"/>
                 <span>{{ child1.name }}</span>
               </template>
               <!-- 三级菜单没有子菜单 -->
-              <el-menu-item v-for="child2 in child1.children" v-if="!child2.children" :key="child2.id" :index="child2">
+              <el-menu-item v-for="child2 in child1.children" v-if="!child2.children" :key="child2.id" :index="JSON.stringify(child2)">
                 <i class="el-icon-menu"/>
                 <span slot="title">{{ child2.name }}</span>
               </el-menu-item>
               <!-- 三级菜单有子菜单 -->
-              <el-submenu v-for="child2 in child1.children" v-if="child2.children" :key="child2.id" :index="child2">
+              <el-submenu v-for="child2 in child1.children" v-if="child2.children" :key="child2.id" :index="JSON.stringify(child2)">
                 <template slot="title">
                   <i class="el-icon-location"/>
                   <span>{{ child2.name }}</span>
                 </template>
                 <!-- 四级菜单没有子菜单 -->
-                <el-menu-item v-for="child3 in child2.children" v-if="!child3.children" :key="child3.id" :index="child3">
+                <el-menu-item v-for="child3 in child2.children" v-if="!child3.children" :key="child3.id" :index="JSON.stringify(child3)">
                   <i class="el-icon-menu"/>
                   <span slot="title">{{ child3.name }}</span>
                 </el-menu-item>
                 <!-- 四级菜单有子菜单 -->
-                <el-submenu v-for="child3 in child2.children" v-if="child3.children" :key="child3.id" :index="child3">
+                <el-submenu v-for="child3 in child2.children" v-if="child3.children" :key="child3.id" :index="JSON.stringify(child3)">
                   <template slot="title">
                     <i class="el-icon-location"/>
                     <span>{{ child3.name }}</span>
                   </template>
                   <!-- 五级菜单没有子菜单 -->
-                  <el-menu-item v-for="child4 in child3.children" v-if="!child4.children" :key="child4.id" :index="child4">
+                  <el-menu-item v-for="child4 in child3.children" v-if="!child4.children" :key="child4.id" :index="JSON.stringify(child4)">
                     <i class="el-icon-menu"/>
                     <span slot="title">{{ child4.name }}</span>
                   </el-menu-item>
@@ -496,7 +496,7 @@ export default {
     },
     handleSelect(key, keyPath) {
       this.listLoading = true
-      this.listQuery.parentId = key.id
+      this.listQuery.parentId = JSON.parse(key).id
       console.log(this.listQuery)
       fetchNavList(this.listQuery).then(response => {
         if (response.status === 200) {
@@ -524,9 +524,9 @@ export default {
         })
     },
     handleOpen(key, keyPath) {
-      console.log(key)
-      if (key.appResourceType === 'TYPE_APPLICATION') {
-        this.listQuery.appId = key.id
+      console.log(JSON.parse(key))
+      if (JSON.parse(key).appResourceType === 'TYPE_APPLICATION') {
+        this.listQuery.appId = JSON.parse(key).id
       }
     }
   }
