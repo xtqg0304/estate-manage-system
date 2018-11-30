@@ -5,9 +5,11 @@
         <h5>菜单树</h5>
         <el-menu
           :unique-opened="true"
+          :default-active="defaultActive"
           class="el-menu-demo"
           mode="vertical"
           @open="handleOpen"
+          @close="handleClose"
           @select="handleSelect">
           <!-- 一级菜单没有子菜单 -->
           <el-menu-item v-for="child in navData" v-if="!child.children" :key="child.id" :index="JSON.stringify(child)">
@@ -94,7 +96,7 @@
           highlight-current-row
           style="width: 100%;min-height:500px;">
           <el-table-column
-            label="区域编码"
+            label="ID"
             align="center"
             width="120">
             <template slot-scope="scope">
@@ -102,18 +104,26 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="区域名称"
-            width="120px">
+            label="导航名称"
+            align="center"
+            width="120">
             <template slot-scope="scope">
-              <span>{{ scope.row.servicename }}</span>
+              <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
           <el-table-column
-            label="区域描述"
+            label="图标"
+            width="120px">
+            <template slot-scope="scope">
+              <span>{{ scope.row.icon }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="链接地址/路由地址"
             min-width="150px"
             align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.remarks }}</span>
+              <span>{{ scope.row.link }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -154,28 +164,70 @@
             :rules="rules"
             :model="temp"
             label-position="left"
-            label-width="70px"
+            label-width="100px"
             style="width: 400px; margin-left:50px;">
             <el-form-item
-              label="上级区域"
-              prop="statusservice">
-              <el-cascader
-                :options="options"
-                v-model="temp.tempParentId"
-                expand-trigger="hover"/>
+              label="应用ID"
+              prop="appId">
+              <el-input v-model="temp.appId" disabled/>
             </el-form-item>
             <el-form-item
-              label="区域编码"
-              prop="code">
-              <el-input v-model="temp.code" />
+              label="父节点ID"
+              prop="parentId">
+              <el-input v-model="temp.parentId" disabled/>
             </el-form-item>
             <el-form-item
-              label="区域名称"
-              prop="name">
-              <el-input v-model="temp.name" />
+              label="名称"
+              prop="navName">
+              <el-input v-model="temp.navName" />
             </el-form-item>
-            <el-form-item label="区域描述">
-              <el-input v-model="temp.desription" type="textarea"/>
+            <el-form-item
+              label="优先级"
+              prop="priority">
+              <el-input v-model="temp.priority" />
+            </el-form-item>
+            <!--router start -->
+            <el-form-item
+              label="路由地址"
+              prop="linkPath">
+              <el-input v-model="temp.linkPath" />
+            </el-form-item>
+            <el-form-item
+              label="路由组件"
+              prop="linkComponent">
+              <el-input v-model="temp.linkComponent" />
+            </el-form-item>
+            <el-form-item
+              label="路由名称"
+              prop="linkName">
+              <el-input v-model="temp.linkName" />
+            </el-form-item>
+            <el-form-item
+              label="路由重定向"
+              prop="linkRedirect">
+              <el-input v-model="temp.linkRedirect" />
+            </el-form-item>
+            <el-form-item
+              label="路由标题"
+              prop="linkMetaTitle">
+              <el-input v-model="temp.linkMetaTitle" />
+            </el-form-item>
+            <el-form-item
+              label="路由图标"
+              prop="linkMetaIcon">
+              <el-input v-model="temp.linkMetaIcon" />
+            </el-form-item>
+            <!--router  end -->
+            <el-form-item
+              label="应用图标"
+              prop="icon">
+              <el-input v-model="temp.icon" />
+            </el-form-item>
+            <el-form-item label="是否可见">
+              <el-radio-group v-model="temp.status">
+                <el-radio label="ENABLED">是</el-radio>
+                <el-radio label="DISABLED">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-form>
           <div
@@ -256,12 +308,19 @@ export default {
       },
       temp: {
         id: '',
-        code: '',
         parentId: '',
-        tempParentId: [],
-        name: '',
-        desription: '',
-        priority: ''
+        navName: '',
+        appId: '',
+        priority: '',
+        link: '',
+        status: '',
+        icon: '',
+        linkPath: '',
+        linkComponent: '',
+        linkRedirect: '',
+        linkName: '',
+        linkMetaTitle: '',
+        linkMetaIcon: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -269,7 +328,34 @@ export default {
         update: '编辑',
         create: '新建'
       },
-      dialogPvVisible: false,
+      appGradeOptions: [
+        {
+          value: 'GRADE_PLATFORM',
+          label: '平台版'
+        },
+        {
+          value: 'GRADE_REGION',
+          label: '区域版'
+        },
+        {
+          value: 'GRADE_COMMUNITY',
+          label: '小区版'
+        },
+        {
+          value: 'GRADE_GROUP',
+          label: '集团版'
+        }
+      ],
+      appResourceTypeOptions: [
+        {
+          value: 'TYPE_GROUP',
+          label: '分组'
+        },
+        {
+          value: 'TYPE_APPLICATION',
+          label: '应用'
+        }
+      ],
       rules: {
         type: [
           { required: true, message: 'type is required', trigger: 'change' }
@@ -286,7 +372,6 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      downloadLoading: false,
       navData: [],
       defaultActive: ''
     }
@@ -303,7 +388,7 @@ export default {
           if (response.data.code === 200) {
             // this.navData = response.data.data
             this.navData = this.traverse(response.data.data)
-            this.defaultActive = this.navData[0].id
+            this.defaultActive = JSON.stringify(this.navData[0])
             this.options = this.traverse(response.data.data)
             this.listLoading = false
           } else {
@@ -361,17 +446,26 @@ export default {
       // 重新初始化新建对象的默认值
       this.temp = {
         id: '',
-        code: '',
         parentId: '',
-        tempParentId: [],
-        name: '',
-        desription: '',
-        priority: ''
+        navName: '',
+        appId: '',
+        priority: '',
+        link: '',
+        status: '',
+        icon: '',
+        linkPath: '',
+        linkComponent: '',
+        linkRedirect: '',
+        linkName: '',
+        linkMetaTitle: '',
+        linkMetaIcon: ''
       }
     },
     handleCreate() {
       // 新建一条信息
       this.resetTemp()
+      this.temp.parentId = this.listQuery.parentId
+      this.temp.appId = this.listQuery.appId
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -379,8 +473,16 @@ export default {
       })
     },
     createData() {
+      const tempLink = {
+        linkPath: this.temp.linkPath,
+        linkComponent: this.temp.linkComponent,
+        linkRedirect: this.temp.linkRedirect,
+        linkName: this.temp.linkName,
+        linkMetaTitle: this.temp.linkMetaTitle,
+        linkMetaIcon: this.temp.linkMetaIcon
+      }
+      this.temp.link = JSON.stringify(tempLink)
       console.log(this.temp)
-      this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
@@ -388,7 +490,18 @@ export default {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 // 新建成功后的回调
-                this.list.unshift(response.data.data)
+                const resData = response.data.data
+                const unshiftRow = {}
+                unshiftRow.id = resData.id
+                unshiftRow.parentId = resData.parentId
+                unshiftRow.name = resData.navName
+                unshiftRow.icon = resData.icon
+                unshiftRow.link = resData.link
+                unshiftRow.nodeType = ''
+                unshiftRow.appGrade = ''
+                unshiftRow.appResourceType = ''
+                unshiftRow.permission = resData.permission
+                this.list.unshift(unshiftRow)
                 this.dialogFormVisible = false
                 this.$notify({
                   title: '成功',
@@ -416,7 +529,32 @@ export default {
     },
     handleUpdate(row) {
       // 修改/编辑事件
-      this.temp = Object.assign({}, row) // copy obj
+      // this.temp = Object.assign({}, row)
+      // this.temp = Object.assign({}, {}) // copy obj
+      this.resetTemp()
+      this.temp.id = row.id
+      this.temp.parentId = row.parentId
+      this.temp.navName = row.name
+      this.temp.appId = this.listQuery.appId
+      this.temp.priority = ''
+      this.temp.link = row.link
+      if (row.link !== '') {
+        JSON.parse(row.link).linkPath && (this.temp.linkPath = JSON.parse(row.link).linkPath)
+        JSON.parse(row.link).linkComponent && (this.temp.linkComponent = JSON.parse(row.link).linkComponent)
+        JSON.parse(row.link).linkRedirect && (this.temp.linkRedirect = JSON.parse(row.link).linkRedirect)
+        JSON.parse(row.link).linkName && (this.temp.linkName = JSON.parse(row.link).linkName)
+        JSON.parse(row.link).linkMetaTitle && (this.temp.linkMetaTitle = JSON.parse(row.link).linkMetaTitle)
+        JSON.parse(row.link).linkMetaIcon && (this.temp.linkMetaIcon = JSON.parse(row.link).linkMetaIcon)
+      } else {
+        this.temp.linkPath = ''
+        this.temp.linkComponent = ''
+        this.temp.linkRedirect = ''
+        this.temp.linkName = ''
+        this.temp.linkMetaTitle = ''
+        this.temp.linkMetaIcon = ''
+      }
+      this.temp.status = ''
+      this.temp.icon = row.icon
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -425,25 +563,44 @@ export default {
     },
     updateData() {
       // 修改/编辑 确认事件
+      const tempLink = {
+        linkPath: this.temp.linkPath,
+        linkComponent: this.temp.linkComponent,
+        linkRedirect: this.temp.linkRedirect,
+        linkName: this.temp.linkName,
+        linkMetaTitle: this.temp.linkMetaTitle,
+        linkMetaIcon: this.temp.linkMetaIcon
+      }
+      this.temp.link = JSON.stringify(tempLink)
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
           const tempData = Object.assign({}, this.temp)
           editNav(tempData).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
+                const resData = response.data.data
                 for (const v of this.list) {
                   // 更新后的值插入原来数据的位置
                   if (v.id === this.temp.id) {
                     const index = this.list.indexOf(v)
-                    this.list.splice(index, 1, this.temp)
+                    const tempRow = {}
+                    tempRow.id = resData.id
+                    tempRow.parentId = resData.parentId
+                    tempRow.name = resData.navName
+                    tempRow.icon = resData.icon
+                    tempRow.link = resData.link
+                    tempRow.nodeType = ''
+                    tempRow.appGrade = ''
+                    tempRow.appResourceType = ''
+                    tempRow.permission = resData.permission
+                    this.list.splice(index, 1, tempRow)
                     break
                   }
                 }
                 this.dialogFormVisible = false
                 this.$notify({
                   title: '成功',
-                  message: '创建成功',
+                  message: response.data.msg,
                   type: 'success',
                   duration: 2000
                 })
@@ -496,7 +653,13 @@ export default {
     },
     handleSelect(key, keyPath) {
       this.listLoading = true
-      this.listQuery.parentId = JSON.parse(key).id
+      if (JSON.parse(key).appResourceType === 'TYPE_APPLICATION') {
+        this.listQuery.appId = JSON.parse(key).id
+        this.listQuery.parentId = '#'
+      } else {
+        this.listQuery.parentId = JSON.parse(key).id
+      }
+      // this.listQuery.parentId = JSON.parse(key).id
       console.log(this.listQuery)
       fetchNavList(this.listQuery).then(response => {
         if (response.status === 200) {
@@ -524,10 +687,77 @@ export default {
         })
     },
     handleOpen(key, keyPath) {
+      this.defaultActive = key
       console.log(JSON.parse(key))
       if (JSON.parse(key).appResourceType === 'TYPE_APPLICATION') {
         this.listQuery.appId = JSON.parse(key).id
+        this.listQuery.parentId = '#'
+      } else {
+        this.listQuery.parentId = JSON.parse(key).id
       }
+      this.listLoading = true
+      console.log(this.listQuery)
+      fetchNavList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryList
+            this.total = response.data.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    handleClose(key, keyPath) {
+      this.defaultActive = key
+      console.log(JSON.parse(key))
+      if (JSON.parse(key).appResourceType === 'TYPE_APPLICATION') {
+        this.listQuery.appId = JSON.parse(key).id
+        this.listQuery.parentId = '#'
+      } else {
+        this.listQuery.parentId = JSON.parse(key).id
+      }
+      this.listLoading = true
+      // this.listQuery.parentId = JSON.parse(key).id
+      console.log(this.listQuery)
+      fetchNavList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryList
+            this.total = response.data.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
     }
   }
 }

@@ -6,6 +6,8 @@
         <el-menu
           class="el-menu-demo"
           mode="vertical"
+          @open="handleOpen"
+          @close="handleClose"
           @select="handleSelect">
           <!-- 一级菜单没有子菜单 -->
           <el-menu-item v-for="child in appData" v-if="!child.children" :key="child.id" :index="child.id">
@@ -116,7 +118,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="连接地址"
+            label="链接地址/路由地址"
             min-width="150px"
             align="center">
             <template slot-scope="scope">
@@ -161,20 +163,63 @@
             :rules="rules"
             :model="temp"
             label-position="left"
-            label-width="70px"
+            label-width="100px"
             style="width: 400px; margin-left:50px;">
             <el-form-item
-              label="图标"
-              prop="icon">
-              <el-input v-model="temp.icon" />
+              label="父节点ID"
+              prop="parentId">
+              <el-input v-model="temp.parentId" disabled/>
             </el-form-item>
             <el-form-item
-              label="标题名称"
-              prop="name">
-              <el-input v-model="temp.name" />
+              label="应用等级"
+              prop="appGrade">
+              <el-select v-model="temp.appGrade" placeholder="请选择应用等级" style="width:100%">
+                <el-option
+                  v-for="item in appGradeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"/>
+              </el-select>
             </el-form-item>
-            <el-form-item label="连接地址">
-              <el-input v-model="temp.link" type="textarea"/>
+            <el-form-item label="资源类型">
+              <el-select v-model="temp.appResourceType" placeholder="请选择资源类型" style="width:100%">
+                <el-option
+                  v-for="item in appResourceTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              label="应用优先级"
+              prop="appPriority">
+              <el-input v-model="temp.appPriority" />
+            </el-form-item>
+            <el-form-item
+              label="应用编码"
+              prop="appCode">
+              <el-input v-model="temp.appCode" />
+            </el-form-item>
+            <el-form-item
+              label="应用名称"
+              prop="appName">
+              <el-input v-model="temp.appName" />
+            </el-form-item>
+            <el-form-item
+              label="应用图标"
+              prop="appIcon">
+              <el-input v-model="temp.appIcon" />
+            </el-form-item>
+            <el-form-item
+              label="连接地址"
+              prop="appLink">
+              <el-input v-model="temp.appLink" />
+            </el-form-item>
+            <el-form-item label="应用可见">
+              <el-radio-group v-model="temp.appStatus">
+                <el-radio label="ENABLED">是</el-radio>
+                <el-radio label="DISABLED">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-form>
           <div
@@ -213,34 +258,6 @@ export default {
   data() {
     return {
       options: [],
-      selectedOptions2: [],
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
       tableKey: 0,
       list: null,
       total: null,
@@ -255,13 +272,14 @@ export default {
       temp: {
         id: '',
         parentId: '',
-        name: '',
-        icon: '',
-        link: '',
-        nodeType: '',
         appGrade: '',
         appResourceType: '',
-        permission: ''
+        appPriority: '',
+        appCode: '',
+        appName: '',
+        appIcon: '',
+        appLink: '',
+        appStatus: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -269,7 +287,6 @@ export default {
         update: '编辑',
         create: '新建'
       },
-      dialogPvVisible: false,
       rules: {
         type: [
           { required: true, message: 'type is required', trigger: 'change' }
@@ -286,7 +303,34 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      downloadLoading: false,
+      appGradeOptions: [
+        {
+          value: 'GRADE_PLATFORM',
+          label: '平台版'
+        },
+        {
+          value: 'GRADE_REGION',
+          label: '区域版'
+        },
+        {
+          value: 'GRADE_COMMUNITY',
+          label: '小区版'
+        },
+        {
+          value: 'GRADE_GROUP',
+          label: '集团版'
+        }
+      ],
+      appResourceTypeOptions: [
+        {
+          value: 'TYPE_GROUP',
+          label: '分组'
+        },
+        {
+          value: 'TYPE_APPLICATION',
+          label: '应用'
+        }
+      ],
       appData: [],
       defaultActive: ''
     }
@@ -369,17 +413,17 @@ export default {
     handleFilter() {
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
-      this.listQuery.limit = val
+      this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
-      this.listQuery.page = val
+      this.listQuery.currentPage = val
       this.getList()
     },
     resetTemp() {
@@ -387,18 +431,20 @@ export default {
       this.temp = {
         id: '',
         parentId: '',
-        name: '',
-        icon: '',
-        link: '',
-        nodeType: '',
         appGrade: '',
         appResourceType: '',
-        permission: ''
+        appPriority: '',
+        appCode: '',
+        appName: '',
+        appIcon: '',
+        appLink: '',
+        appStatus: ''
       }
     },
     handleCreate() {
       // 新建一条信息
       this.resetTemp()
+      this.temp.parentId = this.listQuery.parentId
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -407,7 +453,6 @@ export default {
     },
     createData() {
       console.log(this.temp)
-      this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
@@ -415,7 +460,17 @@ export default {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 // 新建成功后的回调
-                this.list.unshift(response.data.data)
+                const unshiftData = {}
+                unshiftData.id = response.data.data.id
+                unshiftData.parentId = response.data.data.parentId
+                unshiftData.name = response.data.data.appName
+                unshiftData.icon = response.data.data.appIcon
+                unshiftData.link = response.data.data.appLink
+                unshiftData.nodeType = ''
+                unshiftData.appGrade = response.data.data.appGrade
+                unshiftData.appResourceType = response.data.data.appResourceType
+                unshiftData.permission = ''
+                this.list.unshift(unshiftData)
                 this.dialogFormVisible = false
                 this.$notify({
                   title: '成功',
@@ -443,7 +498,19 @@ export default {
     },
     handleUpdate(row) {
       // 修改/编辑事件
-      this.temp = Object.assign({}, row) // copy obj
+      // this.temp = Object.assign({}, row) // copy obj
+      this.temp = Object.assign({}, {}) // copy obj
+      // this.resetTemp()
+      this.temp.id = row.id
+      this.temp.parentId = row.parentId
+      this.temp.appGrade = row.appGrade
+      this.temp.appResourceType = row.appResourceType
+      this.temp.appPriority = ''
+      this.temp.appCode = ''
+      this.temp.appName = row.name
+      this.temp.appIcon = row.icon
+      this.temp.appLink = row.link
+      this.temp.appStatus = ''
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -454,7 +521,6 @@ export default {
       // 修改/编辑 确认事件
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
           const tempData = Object.assign({}, this.temp)
           editApp(tempData).then((response) => {
             if (response.status === 200) {
@@ -463,7 +529,17 @@ export default {
                   // 更新后的值插入原来数据的位置
                   if (v.id === this.temp.id) {
                     const index = this.list.indexOf(v)
-                    this.list.splice(index, 1, this.temp)
+                    const insertData = {}
+                    insertData.id = response.data.data.id
+                    insertData.parentId = response.data.data.parentId
+                    insertData.name = response.data.data.appName
+                    insertData.icon = response.data.data.appIcon
+                    insertData.link = response.data.data.appLink
+                    insertData.nodeType = ''
+                    insertData.appGrade = response.data.data.appGrade
+                    insertData.appResourceType = response.data.data.appResourceType
+                    insertData.permission = ''
+                    this.list.splice(index, 1, insertData)
                     break
                   }
                 }
@@ -527,8 +603,64 @@ export default {
       fetchAppList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            this.list = response.data.data
-            this.total = response.data.data.length
+            this.list = response.data.data.qryList
+            this.total = response.data.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    handleOpen(key, keyPath) {
+      this.listLoading = true
+      this.listQuery.parentId = key
+      fetchAppList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryList
+            this.total = response.data.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    handleClose(key, keyPath) {
+      this.listLoading = true
+      this.listQuery.parentId = key
+      fetchAppList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryList
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({

@@ -187,7 +187,7 @@ import {
   deleteRole,
   editRole,
   setRolePermission,
-  getRoleAppPermList
+  getRoleAllPermList
 } from '@/api/role'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
@@ -490,7 +490,7 @@ export default {
     handleRoleAuth(row) {
       if (row.id !== undefined) {
         this.temp = Object.assign({}, row) // copy obj
-        getRoleAppPermList({ id: this.temp.id }).then((response) => {
+        getRoleAllPermList({ id: this.temp.id }).then((response) => {
           if (response.status === 200) {
             if (response.data.code === 200) {
               this.temp.permissionList = response.data.data
@@ -520,6 +520,9 @@ export default {
             })
           }
         })
+      } else {
+        this.resetTemp()
+        this.$refs.tree.setCheckedKeys([])
       }
       this.dialogStatus = 'update'
       this.dialogAuthVisible = true
@@ -530,7 +533,9 @@ export default {
     updateRoleAuthData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.permissionList = this.$refs.tree.getCheckedNodes()
+          this.temp.permissionList = this.$refs.tree.getCheckedNodes(false, false)
+          console.log('this.temp.permissionList')
+          console.log(JSON.stringify(this.temp.permissionList))
           const tempData = Object.assign({}, this.temp)
           setRolePermission({ roleId: tempData.id, permList: tempData.permissionList }).then((response) => {
             if (response.status === 200) {
@@ -570,7 +575,7 @@ export default {
     handleSelectChange(roleId) {
       console.log(roleId)
       this.temp.id = roleId
-      getRoleAppPermList({ id: roleId }).then((response) => {
+      getRoleAllPermList({ id: roleId }).then((response) => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.temp.permissionList = response.data.data

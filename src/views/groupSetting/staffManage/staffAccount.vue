@@ -125,6 +125,11 @@
           prop="userName">
           <el-input v-model="temp.userName" />
         </el-form-item>
+        <!-- <el-form-item
+          label="密码"
+          prop="userPwd">
+          <el-input v-model="temp.userPwd" />
+        </el-form-item> -->
         <el-form-item
           label="真实姓名"
           prop="trueName">
@@ -456,7 +461,7 @@ export default {
     },
     createData() {
       console.log(this.temp)
-      this.temp.userPwd = '000000'
+      // this.temp.userPwd = '000000'
       debugger
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
@@ -494,6 +499,9 @@ export default {
     handleUpdate(row) {
       // 修改/编辑事件
       this.temp = Object.assign({}, row) // copy obj
+      if (!this.temp.roleIds) {
+        this.temp.roleIds = []
+      }
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {

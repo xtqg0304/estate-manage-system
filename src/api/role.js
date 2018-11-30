@@ -56,3 +56,20 @@ export function getRoleAppPermList(data) {
     data
   })
 }
+/* 获取角色拥有的菜单权限列表 */
+export function getRoleNavPermList(data) {
+  return request({
+    url: basicServer + '/app/getRoleNavPermList',
+    method: 'post',
+    data
+  })
+}
+
+/* 获取角色拥有的全部权限列表 */
+export function getRoleAllPermList(data) {
+  return request({
+    url: basicServer + '/app/getRoleAllPermList',
+    method: 'post',
+    data
+  })
+}

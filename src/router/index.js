@@ -97,11 +97,73 @@ export default new Router({
   routes: constantRouterMap
 })
 
+export const map = {
+  laoutComponet: Layout,
+  appSet: () => import('@/views/cloudControl/appManage/appSet.vue'),
+  navDefine: () => import('@/views/cloudControl/appManage/navDefine.vue'),
+  noticeIndex: () => import('@/views/estateManage/notice/index'),
+  repairIndex: () => import('@/views/estateManage/repair/index'),
+  adviseIndex: () => import('@/views/estateManage/advise/index'),
+  phoneIndex: () => import('@/views/estateManage/phone/index'),
+  news: () => import('@/views/estateManage/news/news.vue'),
+  partyBuilding: () => import('@/views/estateManage/news/partyBuilding.vue'),
+  commonSense: () => import('@/views/estateManage/news/commonSense.vue'),
+  localNews: () => import('@/views/estateManage/news/localNews.vue'),
+  rollPicture: () => import('@/views/estateManage/news/rollPicture.vue'),
+  bill: () => import('@/views/payManage/estatePay/bill.vue'),
+  record: () => import('@/views/payManage/estatePay/record.vue'),
+  detail: () => import('@/views/payManage/estatePay/detail.vue'),
+  monthlybill: () => import('@/views/payManage/vehiclePay/monthlybill.vue'),
+  monthlymoney: () => import('@/views/payManage/vehiclePay/monthlymoney.vue'),
+  deviceManage: () => import('@/views/doorManage/deviceManage/deviceManage.vue'),
+  openLog: () => import('@/views/doorManage/deviceManage/openLog.vue'),
+  keyManage: () => import('@/views/doorManage/keyManage/keyManage.vue'),
+  presentVehicle: () => import('@/views/vehicleManage/realtimeInOut/presentVehicle.vue'),
+  vehicleInOut: () => import('@/views/vehicleManage/realtimeInOut/vehicleInOut.vue'),
+  abnormalLiftrod: () => import('@/views/vehicleManage/realtimeInOut/abnormalLiftrod.vue'),
+  monthlyPayment: () => import('@/views/vehicleManage/payRecord/monthlyPayment.vue'),
+  tempstopPayment: () => import('@/views/vehicleManage/payRecord/tempstopPayment.vue'),
+  parkPayDaily: () => import('@/views/vehicleManage/statisticalAnalysis/parkPayDaily.vue'),
+  parkPayMonthly: () => import('@/views/vehicleManage/statisticalAnalysis/parkPayMonthly.vue'),
+  sentryboxPayDaily: () => import('@/views/vehicleManage/statisticalAnalysis/sentryboxPayDaily.vue'),
+  parkSetting: () => import('@/views/vehicleManage/parkManage/parkSetting.vue'),
+  parkInfo: () => import('@/views/vehicleManage/parkManage/parkInfo.vue'),
+  laneSetting: () => import('@/views/vehicleManage/parkManage/laneSetting.vue'),
+  parkCashier: () => import('@/views/vehicleManage/parkManage/parkCashier.vue'),
+  sentryboxInfo: () => import('@/views/vehicleManage/parkManage/sentryboxInfo.vue'),
+  monthlyMembers: () => import('@/views/vehicleManage/parkManage/monthlyMembers.vue'),
+  monthlyPackages: () => import('@/views/vehicleManage/parkManage/monthlyPackages.vue'),
+  shiftRecord: () => import('@/views/vehicleManage/logQuery/shiftRecord.vue'),
+  abnormalAlarm: () => import('@/views/vehicleManage/logQuery/abnormalAlarm.vue'),
+  estatePaymentBill: () => import('@/views/statisticalReportManage/estatePayment/estatePaymentBill.vue'),
+  estatePaymentOrder: () => import('@/views/statisticalReportManage/estatePayment/estatePaymentOrder.vue'),
+  parkPaymentBill: () => import('@/views/statisticalReportManage/parkPayment/parkPaymentBill.vue'),
+  parkPaymentOrder: () => import('@/views/statisticalReportManage/parkPayment/parkPaymentOrder.vue'),
+  estatePaymentMonthly: () => import('@/views/statisticalReportManage/paymentStatistical/estatePaymentMonthly.vue'),
+  parkPaymentDaily: () => import('@/views/statisticalReportManage/paymentStatistical/parkPaymentDaily.vue'),
+  parkPaymentMonthly: () => import('@/views/statisticalReportManage/paymentStatistical/parkPaymentMonthly.vue'),
+  groupDetail: () => import('@/views/groupSetting/groupManage/groupDetail.vue'),
+  areaSetting: () => import('@/views/groupSetting/groupManage/areaSetting.vue'),
+  communitySetting: () => import('@/views/groupSetting/groupManage/communitySetting.vue'),
+  positionRole: () => import('@/views/groupSetting/staffManage/positionRole.vue'),
+  staffAccount: () => import('@/views/groupSetting/staffManage/staffAccount.vue'),
+  publicAccount: () => import('@/views/groupSetting/wechatManage/publicAccount.vue'),
+  smallProject: () => import('@/views/groupSetting/wechatManage/smallProject.vue'),
+  sendRecord: () => import('@/views/groupSetting/shortMessageManage/sendRecord.vue'),
+  useStatistical: () => import('@/views/groupSetting/shortMessageManage/useStatistical.vue'),
+  propertyInfo: () => import('@/views/communitySetting/communityManage/propertyInfo.vue'),
+  propertyImport: () => import('@/views/communitySetting/communityManage/propertyImport.vue'),
+  householdInfo: () => import('@/views/communitySetting/communityManage/householdInfo.vue'),
+  householdImport: () => import('@/views/communitySetting/communityManage/householdImport.vue')
+
+}
+
 export const asyncRouterMap = [
   {
     path: '/cloudControl/appManage',
     component: Layout,
     redirect: '/cloudControl/appManage/appSet.vue',
+    name: 'appManage',
     meta: {
       title: 'appManage',
       icon: 'guide',
@@ -136,6 +198,7 @@ export const asyncRouterMap = [
     path: '/estateManage/notice',
     component: Layout,
     redirect: '/estateManage/notice/index',
+    name: 'noticeManage',
     meta: {
       roles: ['admin', 'estate', 'editor']
     },
@@ -157,6 +220,7 @@ export const asyncRouterMap = [
     path: '/estateManage/repair',
     component: Layout,
     redirect: '/estateManage/repair/index',
+    name: 'repairManage',
     meta: {
       roles: ['admin', 'estate', 'editor']
     },
@@ -178,6 +242,7 @@ export const asyncRouterMap = [
     path: '/estateManage/advise',
     component: Layout,
     redirect: '/estateManage/advise/index',
+    name: 'adviseManage',
     meta: {
       roles: ['admin', 'estate', 'editor']
     },
@@ -199,6 +264,7 @@ export const asyncRouterMap = [
     path: '/estateManage/phone',
     component: Layout,
     redirect: '/estateManage/phone/index',
+    name: 'phoneManage',
     meta: {
       roles: ['admin', 'estate', 'editor']
     },
@@ -220,6 +286,7 @@ export const asyncRouterMap = [
     path: '/estateManage/newsManage',
     component: Layout,
     redirect: '/estateManage/news/news.vue',
+    name: 'newsManage',
     meta: {
       title: 'newsManage',
       icon: 'news',
@@ -287,6 +354,7 @@ export const asyncRouterMap = [
     path: '/payManage/estatePay',
     component: Layout,
     redirect: '/payManage/estatePay/bill.vue',
+    name: 'estatePay',
     meta: {
       title: 'estatePay',
       icon: 'estatePay',
@@ -332,6 +400,7 @@ export const asyncRouterMap = [
     path: '/payManage/vehiclePay',
     component: Layout,
     redirect: '/payManage/vehiclePay/monthlybill.vue',
+    name: 'vehiclePay',
     meta: {
       title: 'vehiclePay',
       icon: 'vehiclePay1',
@@ -366,6 +435,7 @@ export const asyncRouterMap = [
     path: '/doorManage/deviceManage',
     component: Layout,
     redirect: '/doorManage/deviceManage/deviceManage.vue',
+    name: 'DeviceManage',
     meta: {
       title: 'deviceManage',
       icon: 'deviceManage',
@@ -400,6 +470,7 @@ export const asyncRouterMap = [
     path: '/doorManage/keyManage',
     component: Layout,
     redirect: '/doorManage/keyManage/keyManage.vue',
+    name: 'KeyManage',
     meta: {
       title: 'keyManage',
       icon: 'keyManage',
@@ -423,6 +494,7 @@ export const asyncRouterMap = [
     path: '/vehicleManage/realtimeInOut',
     component: Layout,
     redirect: '/vehicleManage/realtimeInOut/presentVehicle.vue',
+    name: 'realtimeInOut',
     meta: {
       title: 'realtimeInOut',
       icon: 'realtimeInOut',
@@ -468,6 +540,7 @@ export const asyncRouterMap = [
     path: '/vehicleManage/payRecord',
     component: Layout,
     redirect: '/vehicleManage/payRecord/monthlyPayment.vue',
+    name: 'payRecord',
     meta: {
       title: 'payRecord',
       icon: 'payrecord',
@@ -502,6 +575,7 @@ export const asyncRouterMap = [
     path: '/vehicleManage/statisticalAnalysis',
     component: Layout,
     redirect: '/vehicleManage/statisticalAnalysis/parkPayDaily.vue',
+    name: 'statisticalAnalysis',
     meta: {
       title: 'statisticalAnalysis',
       icon: 'statisticalAnalysis',
@@ -547,6 +621,7 @@ export const asyncRouterMap = [
     path: '/vehicleManage/parkManage',
     component: Layout,
     redirect: '/vehicleManage/parkManage/parkInfo.vue',
+    name: 'parkManage',
     meta: {
       title: 'parkManage',
       icon: 'parkManage',
@@ -636,6 +711,7 @@ export const asyncRouterMap = [
     path: '/vehicleManage/logQuery',
     component: Layout,
     redirect: '/vehicleManage/logQuery/shiftRecord.vue',
+    name: 'logQuery',
     meta: {
       title: 'logQuery',
       icon: 'openLog',
@@ -670,6 +746,7 @@ export const asyncRouterMap = [
     path: '/statisticalReportManage/estatePayment',
     component: Layout,
     redirect: '/statisticalReportManage/estatePayment/estatePaymentBill.vue',
+    name: 'estatePayment',
     meta: {
       title: 'estatePayment',
       icon: 'estatePay',
@@ -704,6 +781,7 @@ export const asyncRouterMap = [
     path: '/statisticalReportManage/parkPayment',
     component: Layout,
     redirect: '/statisticalReportManage/parkPayment/parkPaymentBill.vue',
+    name: 'parkPayment',
     meta: {
       title: 'parkPayment',
       icon: 'vehiclePay1',
@@ -738,6 +816,7 @@ export const asyncRouterMap = [
     path: '/statisticalReportManage/paymentStatistical',
     component: Layout,
     redirect: '/statisticalReportManage/paymentStatistical/estatePaymentMonthly.vue',
+    name: 'paymentStatistical',
     meta: {
       title: 'paymentStatistical',
       icon: 'statisticalAnalysis',
@@ -783,6 +862,7 @@ export const asyncRouterMap = [
     path: '/groupSetting/groupManage',
     component: Layout,
     redirect: '/groupSetting/groupManage/groupDetail.vue',
+    name: 'groupManage',
     meta: {
       title: 'groupManage',
       icon: 'groupManage',
@@ -828,6 +908,7 @@ export const asyncRouterMap = [
     path: '/groupSetting/staffManage',
     component: Layout,
     redirect: '/groupSetting/staffManage/positionRole.vue',
+    name: 'staffManage',
     meta: {
       title: 'staffManage',
       icon: 'staffManage',
@@ -862,6 +943,7 @@ export const asyncRouterMap = [
     path: '/groupSetting/wechatManage',
     component: Layout,
     redirect: '/groupSetting/wechatManage/publicAccount.vue',
+    name: 'wechatManage',
     meta: {
       title: 'wechatManage',
       icon: 'publicAccount',
@@ -892,44 +974,46 @@ export const asyncRouterMap = [
       }
     ]
   },
-  {
-    path: '/groupSetting/shortMessageManage',
-    component: Layout,
-    redirect: '/groupSetting/shortMessageManage/sendRecord.vue',
-    meta: {
-      title: 'shortMessageManage',
-      icon: 'shortMessageManage',
-      roles: ['groupSetting']
-    },
-    children: [
-      {
-        path: 'sendRecord',
-        component: () => import('@/views/groupSetting/shortMessageManage/sendRecord.vue'),
-        name: 'sendRecord',
-        meta: {
-          title: 'sendRecord',
-          icon: 'sendRecord',
-          noCache: true,
-          roles: ['groupSetting']
-        }
-      },
-      {
-        path: 'useStatistical',
-        component: () => import('@/views/groupSetting/shortMessageManage/useStatistical.vue'),
-        name: 'useStatistical',
-        meta: {
-          title: 'useStatistical',
-          icon: 'useStatistical',
-          noCache: true,
-          roles: ['groupSetting']
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/groupSetting/shortMessageManage',
+  //   component: Layout,
+  //   redirect: '/groupSetting/shortMessageManage/sendRecord.vue',
+  //   name: 'shortMessageManage',
+  //   meta: {
+  //     title: 'shortMessageManage',
+  //     icon: 'shortMessageManage',
+  //     roles: ['groupSetting']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'sendRecord',
+  //       component: () => import('@/views/groupSetting/shortMessageManage/sendRecord.vue'),
+  //       name: 'sendRecord',
+  //       meta: {
+  //         title: 'sendRecord',
+  //         icon: 'sendRecord',
+  //         noCache: true,
+  //         roles: ['groupSetting']
+  //       }
+  //     },
+  //     {
+  //       path: 'useStatistical',
+  //       component: () => import('@/views/groupSetting/shortMessageManage/useStatistical.vue'),
+  //       name: 'useStatistical',
+  //       meta: {
+  //         title: 'useStatistical',
+  //         icon: 'useStatistical',
+  //         noCache: true,
+  //         roles: ['groupSetting']
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/communitySetting/communityManage',
     component: Layout,
     redirect: '/communitySetting/communityManage/propertyInfo.vue',
+    name: 'communityManage',
     meta: {
       title: 'communityManage',
       icon: 'communitySetting',
@@ -982,73 +1066,74 @@ export const asyncRouterMap = [
       }
     ]
   },
-  {
-    path: '/communitySetting/staffManage',
-    component: Layout,
-    redirect: '/communitySetting/staffManage/positionRole.vue',
-    meta: {
-      title: 'staffManage',
-      icon: 'staffManage',
-      roles: ['communitySetting']
-    },
-    children: [
-      {
-        path: 'positionRole',
-        component: () => import('@/views/communitySetting/staffManage/positionRole.vue'),
-        name: 'positionRole',
-        meta: {
-          title: 'positionRole',
-          icon: 'positionRole',
-          noCache: true,
-          roles: ['communitySetting']
-        }
-      },
-      {
-        path: 'staffAccount',
-        component: () => import('@/views/communitySetting/staffManage/staffAccount.vue'),
-        name: 'staffAccount',
-        meta: {
-          title: 'staffAccount',
-          icon: 'staffAccount',
-          noCache: true,
-          roles: ['communitySetting']
-        }
-      }
-    ]
-  },
-  {
-    path: '/communitySetting/shortMessageManage',
-    component: Layout,
-    redirect: '/communitySetting/shortMessageManage/sendRecord.vue',
-    meta: {
-      title: 'shortMessageManage',
-      icon: 'shortMessageManage',
-      roles: ['communitySetting']
-    },
-    children: [
-      {
-        path: 'sendRecord',
-        component: () => import('@/views/communitySetting/shortMessageManage/sendRecord.vue'),
-        name: 'sendRecord',
-        meta: {
-          title: 'sendRecord',
-          icon: 'sendRecord',
-          noCache: true,
-          roles: ['communitySetting']
-        }
-      },
-      {
-        path: 'useStatistical',
-        component: () => import('@/views/communitySetting/shortMessageManage/useStatistical.vue'),
-        name: 'useStatistical',
-        meta: {
-          title: 'useStatistical',
-          icon: 'useStatistical',
-          noCache: true,
-          roles: ['communitySetting']
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/communitySetting/staffManage',
+  //   component: Layout,
+  //   redirect: '/communitySetting/staffManage/positionRole.vue',
+  //   meta: {
+  //     title: 'staffManage',
+  //     icon: 'staffManage',
+  //     roles: ['communitySetting']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'positionRole',
+  //       component: () => import('@/views/communitySetting/staffManage/positionRole.vue'),
+  //       name: 'positionRole',
+  //       meta: {
+  //         title: 'positionRole',
+  //         icon: 'positionRole',
+  //         noCache: true,
+  //         roles: ['communitySetting']
+  //       }
+  //     },
+  //     {
+  //       path: 'staffAccount',
+  //       component: () => import('@/views/communitySetting/staffManage/staffAccount.vue'),
+  //       name: 'staffAccount',
+  //       meta: {
+  //         title: 'staffAccount',
+  //         icon: 'staffAccount',
+  //         noCache: true,
+  //         roles: ['communitySetting']
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/communitySetting/shortMessageManage',
+  //   component: Layout,
+  //   redirect: '/communitySetting/shortMessageManage/sendRecord.vue',
+  //   name: 'shortMessageManage',
+  //   meta: {
+  //     title: 'shortMessageManage',
+  //     icon: 'shortMessageManage',
+  //     roles: ['communitySetting']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'sendRecord',
+  //       component: () => import('@/views/communitySetting/shortMessageManage/sendRecord.vue'),
+  //       name: 'sendRecord',
+  //       meta: {
+  //         title: 'sendRecord',
+  //         icon: 'sendRecord',
+  //         noCache: true,
+  //         roles: ['communitySetting']
+  //       }
+  //     },
+  //     {
+  //       path: 'useStatistical',
+  //       component: () => import('@/views/communitySetting/shortMessageManage/useStatistical.vue'),
+  //       name: 'useStatistical',
+  //       meta: {
+  //         title: 'useStatistical',
+  //         icon: 'useStatistical',
+  //         noCache: true,
+  //         roles: ['communitySetting']
+  //       }
+  //     }
+  //   ]
+  // },
   { path: '*', redirect: '/404', hidden: true }
 ]

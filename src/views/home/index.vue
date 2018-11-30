@@ -758,6 +758,7 @@ export default {
   //   next()
   // },
   beforeRouteLeave(to, from, next) {
+    debugger
     this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)
     this.$store.dispatch('GenerateRoutes', to.params.systemName).then(() => {
       this.$router.addRoutes(this.$store.getters.addRouters) // 动态添加可访问路由表

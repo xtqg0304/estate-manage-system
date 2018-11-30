@@ -1,5 +1,5 @@
 import { generateRoutes } from '@/api/login'
-import { asyncRouterMap, constantRouterMap } from '@/router'
+import { asyncRouterMap, constantRouterMap, map } from '@/router'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -78,11 +78,35 @@ const permission = {
         const appId = data
         generateRoutes(appId)
           .then(response => {
-            console.log('routes response')
-            console.log(response)
-            // const data = response.data.data
-            // debugger
+            const data = response.data.data
+            debugger
+            const resAddRouters = []
+            for (let i = 0; i < data.length; i++) {
+              const tempRouter = {}
+              tempRouter.path = JSON.parse(data[i].link).linkPath
+              tempRouter.component = map[JSON.parse(data[i].link).linkComponent]
+              tempRouter.redirect = JSON.parse(data[i].link).linkRedirect
+              tempRouter.name = JSON.parse(data[i].link).linkName
+              tempRouter.meta = {}
+              tempRouter.meta.title = JSON.parse(data[i].link).linkMetaTitle
+              tempRouter.meta.icon = JSON.parse(data[i].link).linkMetaIcon
+              tempRouter.children = []
+              for (let j = 0; j < data[i].children.length; j++) {
+                const tempSecondRouter = {}
+                tempSecondRouter.path = JSON.parse(data[i].children[j].link).linkPath
+                tempSecondRouter.component = map[JSON.parse(data[i].children[j].link).linkComponent]
+                tempSecondRouter.redirect = JSON.parse(data[i].children[j].link).linkRedirect
+                tempSecondRouter.name = JSON.parse(data[i].children[j].link).linkName
+                tempSecondRouter.meta = {}
+                tempSecondRouter.meta.title = JSON.parse(data[i].children[j].link).linkMetaTitle
+                tempSecondRouter.meta.icon = JSON.parse(data[i].children[j].link).linkMetaIcon
+                tempRouter.children.push(tempSecondRouter)
+              }
+              resAddRouters.push(tempRouter)
+            }
+            resAddRouters.push({ path: '*', redirect: '/404', hidden: true })
             commit('SET_ROUTERS', asyncRouterMap) // 设置vuex 路由表
+            // commit('SET_ROUTERS', resAddRouters) // 设置vuex 路由表
             resolve()
           })
           .catch(error => {
