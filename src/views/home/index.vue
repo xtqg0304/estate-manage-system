@@ -19,7 +19,7 @@
               <li id="sec"> {{ secT }}</li>
             </ul>
           </div>
-          <div class="user-avator">
+          <!-- <div class="user-avator">
             <svg-icon icon-class="user" />
           </div>
           <el-dropdown
@@ -36,7 +36,7 @@
                   @click="logout">{{ $t('navbar.logOut') }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
-          </el-dropdown>
+          </el-dropdown> -->
         </div>
       </div>
       <div class=" container clearfix">
@@ -758,12 +758,13 @@ export default {
   //   next()
   // },
   beforeRouteLeave(to, from, next) {
-    debugger
     this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)
     this.$store.dispatch('GenerateRoutes', to.params.systemName).then(() => {
       this.$router.addRoutes(this.$store.getters.addRouters) // 动态添加可访问路由表
       next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
     })
+    this.$store.dispatch('delAllVisitedViews') // 清空tagview的已访问过的连接
+    this.$store.dispatch('delAllCachedViews') // 清空tagview的已访问过的缓存连接
     next()
   },
   created() {
@@ -793,7 +794,7 @@ export default {
     logout() {
       this.$store.dispatch('LogOut').then(() => {
         this.$router.push({ path: '/login' })
-        location.reload()// In order to re-instantiate the vue-router object to avoid bugs
+        // location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
     }
   }

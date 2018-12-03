@@ -1,5 +1,5 @@
 import { generateRoutes } from '@/api/login'
-import { asyncRouterMap, constantRouterMap, map } from '@/router'
+import { constantRouterMap, map } from '@/router'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -79,7 +79,6 @@ const permission = {
         generateRoutes(appId)
           .then(response => {
             const data = response.data.data
-            debugger
             const resAddRouters = []
             for (let i = 0; i < data.length; i++) {
               const tempRouter = {}
@@ -105,8 +104,8 @@ const permission = {
               resAddRouters.push(tempRouter)
             }
             resAddRouters.push({ path: '*', redirect: '/404', hidden: true })
-            commit('SET_ROUTERS', asyncRouterMap) // 设置vuex 路由表
-            // commit('SET_ROUTERS', resAddRouters) // 设置vuex 路由表
+            // commit('SET_ROUTERS', asyncRouterMap) // 设置vuex 路由表
+            commit('SET_ROUTERS', resAddRouters) // 设置vuex 路由表
             resolve()
           })
           .catch(error => {

@@ -10,23 +10,20 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/basicServer': {
+      // '/basicServer': {
+      //   // target: 'http://10.18.72.29:8401',
+      //   // pathRewrite: { '^/basicServer': '' },
+      //   target: 'http://47.94.202.102:8500',
+      //   pathRewrite: { '^/basicServer': '/basicServer' },
+      //   changeOrigin: true
+      // },
+      '/api': {
         // target: 'http://10.18.72.29:8401',
         // pathRewrite: { '^/basicServer': '' },
-        target: 'http://47.94.202.102:8500',
-        pathRewrite: { '^/basicServer': '/basicServer' },
+        target: 'https://www.starnetiot-park.top/',
+        pathRewrite: { '^/api': '/' },
         changeOrigin: true
       },
-      '/estateServer': {
-        target: 'http://10.18.72.28:8099',
-        pathRewrite: { '^/estateServer': '' },
-        changeOrigin: true
-      },
-      '/vehicleServer': {
-        target: 'http://10.18.72.240:8600',
-        pathRewrite: { '^/vehicleServer': '' },
-        changeOrigin: true
-      }
     },
 
     // Various Dev Server settings

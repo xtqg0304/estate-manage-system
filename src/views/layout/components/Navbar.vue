@@ -214,7 +214,6 @@ export default {
     },
     /** 退出登录 */
     logout() {
-      debugger
       this.$store.dispatch('LogOut').then(() => {
         this.$router.push({ path: '/login' })
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
@@ -222,7 +221,7 @@ export default {
     },
     /** 切换小区 */
     handelChangeCommunity(value) {
-      console.log(value)
+      // console.log(value)
       this.$store.commit('SET_SELECTCOMMUNITY', value)
       this.getCommunityText()
       this.showCommunity = true

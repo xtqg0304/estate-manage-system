@@ -51,3 +51,19 @@ export function deleteEstate(data) {
     data
   })
 }
+/* 获取房产楼栋 */
+export function getBuildingList(data) {
+  return request({
+    url: basicServer + '/estate/getBuildingList',
+    method: 'post',
+    data
+  })
+}
+/* 获取房产房间号 */
+export function getRoomList(data) {
+  return request({
+    url: basicServer + '/estate/getEstateList',
+    method: 'post',
+    data
+  })
+}

@@ -234,8 +234,7 @@ const user = {
       return new Promise((resolve, reject) => {
         logout()
           .then((response) => {
-            debugger
-            console.log(response)
+            // console.log(response)
             if(response.data.code === 200){
               commit('SET_TOKEN', '')
               // commit('SET_ROLES', [])
