@@ -1,73 +1,67 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
-      <el-cascader :options="options" v-model="listQuery.selectedroom" :placeholder="$t('table.propertyname')" class="filter-item" expand-trigger="hover" />
+      <el-cascader
+        :options="buildings"
+        v-model="listQuery.searchEstate"
+        placeholder="房产名称"
+        class="filter-item"
+        @active-item-change="handleChange" />
       <el-select v-model="listQuery.statusBill" placeholder="账单状态" clearable class="filter-item">
-        <el-option v-for="item in statusbillOptions" :key="item" :label="$t('table.'+item)" :value="item" />
+        <el-option v-for="item in statusbillOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-input v-model="listQuery.keyword" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.searchKey" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column :label="$t('table.id')" align="center" width="65">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.date')" width="150px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
       <el-table-column :label="$t('table.propertyname')" min-width="150px">
         <template slot-scope="scope">
-          <span>{{ scope.row.propertyname }}</span>
+          <span>{{ scope.row.estateName }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.ownername')" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.ownername }}</span>
+          <span>{{ scope.row.houseHoldName }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.ownerphone')" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.ownerphone }}</span>
+          <span>{{ scope.row.houseHoldPhone }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.monthofpay')" width="80px">
         <template slot-scope="scope">
-          <span>{{ scope.row.monthofpay }}</span>
+          <span>{{ scope.row.payMonth }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.projectofpay')" align="center" width="95">
         <template slot-scope="scope">
-          <span>{{ scope.row.projectofpay }}</span>
+          <span>{{ scope.row.payCategory | typeFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.feesofpay')" align="center" width="95">
+      <el-table-column :label="$t('table.feesofpay')" align="center" width="300">
         <template slot-scope="scope">
-          <span>{{ scope.row.feesofpay }}</span>
+          <template v-if="scope.row.edit">
+            <el-input v-model="scope.row.payAmount" class="edit-input" size="small"/>
+            <el-button class="cancel-btn" size="small" icon="el-icon-refresh" type="warning" @click="cancelEdit(scope.row)">cancel</el-button>
+            <el-button type="success" size="small" icon="el-icon-circle-check-outline" @click="confirmEdit(scope.row)">Ok</el-button>
+          </template>
+          <span v-else>
+            {{ scope.row.payAmount }}
+            <el-button v-if="scope.row.editButton" type="primary" size="small" icon="el-icon-edit" @click="scope.row.edit=!scope.row.edit">Edit</el-button>
+          </span>
         </template>
       </el-table-column>
-      <!-- <el-table-column :label="$t('table.status')" class-name="status-col" width="100">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column :label="$t('table.statusbill')" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.statusbill | statusFilter">{{ $t('table.'+scope.row.statusbill) }}</el-tag>
+          <span>{{ scope.row.billStatus | statusFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">{{ $t('table.publish') }}
+          <el-button v-if="scope.row.editButton" size="mini" type="success" @click="handleModifyStatus(scope.row, 4)">销账
           </el-button>
-          <el-button v-if="scope.row.status!='draft'" size="mini" @click="handleModifyStatus(scope.row,'draft')">{{ $t('table.draft') }}
-          </el-button>
-          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">{{ $t('table.delete') }}
+          <el-button v-if="scope.row.editButton" size="mini" @click="handleModifyStatus(scope.row, 2)">作废
           </el-button>
         </template>
       </el-table-column>
@@ -81,12 +75,15 @@
 
 <script>
 import {
-  fetchList
-} from '@/api/estatePaybill'
-import Tinymce from '@/components/Tinymce'
+  fetchBillList,
+  editBillAmount,
+  editBillStatus
+} from '@/api/payManage'
+import {
+  getBuildingList,
+  getRoomList
+} from '@/api/property'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
-import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 export default {
   name: 'ComplexTable',
   directives: {
@@ -95,171 +92,25 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        1: '已缴',
+        2: '作废',
+        3: '未缴',
+        4: '销账'
+      }
+      return statusMap[status]
+    },
+    typeFilter(status) {
+      const statusMap = {
+        1: '水费',
+        2: '电费',
+        3: '物业费',
+        4: '其他费用'
       }
       return statusMap[status]
     }
   },
-  components: { Tinymce, UploadExcelComponent },
   data() {
     return {
-      options: [
-        {
-          value: 'B1',
-          label: 'B1座',
-          children: [
-            {
-              value: '01',
-              label: '01单元',
-              children: [{
-                value: '0101',
-                label: '0101'
-              },
-              {
-                value: '0102',
-                label: '0102'
-              },
-              {
-                value: '0103',
-                label: '0103'
-              },
-              {
-                value: '0104',
-                label: '0104'
-              }
-              ]
-            },
-            {
-              value: '02',
-              label: '02单元',
-              children: [{
-                value: '0201',
-                label: '0201'
-              }, {
-                value: '0202',
-                label: '0202'
-              }]
-            }
-          ]
-        },
-        {
-          value: 'B2',
-          label: 'B2座',
-          children: [
-            {
-              value: '01',
-              label: '01单元',
-              children: [{
-                value: '0101',
-                label: '0101'
-              },
-              {
-                value: '0102',
-                label: '0102'
-              },
-              {
-                value: '0103',
-                label: '0103'
-              },
-              {
-                value: '0104',
-                label: '0104'
-              }
-              ]
-            },
-            {
-              value: '02',
-              label: '02单元',
-              children: [{
-                value: '0201',
-                label: '0201'
-              }, {
-                value: '0202',
-                label: '0202'
-              }]
-            }
-          ]
-        },
-        {
-          value: 'C1',
-          label: 'C1座',
-          children: [
-            {
-              value: '01',
-              label: '01单元',
-              children: [{
-                value: '0101',
-                label: '0101'
-              },
-              {
-                value: '0102',
-                label: '0102'
-              },
-              {
-                value: '0103',
-                label: '0103'
-              },
-              {
-                value: '0104',
-                label: '0104'
-              }
-              ]
-            },
-            {
-              value: '02',
-              label: '02单元',
-              children: [{
-                value: '0201',
-                label: '0201'
-              }, {
-                value: '0202',
-                label: '0202'
-              }]
-            }
-          ]
-        },
-        {
-          value: 'D1',
-          label: 'D1座',
-          children: [
-            {
-              value: '01',
-              label: '01单元',
-              children: [{
-                value: '0101',
-                label: '0101'
-              },
-              {
-                value: '0102',
-                label: '0102'
-              },
-              {
-                value: '0103',
-                label: '0103'
-              },
-              {
-                value: '0104',
-                label: '0104'
-              }
-              ]
-            },
-            {
-              value: '02',
-              label: '02单元',
-              children: [{
-                value: '0201',
-                label: '0201'
-              }, {
-                value: '0202',
-                label: '0202'
-              }]
-            }
-          ]
-        }
-
-      ],
       tableData: [],
       tableHeader: [],
       tableKey: 0,
@@ -267,147 +118,231 @@ export default {
       total: null,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20,
-        statusBill: undefined,
-        keyword: undefined,
-        selectedroom: undefined
+        currentPage: 1,
+        pageSize: 10,
+        communityId: '',
+        estateId: '',
+        searchEstate: [],
+        billStatus: '',
+        searchKey: ''
       },
-      sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
+      statusbillOptions: [
+        {
+          label: '已缴',
+          value: 1
+        },
+        {
+          label: '作废',
+          value: 2
+        },
+        {
+          label: '未缴',
+          value: 3
+        }
       ],
-      statusOptions: ['published', 'draft', 'deleted'],
-      statusbillOptions: ['payment', 'cancelaccount', 'invalid', 'nopay'],
-      downloadLoading: false
+      buildings: []
+    }
+  },
+  computed: {
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
     }
   },
   created() {
     this.getList()
+    this.getBuilding()
   },
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+      this.listQuery.communityId = this.communityId
+      fetchBillList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const items = response.data.data.qryList
+            this.list = items.map(v => {
+              if (v.billStatus === 3) {
+                this.$set(v, 'editButton', true)
+                this.$set(v, 'edit', false)
+                v.originalPayAmount = v.payAmount
+              }
+              return v
+            })
+            // this.list = response.data.data.qryList
+            this.total = response.data.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+    },
+    getBuilding() {
+      getBuildingList({ id: this.communityId }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const items = response.data.data
+            this.buildings = items.map(v => {
+              v.label = v.buildingName
+              v.value = v.id
+              v.children = []
+              return v
+            })
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
       })
     },
     handleFilter() {
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
+      this.listQuery.estateId = this.listQuery.searchEstate[1]
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
-      this.listQuery.limit = val
+      this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
-      this.listQuery.page = val
+      this.listQuery.currentPage = val
       this.getList()
     },
     handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
-      // 请求后台接口将状态传给后台，如果成功，前端修改数据
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
-    },
-    resetTemp() {
-      // 重新初始化新建对象的默认值
-      this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
-      }
-    },
-    handleDelete(row) {
-      // 在列表中删除 （将当前id传给后台）
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
+      editBillStatus({ id: row.id, billStatus: status }).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            row.billStatus = status
+            for (const v of this.list) {
+              // 更新后的值插入原来数据的位置
+              if (v.id === row.id) {
+                const index = this.list.indexOf(v)
+                this.list.splice(index, 1, row)
+                break
+              }
+            }
+            row.editButton = false
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
           } else {
-            return v[j]
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
           }
-        })
-      )
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
     },
-    beforeUpload(file) {
-      const isLt1M = file.size / 1024 / 1024 < 1
-
-      if (isLt1M) {
-        return true
-      }
-
+    cancelEdit(row) {
+      row.payAmount = row.originalPayAmount
+      row.edit = false
       this.$message({
-        message: 'Please do not upload files larger than 1m in size.',
+        message: '缴费金额未改变',
         type: 'warning'
       })
-      return false
     },
-    handleSuccess({ results, header }) {
-      // this.$notify({
-      //   title: '成功',
-      //   message: '导入成功',
-      //   type: 'success',
-      //   duration: 2000
-      // })
-      this.tableData = results
-      this.tableHeader = header
-      console.log(this.tableData)
-      console.log(header)
-      // 将数据传给后台，后台存入数据库成功，则重新获取数据列表
-      // this.list = results
-      // this.total = results.length
-      this.getList()
+    confirmEdit(row) {
+      editBillAmount({ id: row.id, payAmount: row.payAmount }).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            row.edit = false
+            row.originalPayAmount = row.payAmount
+            this.$message({
+              message: '金额改变成功',
+              type: 'success'
+            })
+            // this.$notify({
+            //   title: '成功',
+            //   message: '更新成功',
+            //   type: 'success',
+            //   duration: 2000
+            // })
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+    },
+    handleChange(value) {
+      getRoomList({ communityId: this.communityId, buildingId: value[0] }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            for (const v of this.buildings) {
+              // 更新后的值插入原来数据的位置
+              if (v.id === value[0]) {
+                const building = Object.assign({}, v)
+                const items = response.data.data
+                building.children = items.map(v => {
+                  v.label = v.room
+                  v.value = v.id
+                  return v
+                })
+                const index = this.buildings.indexOf(v)
+                this.buildings.splice(index, 1, building)
+                break
+              }
+            }
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
     }
   }
 }
@@ -427,5 +362,8 @@ export default {
 }
 .editor-custom-btn-container {
   top: 0 !important;
+}
+.edit-input{
+  width:100px;
 }
 </style>

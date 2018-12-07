@@ -7,7 +7,6 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate">新增楼栋</el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
       <el-select v-model="listQuery.statusProperty" placeholder="请选择房产类型" clearable class="filter-item">
         <el-option v-for="item in statuspropertyOptions" :key="item.name" :label="item.value" :value="item.name" />
       </el-select>
@@ -54,7 +53,7 @@
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.currentPage" :page-sizes="[10,20,30, 50]" :page-size="listQuery.pageSize" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
 
     <el-dialog
@@ -65,7 +64,7 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
           label="房产类型"
@@ -84,22 +83,22 @@
         </el-form-item>
         <el-form-item
           label="楼栋名称"
-          prop="content">
+          prop="building">
           <el-input v-model="temp.building" />
         </el-form-item>
         <el-form-item
           label="楼层"
-          prop="content">
+          prop="floor">
           <el-input v-model="temp.floor" />
         </el-form-item>
         <el-form-item
           label="单元"
-          prop="content">
+          prop="unit">
           <el-input v-model="temp.unit" />
         </el-form-item>
         <el-form-item
           label="房间号"
-          prop="content">
+          prop="room">
           <el-input v-model="temp.room" />
         </el-form-item>
       </el-form>
@@ -147,7 +146,12 @@ export default {
         pageSize: 20,
         statusProperty: undefined,
         communityId: '',
-        keyword: undefined
+        keyword: undefined,
+        qryList: [
+          {
+            estateType: ''
+          }
+        ]
       },
       statuspropertyOptions: [],
       downloadLoading: false,
@@ -173,48 +177,57 @@ export default {
         create: '新建'
       },
       rules: {
-        type: [
-          { required: true, message: 'type is required', trigger: 'change' }
+        estateType: [
+          { required: true, message: '房产类型不能为空', trigger: 'change' }
         ],
-        timestamp: [
-          {
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
+        building: [
+          { required: true, message: '楼栋名称不能为空', trigger: 'blur' }
         ],
-        title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
+        floor: [
+          { required: true, message: '楼层不能为空', trigger: 'blur' }
+        ],
+        unit: [
+          { required: true, message: '单元不能为空', trigger: 'blur' }
+        ],
+        room: [
+          { required: true, message: '房间号不能为空', trigger: 'blur' }
         ]
+
       }
     }
   },
   computed: {
     ...mapGetters([
       'userInfo'
-    ])
+    ]),
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
+    },
+    selectCommunityName() {
+      const sessionData = sessionStorage.getItem('selectCommunityName')
+      if (this.$store.getters.selectCommunityName === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITYNAME', sessionData)// 同步操作
+      }
+      return this.$store.getters.selectCommunityName
+    }
   },
   created() {
+    this.getList()
     this.getTypeList()
   },
   methods: {
-    getTypeList() {
+    getList() {
       this.listLoading = true
-      fetchEstateTypeList().then(response => {
-        console.log(response)
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            this.statuspropertyOptions = response.data.data
-          }
-        }
-      })
-      this.listQuery.communityId = this.userInfo.selectCommunity
+      this.listQuery.communityId = this.communityId
       fetchList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryList
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({
@@ -232,20 +245,29 @@ export default {
         }
       })
     },
+    getTypeList() {
+      fetchEstateTypeList().then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.statuspropertyOptions = response.data.data
+          }
+        }
+      })
+    },
     handleFilter() {
-      console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
+      this.listQuery.qryList[0].estateType = this.listQuery.statusProperty
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
-      this.listQuery.limit = val
+      this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
-      this.listQuery.page = val
+      this.listQuery.currentPage = val
       this.getList()
     },
     resetTemp() {
@@ -276,13 +298,12 @@ export default {
       })
     },
     createData() {
-      console.log(this.temp)
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.communityId = this.userInfo.selectCommunity
-          this.temp.communityCode = this.userInfo.selectCommunity
-          this.temp.communityName = this.userInfo.selectCommunityName
+          this.temp.communityId = this.communityId
+          this.temp.communityCode = this.communityId
+          this.temp.communityName = this.selectCommunityName
           editEstate(this.temp).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {

@@ -77,7 +77,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchLaneList({ serviceId: '2018111500', searchType: 0 }).then(response => {
+      fetchLaneList({ serviceId: this.userInfo.selectCommunity, searchType: 0 }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data

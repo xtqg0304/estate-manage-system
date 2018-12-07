@@ -1,75 +1,72 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
-      <el-date-picker v-model="listQuery.starttoendimestamp" :picker-options="pickerOptions" :range-separator="$t('table.to')" :start-placeholder="$t('table.startdate')" :end-placeholder="$t('table.enddate')" class="filter-item-rangedate" type="daterange" />
-      <el-select v-model="listQuery.statusPayment" :placeholder="$t('table.statuspayment')" clearable class="filter-item">
-        <el-option v-for="item in statuspaymentOptions" :key="item" :label="$t('table.'+item)" :value="item" />
+      <el-date-picker
+        v-model="listQuery.beginTime"
+        :picker-options="timePickerOptions"
+        class="filter-item-rangedate"
+        type="datetime"
+        placeholder="开始时间"
+        align="right"/>
+      <el-date-picker
+        v-model="listQuery.endTime"
+        :picker-options="timePickerOptions"
+        class="filter-item-rangedate"
+        type="datetime"
+        placeholder="结束时间"
+        align="right"/>
+      <el-select v-model="listQuery.payType" placeholder="支付类型" clearable class="filter-item">
+        <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.categoryPayment" :placeholder="$t('table.categorypayment')" clearable class="filter-item">
-        <el-option v-for="item in categorypaymentOptions" :key="item" :label="$t('table.'+item)" :value="item" />
+      <el-select v-model="listQuery.payCategory" placeholder="支付类目" clearable class="filter-item">
+        <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-input v-model="listQuery.keyword" :placeholder="$t('table.keyword')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.searchKey" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column :label="$t('table.id')" align="center" width="65">
+      <el-table-column label="订单编号" width="180px">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.outTradeNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.date')" width="150px" align="center">
+      <el-table-column label="所属房产" min-width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.estateName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.propertyname')" min-width="150px">
+      <el-table-column label="业主姓名" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.propertyname }}</span>
+          <span>{{ scope.row.houseHoldName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownername')" width="110px" align="center">
+      <el-table-column label="支付类型" width="100px">
         <template slot-scope="scope">
-          <span>{{ scope.row.ownername }}</span>
+          <span>{{ scope.row.payType | payFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownerphone')" width="110px" align="center">
+      <el-table-column label="支付金额" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{ scope.row.ownerphone }}</span>
+          <span>{{ scope.row.payAmount }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.feesofpay')" align="center" width="95">
+      <el-table-column label="支付时间" width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.feesofpay }}</span>
+          <span>{{ scope.row.payTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.categorypayment')" align="center" width="95">
+      <el-table-column label="支付类目" width="100">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.categorypayment | statusFilter">{{ $t('table.'+scope.row.categorypayment) }}</el-tag>
+          <span>{{ scope.row.payCategory | typeFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.statepayment')" align="center" width="95">
+      <el-table-column label="支付月份" width="100">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.statepayment | statusFilter">{{ $t('table.'+scope.row.statepayment) }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.statuspayment')" class-name="status-col" width="100">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.statuspayment | statusFilter">{{ $t('table.'+scope.row.statuspayment) }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">{{ $t('table.publish') }}
-          </el-button>
-          <el-button v-if="scope.row.status!='draft'" size="mini" @click="handleModifyStatus(scope.row,'draft')">{{ $t('table.draft') }}
-          </el-button>
-          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">{{ $t('table.delete') }}
-          </el-button>
+          <span>{{ scope.row.payMonth }}</span>
         </template>
       </el-table-column>
     </el-table>
+
     <div class="pagination-container">
       <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
@@ -78,54 +75,62 @@
 
 <script>
 import {
-  fetchList
-} from '@/api/estatePaydetail'
-import Tinymce from '@/components/Tinymce'
+  fetchDetailList
+} from '@/api/payManage'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
-import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+// import { parseTime } from '@/utils'
 export default {
   name: 'ComplexTable',
   directives: {
     waves
   },
   filters: {
+    payFilter(status) {
+      const statusMap = {
+        1: '微信支付',
+        2: '支付宝'
+      }
+      return statusMap[status]
+    },
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        1: '支付成功',
+        2: '支付超时',
+        3: '等待支付'
+      }
+      return statusMap[status]
+    },
+    typeFilter(status) {
+      const statusMap = {
+        1: '水费',
+        2: '电费',
+        3: '物业费',
+        4: '其他费用'
       }
       return statusMap[status]
     }
   },
-  components: { Tinymce, UploadExcelComponent },
   data() {
     return {
-      pickerOptions: {
+      timePickerOptions: {
         shortcuts: [{
-          text: '最近一周',
+          text: '今天',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
+            picker.$emit('pick', new Date())
           }
         }, {
-          text: '最近一个月',
+          text: '昨天',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
           }
         }, {
-          text: '最近三个月',
+          text: '一周前',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
           }
         }]
       },
@@ -136,20 +141,52 @@ export default {
       total: null,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20,
-        statusPayment: undefined,
-        keyword: undefined,
-        starttoendimestamp: undefined
+        currentPage: 1,
+        pageSize: 10,
+        communityId: '',
+        beginTime: '',
+        endTime: '',
+        payType: '',
+        payCategory: '',
+        searchKey: ''
       },
-      sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
+      statusOptions: [
+        {
+          label: '微信支付',
+          value: 1
+        },
+        {
+          label: '支付宝',
+          value: 2
+        }
       ],
-      statusOptions: ['published', 'draft', 'deleted'],
-      statuspaymentOptions: ['cash', 'alipay', 'wechat', 'unionpay'],
-      categorypaymentOptions: ['chargeforwater', 'chargeforelectric', 'chargeforestate', 'chargeforpublic', 'chargeforpark'],
-      downloadLoading: false
+      typeOptions: [
+        {
+          label: '水费',
+          value: 1
+        },
+        {
+          label: '电费',
+          value: 2
+        },
+        {
+          label: '物业费',
+          value: 3
+        },
+        {
+          label: '其他费用',
+          value: 4
+        }
+      ]
+    }
+  },
+  computed: {
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
     }
   },
   created() {
@@ -158,125 +195,44 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+      this.listQuery.communityId = this.communityId
+      fetchDetailList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.qryList
+            this.total = response.data.data.totalCount
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
       })
     },
     handleFilter() {
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
+      this.listQuery.communityId = this.communityId
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
-      this.listQuery.limit = val
+      this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
-      this.listQuery.page = val
-      this.getList()
-    },
-    handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
-      // 请求后台接口将状态传给后台，如果成功，前端修改数据
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
-    },
-    resetTemp() {
-      // 重新初始化新建对象的默认值
-      this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
-      }
-    },
-    handleDelete(row) {
-      // 在列表中删除 （将当前id传给后台）
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        })
-      )
-    },
-    beforeUpload(file) {
-      const isLt1M = file.size / 1024 / 1024 < 1
-
-      if (isLt1M) {
-        return true
-      }
-
-      this.$message({
-        message: 'Please do not upload files larger than 1m in size.',
-        type: 'warning'
-      })
-      return false
-    },
-    handleSuccess({ results, header }) {
-      // this.$notify({
-      //   title: '成功',
-      //   message: '导入成功',
-      //   type: 'success',
-      //   duration: 2000
-      // })
-      this.tableData = results
-      this.tableHeader = header
-      console.log(this.tableData)
-      console.log(header)
-      // 将数据传给后台，后台存入数据库成功，则重新获取数据列表
-      // this.list = results
-      // this.total = results.length
+      this.listQuery.currentPage = val
       this.getList()
     }
   }
@@ -297,5 +253,8 @@ export default {
 }
 .editor-custom-btn-container {
   top: 0 !important;
+}
+.edit-input{
+  width:100px;
 }
 </style>

@@ -7,8 +7,7 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate">新增住户</el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
-      <el-select v-model="listQuery.statusProperty" placeholder="请选择房产类型" clearable class="filter-item">
+      <el-select v-model="listQuery.statusProperty" placeholder="请选择住户身份" clearable class="filter-item">
         <el-option v-for="item in statuspropertyOptions" :key="item.name" :label="item.value" :value="item.name" />
       </el-select>
       <el-input v-model="listQuery.keyword" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
@@ -65,36 +64,33 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
-          label="房产"
-          prop="estateType">
-          <el-select
-            v-model="temp.estateId"
+          label="房产名称"
+          prop="estateIds" >
+          <el-cascader
+            :options="buildings"
+            v-model="temp.estateIds"
+            placeholder="房产名称"
             class="filter-item"
-            placeholder="请选择类型"
-            style="width:100%;">
-            <el-option
-              v-for="item in statuspropertyOptions"
-              :key="item.name"
-              :label="item.value"
-              :value="item.name" />
-          </el-select>
+            style="width:100%"/>
         </el-form-item>
         <el-form-item
           label="用户姓名"
-          prop="content">
+          prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item
           label="住户身份"
-          prop="content">
-          <el-input v-model="temp.identifyNo" />
+          prop="identifyNo">
+          <el-select v-model="temp.identifyNo" placeholder="请选择住户身份" clearable class="filter-item" style="width:100%">
+            <el-option v-for="item in statuspropertyOptions" :key="item.name" :label="item.value" :value="item.name" />
+          </el-select>
         </el-form-item>
         <el-form-item
           label="手机号码"
-          prop="content">
+          prop="telephone">
           <el-input v-model="temp.telephone" />
         </el-form-item>
       </el-form>
@@ -121,6 +117,11 @@ import {
   editHousehold,
   deleteHousehold
 } from '@/api/houseHold'
+import {
+  getBuildingList,
+  getRoomList,
+  getEstateInfo
+} from '@/api/property'
 import waves from '@/directive/waves' // 水波纹指令
 import { mapGetters } from 'vuex'
 export default {
@@ -143,11 +144,25 @@ export default {
         communityId: '',
         keyword: undefined
       },
-      statuspropertyOptions: [],
+      statuspropertyOptions: [
+        {
+          name: '业主',
+          value: '业主'
+        },
+        {
+          name: '家属',
+          value: '家属'
+        },
+        {
+          name: '租客',
+          value: '租客'
+        }
+      ],
       downloadLoading: false,
       temp: {
         id: '',
         estateId: '',
+        estateIds: [],
         estateName: '',
         name: '',
         telephone: '',
@@ -160,41 +175,91 @@ export default {
         create: '新建'
       },
       rules: {
-        type: [
-          { required: true, message: 'type is required', trigger: 'change' }
+        estateIds: [
+          { required: true, message: '房产名称不能为空', trigger: 'change' }
         ],
-        timestamp: [
-          {
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
+        name: [
+          { required: true, message: '用户姓名不能为空', trigger: 'blur' }
         ],
-        title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
+        identifyNo: [
+          { required: true, message: '用户身份不能为空', trigger: 'change' }
+        ],
+        telephone: [
+          { required: true, message: '手机号码不能为空', trigger: 'blur' },
+          { pattern: '[0-9]{3}-[0-9]{3}-[0-9]{4}', message: '请输入正确格式的手机号' }
         ]
-      }
+
+      },
+      buildings: []
     }
   },
   computed: {
     ...mapGetters([
       'userInfo'
-    ])
+    ]),
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
+    }
   },
   created() {
-    this.getTypeList()
+    this.getList()
+    this.getBuilding()
   },
   methods: {
-    getTypeList() {
+    getList() {
       this.listLoading = true
-      this.listQuery.communityId = this.userInfo.selectCommunity
+      this.listQuery.communityId = this.communityId
       fetchList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryList
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+    },
+    getBuilding() {
+      getBuildingList({ id: this.communityId }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const items = response.data.data
+            this.buildings = items.map(v => {
+              v.label = v.buildingName
+              v.value = v.id
+              v.children = []
+              return v
+            })
+            for (let i = 0; i < this.buildings.length; i++) {
+              getRoomList({ communityId: this.communityId, buildingId: this.buildings[i].id }).then(response => {
+                if (response.status === 200) {
+                  if (response.data.code === 200) {
+                    const items = response.data.data
+                    this.buildings[i].children = items.map(v => {
+                      v.label = v.room
+                      v.value = v.id
+                      return v
+                    })
+                  }
+                }
+              })
+            }
           } else {
             this.$notify.error({
               title: '失败',
@@ -214,17 +279,17 @@ export default {
     handleFilter() {
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
-      this.listQuery.limit = val
+      this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
-      this.listQuery.page = val
+      this.listQuery.currentPage = val
       this.getList()
     },
     resetTemp() {
@@ -232,6 +297,7 @@ export default {
       this.temp = {
         id: '',
         estateId: '',
+        estateIds: [],
         estateName: '',
         name: '',
         telephone: '',
@@ -252,7 +318,8 @@ export default {
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.communityId = this.userInfo.selectCommunity
+          this.temp.communityId = this.communityId
+          this.temp.estateId = this.temp.estateIds[1]
           editHousehold(this.temp).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
@@ -286,6 +353,16 @@ export default {
     handleUpdate(row) {
       // 修改/编辑事件
       this.temp = Object.assign({}, row) // copy obj
+      this.temp.estateIds = []
+      getEstateInfo({ id: this.temp.estateId }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const item = response.data.data
+            this.temp.estateIds.push(item.buildingId)
+            this.temp.estateIds.push(this.temp.estateId)
+          }
+        }
+      })
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -296,6 +373,7 @@ export default {
       // 修改/编辑 确认事件
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
+          this.temp.estateId = this.temp.estateIds[1]
           const tempData = Object.assign({}, this.temp)
           editHousehold(tempData).then((response) => {
             if (response.status === 200) {

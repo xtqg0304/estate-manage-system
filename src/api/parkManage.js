@@ -1,10 +1,10 @@
 import request from '@/utils/request'
-import { vehicleServer } from '@/api/api.js'
+import { paymentServer } from '@/api/api.js'
 
 /* 获取车场信息列表 */
 export function fetchList(data) {
   return request({
-    url: vehicleServer + '/parkRegister/getParkListByComId',
+    url: paymentServer + '/parkRegister/getParkListByComId',
     method: 'post',
     data
   })
@@ -13,7 +13,7 @@ export function fetchList(data) {
 /* 新增车场信息列表 */
 export function addCarpark(data) {
   return request({
-    url: vehicleServer + '/parkRegister/insertCarparkInfo',
+    url: paymentServer + '/parkRegister/insertCarparkInfo',
     method: 'post',
     data
   })
@@ -21,7 +21,7 @@ export function addCarpark(data) {
 /* 修改车场信息列表 */
 export function editCarpark(data) {
   return request({
-    url: vehicleServer + '/parkRegister/updateCarparkInfo',
+    url: paymentServer + '/parkRegister/updateCarparkInfo',
     method: 'post',
     data
   })
@@ -29,7 +29,7 @@ export function editCarpark(data) {
 /* 删除车场信息列表 */
 export function deleteCarpark(data) {
   return request({
-    url: vehicleServer + '/parkRegister/deleteCarparkInfo',
+    url: paymentServer + '/parkRegister/deleteCarparkInfo',
     method: 'post',
     data
   })
@@ -37,7 +37,7 @@ export function deleteCarpark(data) {
 /* 获取车场秘钥 */
 export function getKey(data) {
   return request({
-    url: vehicleServer + '/parkRegister/getCarparkSecretKey',
+    url: paymentServer + '/parkRegister/getCarparkSecretKey',
     method: 'post',
     data
   })
@@ -45,7 +45,7 @@ export function getKey(data) {
 /* 获取车场详细信息*/
 export function getCarparkDetail(data) {
   return request({
-    url: vehicleServer + '/parkRegister/getParkInfoById',
+    url: paymentServer + '/parkRegister/getParkInfoById',
     method: 'post',
     data
   })
@@ -53,7 +53,7 @@ export function getCarparkDetail(data) {
 /* 车场信息列表 table*/
 export function fetchCommunityParkList(data) {
   return request({
-    url: vehicleServer + '/communityParkInfo/getCommunityParkInfo',
+    url: paymentServer + '/communityParkInfo/getCommunityParkInfo',
     method: 'post',
     data
   })
@@ -61,7 +61,7 @@ export function fetchCommunityParkList(data) {
 /* 车道信息列表 table*/
 export function fetchLaneList(data) {
   return request({
-    url: vehicleServer + '/communityParkInfo/getCommunityRoadnfo',
+    url: paymentServer + '/communityParkInfo/getCommunityRoadnfo',
     method: 'post',
     data
   })
@@ -69,7 +69,7 @@ export function fetchLaneList(data) {
 /* 岗亭信息列表 table*/
 export function fetchSentryboxList(data) {
   return request({
-    url: vehicleServer + '/communityParkInfo/getCommunityPostnfo',
+    url: paymentServer + '/communityParkInfo/getCommunityPostnfo',
     method: 'post',
     data
   })
@@ -77,7 +77,7 @@ export function fetchSentryboxList(data) {
 /* 操作员信息列表 table*/
 export function fetchOperatorList(data) {
   return request({
-    url: vehicleServer + '/communityParkInfo/getCommunityOperatorInfo',
+    url: paymentServer + '/communityParkInfo/getCommunityOperatorInfo',
     method: 'post',
     data
   })
@@ -85,7 +85,7 @@ export function fetchOperatorList(data) {
 /* 包月会员信息列表 table*/
 export function fetchMonthlyMembersList(data) {
   return request({
-    url: vehicleServer + '/communityParkInfo/getCommunityMemberWalletInfo',
+    url: paymentServer + '/communityParkInfo/getCommunityMemberWalletInfo',
     method: 'post',
     data
   })
@@ -93,7 +93,7 @@ export function fetchMonthlyMembersList(data) {
 /* 包月套餐信息列表 table*/
 export function fetchMonthlyPackagesList(data) {
   return request({
-    url: vehicleServer + '/communityParkInfo/getCommunityMemberInfo',
+    url: paymentServer + '/communityParkInfo/getCommunityMemberInfo',
     method: 'post',
     data
   })

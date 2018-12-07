@@ -24,7 +24,7 @@
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
       <el-table-column label="投诉房号" align="center" width="300px">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.roomId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="用户名称" width="110px">
@@ -37,21 +37,14 @@
           <span >{{ scope.row.telephone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="投诉类型" width="110px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.telephone }}</span>
-        </template>
-      </el-table-column>
-
       <el-table-column label="投诉内容" min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
-
       <el-table-column label="投诉时间" width="180px">
         <template slot-scope="scope">
-          <span>{{ scope.row.publishTime }}</span>
+          <span>{{ scope.row.publishTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="投诉状态" class-name="status-col" width="100">
@@ -88,7 +81,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDetailVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="投诉房产" prop="id">
           {{ temp.id }}
         </el-form-item>
@@ -104,15 +97,9 @@
         <el-form-item label="投诉状态">
           {{ temp.status | statusFilter }}
         </el-form-item>
-        <el-form-item label="投诉内容)">
+        <el-form-item label="投诉内容">
           {{ temp.content }}
         </el-form-item>
-        <!-- <el-form-item label="处理时间">
-          {{ temp.status }}
-        </el-form-item>
-        <el-form-item label="完成时间)">
-          {{ temp.importance }}
-        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDetailVisible = false">{{ $t('table.cancel') }}</el-button>
@@ -249,7 +236,14 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo'
-    ])
+    ]),
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
+    }
   },
   created() {
     this.getList()
@@ -257,11 +251,12 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      this.listQuery.qryReportElementData[0].communityId = this.communityId
       fetchList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryReportElementData
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({
@@ -280,9 +275,9 @@ export default {
       })
     },
     handleFilter() {
-      this.listQuery.qryReportElementData[0].communityId = this.userInfo.selectCommunity
-      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
-      this.listQuery.endTime = parseTime(this.listQuery.endTime)
+      this.listQuery.qryReportElementData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
       this.listQuery.page = 1
@@ -290,11 +285,17 @@ export default {
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
+      this.listQuery.qryReportElementData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       this.listQuery.limit = val
       this.getList()
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
+      this.listQuery.qryReportElementData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       this.listQuery.page = val
       this.getList()
     },
@@ -353,7 +354,6 @@ export default {
           }
         })
       } else {
-        debugger
         this.temp = Object.assign({}, row)
         this.temp.status = status
         tempData = Object.assign({}, this.temp)

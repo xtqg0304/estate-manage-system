@@ -287,7 +287,7 @@ export default {
                 this.list[i].status = false
               }
             }
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({

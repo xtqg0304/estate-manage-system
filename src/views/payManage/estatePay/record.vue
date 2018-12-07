@@ -65,37 +65,26 @@
     </div>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDetailVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="投诉房产" prop="id">
-          {{ temp.id }}
-        </el-form-item>
-        <el-form-item label="投诉人" prop="announcer">
-          {{ temp.announcer }}
-        </el-form-item>
-        <el-form-item label="投诉人电话" prop="telephone">
-          {{ temp.telephone }}
-        </el-form-item>
-        <el-form-item label="投诉时间" prop="author">
-          {{ temp.publishTime }}
-        </el-form-item>
-        <el-form-item label="投诉状态">
-          {{ temp.status | statusFilter }}
-        </el-form-item>
-        <el-form-item label="投诉内容)">
-          {{ temp.content }}
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogDetailVisible = false">{{ $t('table.cancel') }}</el-button>
+      <el-table :data="userList" border fit highlight-current-row style="width: 100%">
+        <el-table-column label="缴费类目" width="80px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.payCategory | typeFilter }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="缴费金额" prop="payAmount" />
+        <el-table-column label="缴费时间" prop="payMonth" />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
-      </div>
+      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  fetchOrderList
+  fetchOrderList,
+  fetchOrderDetail
 } from '@/api/payManage'
 import waves from '@/directive/waves' // 水波纹指令
 // import { parseTime } from '@/utils'
@@ -117,6 +106,15 @@ export default {
         1: '支付成功',
         2: '支付超时',
         3: '等待支付'
+      }
+      return statusMap[status]
+    },
+    typeFilter(status) {
+      const statusMap = {
+        1: '水费',
+        2: '电费',
+        3: '物业费',
+        4: '其他费用'
       }
       return statusMap[status]
     }
@@ -161,6 +159,7 @@ export default {
         payStatus: '',
         searchKey: ''
       },
+      temp: {},
       statusOptions: [
         {
           label: '微信支付',
@@ -177,7 +176,8 @@ export default {
         update: '编辑',
         create: '新建',
         detail: '详情'
-      }
+      },
+      userList: []
     }
   },
   computed: {
@@ -200,7 +200,7 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryList
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({
@@ -235,10 +235,29 @@ export default {
       this.getList()
     },
     handleShowDetail(row) {
-      // 显示详情事件
-      this.temp = Object.assign({}, row) // copy obj
-      this.dialogStatus = 'detail'
-      this.dialogDetailVisible = true
+      fetchOrderDetail({ outTradeNo: row.outTradeNo }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            // 显示详情事件
+            this.temp = Object.assign({}, row) // copy obj
+            this.userList = response.data.data
+            this.dialogStatus = 'detail'
+            this.dialogDetailVisible = true
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
     }
   }
 }

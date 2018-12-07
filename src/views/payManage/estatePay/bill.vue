@@ -36,7 +36,7 @@
       </el-table-column>
       <el-table-column :label="$t('table.projectofpay')" align="center" width="95">
         <template slot-scope="scope">
-          <span>{{ scope.row.payCategory }}</span>
+          <span>{{ scope.row.payCategory | typeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.feesofpay')" align="center" width="300">
@@ -96,6 +96,15 @@ export default {
         2: '作废',
         3: '未缴',
         4: '销账'
+      }
+      return statusMap[status]
+    },
+    typeFilter(status) {
+      const statusMap = {
+        1: '水费',
+        2: '电费',
+        3: '物业费',
+        4: '其他费用'
       }
       return statusMap[status]
     }
@@ -164,7 +173,7 @@ export default {
               return v
             })
             // this.list = response.data.data.qryList
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({

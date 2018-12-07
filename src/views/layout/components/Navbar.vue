@@ -4,9 +4,9 @@
     <breadcrumb class="breadcrumb-container" />
     <div class="right-menu">
       <error-log class="errLog-container right-menu-item" />
-      <el-select v-model="selectSysId" style="float:left;" placeholder="请选择" @change="handelChange">
+      <el-select v-model="selectAppId" style="float:left;" placeholder="请选择" @change="handelChange">
         <el-option
-          v-for="item in permissionSys"
+          v-for="item in appPermission"
           :key="item.id"
           :label="item.name"
           :value="item.id"/>
@@ -93,7 +93,9 @@ export default {
   },
   data() {
     return {
-      showCommunity: true
+      showCommunity: true,
+      appPermission: [],
+      selectAppId: ''
     }
   },
   computed: {
@@ -147,6 +149,8 @@ export default {
 
   },
   created() {
+    this.selectAppId = this.selectSysId
+    this.handlePermissionSys()
   },
   methods: {
     toggleSideBar() {
@@ -236,6 +240,13 @@ export default {
         if (this.communityList[i].id === this.selectCommunity) {
           this.selectCommunityText = this.communityList[i].name
           this.$store.commit('SET_SELECTCOMMUNITYNAME', this.selectCommunityText)
+        }
+      }
+    },
+    handlePermissionSys() {
+      for (let i = 0; i < this.permissionSys.length; i++) {
+        if (this.permissionSys[i].appResourceType === 'TYPE_APPLICATION') {
+          this.appPermission.push(this.permissionSys[i])
         }
       }
     }

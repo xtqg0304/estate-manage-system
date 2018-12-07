@@ -24,7 +24,7 @@
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
       <el-table-column label="报事房号" align="center" width="300px">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.roomId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="用户名称" width="110px">
@@ -37,21 +37,14 @@
           <span >{{ scope.row.telephone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="报事类型" width="110px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.telephone }}</span>
-        </template>
-      </el-table-column>
-
       <el-table-column label="报事内容" min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
-
       <el-table-column label="报事时间" width="180px">
         <template slot-scope="scope">
-          <span>{{ scope.row.publishTime }}</span>
+          <span>{{ scope.row.publishTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="报事状态" class-name="status-col" width="100">
@@ -59,7 +52,6 @@
           <span>{{ scope.row.status | statusFilter }}</span>
         </template>
       </el-table-column>
-
       <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button :disabled="scope.row.status === 'Reply'||scope.row.status === 'PROCESSED'" size="mini" type="primary" @click="handleModifyStatus(scope.row,'Reply')">回复
@@ -73,7 +65,15 @@
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-pagination
+        :current-page.sync="listQuery.currentPage"
+        :page-sizes="[10,20,30, 50]"
+        :page-size="listQuery.pageSize"
+        :total="total"
+        background
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -88,7 +88,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDetailVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="投诉房产" prop="id">
           {{ temp.id }}
         </el-form-item>
@@ -104,7 +104,7 @@
         <el-form-item label="投诉状态">
           {{ temp.status | statusFilter }}
         </el-form-item>
-        <el-form-item label="投诉内容)">
+        <el-form-item label="投诉内容">
           {{ temp.content }}
         </el-form-item>
       </el-form>
@@ -243,7 +243,14 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo'
-    ])
+    ]),
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
+    }
   },
   created() {
     this.getList()
@@ -251,11 +258,12 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      this.listQuery.qryComplaintElementData[0].communityId = this.communityId
       fetchList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryComplaintElementData
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({
@@ -274,22 +282,28 @@ export default {
       })
     },
     handleFilter() {
-      this.listQuery.qryComplaintElementData[0].communityId = this.userInfo.selectCommunity
-      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
-      this.listQuery.endTime = parseTime(this.listQuery.endTime)
+      this.listQuery.qryComplaintElementData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
-      this.listQuery.limit = val
+      this.listQuery.qryComplaintElementData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
+      this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
-      this.listQuery.page = val
+      this.listQuery.qryComplaintElementData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
+      this.listQuery.currentPage = val
       this.getList()
     },
     handleModifyStatus(row, status) {
@@ -414,6 +428,31 @@ export default {
 }
 </script>
 <style>
+/* .filter-container .filter-item-rangedate {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-bottom: 10px;
+}
+.el-date-editor .el-range-separator {
+  padding: 0;
+}
+.filter-container,
+.pagination-container {
+  text-align: right;
+}
+.editor-custom-btn-container {
+  top: 0 !important;
+} */
+
+.demo-block-control {
+  border-top: 1px solid #eaeefb;
+}
+.red {
+  color: red;
+}
+.green {
+  color: green;
+}
 .filter-container .filter-item-rangedate {
   display: inline-flex;
   vertical-align: middle;
@@ -429,4 +468,5 @@ export default {
 .editor-custom-btn-container {
   top: 0 !important;
 }
+
 </style>

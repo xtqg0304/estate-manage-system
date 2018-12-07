@@ -75,8 +75,8 @@
               <span>车辆管理</span>
             </li>
           </router-link>
-          <router-link :to="{ name: 'Dashboard', params: { systemName: systems.moreSys }}">
-            <li>
+          <router-link :to="{}">
+            <li @click="showMsg()">
               <a class="to top ">
                 <svg-icon icon-class="build" />
               </a>
@@ -795,6 +795,13 @@ export default {
       this.$store.dispatch('LogOut').then(() => {
         this.$router.push({ path: '/login' })
         // location.reload()// In order to re-instantiate the vue-router object to avoid bugs
+      })
+    },
+    showMsg() {
+      this.$message({
+        message: '感谢您的使用,更多功能敬请期待',
+        type: 'success',
+        duration: 2000
       })
     }
   }

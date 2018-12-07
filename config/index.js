@@ -11,19 +11,19 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       // '/basicServer': {
-      //   // target: 'http://10.18.72.29:8401',
-      //   // pathRewrite: { '^/basicServer': '' },
-      //   target: 'http://47.94.202.102:8500',
-      //   pathRewrite: { '^/basicServer': '/basicServer' },
+      //   target: 'https://www.starnetiot-park.top/',
       //   changeOrigin: true
       // },
       '/api': {
-        // target: 'http://10.18.72.29:8401',
-        // pathRewrite: { '^/basicServer': '' },
         target: 'https://www.starnetiot-park.top/',
         pathRewrite: { '^/api': '/' },
         changeOrigin: true
-      },
+      }
+      // '/goodsServer': {
+      //   target: 'http://10.18.72.28:8099',
+      //   pathRewrite: { '^/goodsServer': '' },
+      //   changeOrigin: true
+      // }
     },
 
     // Various Dev Server settings

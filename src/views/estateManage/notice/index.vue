@@ -6,15 +6,7 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
-        @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <!-- <el-date-picker
-        v-model="listQuery.starttoendimestamp"
-        :picker-options="pickerOptions"
-        class="filter-item-rangedate"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间" /> -->
+        @click="handleCreate">发布公告</el-button>
       <el-date-picker
         v-model="listQuery.beginTime"
         :picker-options="timePickerOptions"
@@ -39,7 +31,7 @@
           value="REMOVED" />
         <el-option
           label="已发布"
-          value="PUBLISHED1" />
+          value="PUBLISHED" />
       </el-select>
       <el-input
         v-model="listQuery.keyword"
@@ -65,17 +57,17 @@
       <el-table-column
         label="公告标题"
         align="center"
-        width="65">
+        width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.head }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="发布时间"
-        width="150px"
+        width="220px"
         align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.publishTime }}</span>
+          <span>{{ scope.row.publishTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -110,7 +102,7 @@
         width="200">
         <template slot-scope="scope">
           <el-switch
-            v-model="scope.row.status"
+            v-model="scope.row.openOffstatus"
             active-text="已发布"
             inactive-text="已下架"
             @change="handleChangeStatus(scope.row)"/>
@@ -158,14 +150,14 @@
         style="width: 400px; margin-left:50px;">
         <el-form-item
           label="标题"
-          prop="title">
+          prop="head">
           <el-input v-model="temp.head" />
         </el-form-item>
         <el-form-item
-          label="公告内容"
+          label="内容"
           prop="content"
           style="width:650px;">
-          <tinymce v-model="temp.content" />
+          <tinymce id="tinymceEdit" ref="tinymceEdit" v-model="temp.content" />
         </el-form-item>
         <el-form-item
           label="发布者"
@@ -260,6 +252,7 @@ export default {
         announcer: '',
         imageUrl: '',
         status: '',
+        openOffstatus: '',
         communityId: ''
       },
       dialogFormVisible: false,
@@ -270,13 +263,29 @@ export default {
         reCreate: '再发布'
       },
       rules: {
+        head: [
+          { required: true, message: '请输入公告标题', trigger: 'blur' }
+        ],
+        content: [
+          { required: true, message: '请输入公告内容', trigger: 'blur' }
+        ],
+        announcer: [
+          { required: true, message: '请输入发布人员名称', trigger: 'blur' }
+        ]
       }
     }
   },
   computed: {
     ...mapGetters([
       'userInfo'
-    ])
+    ]),
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
+    }
   },
   created() {
     this.getList()
@@ -284,18 +293,19 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      this.listQuery.qryInfoData[0].communityId = this.communityId
       fetchList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryInfoData
             for (let i = 0; i < this.list.length; i++) {
               if (this.list[i].status === 'PUBLISHED') {
-                this.list[i].status = true
+                this.list[i].openOffstatus = true
               } else {
-                this.list[i].status = false
+                this.list[i].openOffstatus = false
               }
             }
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({
@@ -315,25 +325,25 @@ export default {
     },
     handleFilter() {
       console.log(this.listQuery)
-      this.listQuery.qryInfoData[0].communityId = this.userInfo.selectCommunity
-      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
-      this.listQuery.endTime = parseTime(this.listQuery.endTime)
+      this.listQuery.qryInfoData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       // 搜索数据（默认请求第一页数据）
       this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
-      this.listQuery.qryInfoData[0].communityId = this.userInfo.selectCommunity
-      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
-      this.listQuery.endTime = parseTime(this.listQuery.endTime)
+      this.listQuery.qryInfoData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       // 每页显示多少条数据
       this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
-      this.listQuery.qryInfoData[0].communityId = this.userInfo.selectCommunity
-      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
-      this.listQuery.endTime = parseTime(this.listQuery.endTime)
+      this.listQuery.qryInfoData[0].communityId = this.communityId
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       // 显示第几页的数据
       this.listQuery.page = val
       this.getList()
@@ -348,7 +358,8 @@ export default {
         announcer: '',
         imageUrl: '',
         status: '',
-        communityId: ''
+        openOffstatus: '',
+        communityId: this.communityId
       }
     },
     handleCreate() {
@@ -369,6 +380,11 @@ export default {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 // 新建成功后的回调
+                if (response.data.data.status === 'PUBLISHED') {
+                  response.data.data.openOffstatus = true
+                } else {
+                  response.data.data.openOffstatus = false
+                }
                 this.list.unshift(response.data.data)
                 this.dialogFormVisible = false
                 this.$notify({
@@ -397,11 +413,13 @@ export default {
     },
     handleUpdate(row) {
       // 修改/编辑事件
+
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
+        this.$refs.tinymceEdit.setContent(this.temp.content)
       })
     },
     updateData() {
@@ -447,10 +465,10 @@ export default {
     },
     handleChangeStatus(row) {
       this.temp = Object.assign({}, row) // copy obj
-      if (this.temp.status === true) {
-        this.temp.status === 'PUBLISHED'
+      if (this.temp.openOffstatus === true) {
+        this.temp.status = 'PUBLISHED'
       } else {
-        this.temp.status === 'REMOVED'
+        this.temp.status = 'REMOVED'
       }
       editNotice(this.temp).then((response) => {
         if (response.status === 200) {
@@ -493,6 +511,7 @@ export default {
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
+        this.$refs.tinymceEdit.setContent(this.temp.content)
       })
     },
     reCreateData() {
@@ -501,10 +520,16 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.id = ''
+          tempData.publishTime = parseTime(new Date())
           editNotice(tempData).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 // 新建成功后的回调
+                if (response.data.data.status === 'PUBLISHED') {
+                  response.data.data.openOffstatus = true
+                } else {
+                  response.data.data.openOffstatus = false
+                }
                 this.list.unshift(response.data.data)
                 this.dialogFormVisible = false
                 this.$notify({

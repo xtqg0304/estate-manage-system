@@ -18,9 +18,9 @@
       <el-table-column
         label="车场编码"
         align="center"
-        width="65">
+        width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.carparkKey }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -82,7 +82,7 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
           label="车场ID"
@@ -101,8 +101,8 @@
         </el-form-item>
         <el-form-item
           label="车场名称"
-          prop="carparkName ">
-          <el-input v-model="temp.carparkName " />
+          prop="carparkName">
+          <el-input v-model="temp.carparkName" />
         </el-form-item>
         <el-form-item
           label="车场总数"
@@ -153,7 +153,7 @@
         :rules="rules"
         :model="tempDetail"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
           label="车场ID"
@@ -203,7 +203,8 @@
         </el-form-item>
         <el-form-item
           label="车场密钥"
-          prop="address">
+          prop="address"
+          style="word-wrap: break-word;">
           {{ tempDetail.secretKey }}
         </el-form-item>
       </el-form>
@@ -274,19 +275,17 @@ export default {
         create: '新建'
       },
       rules: {
-        type: [
-          { required: true, message: 'type is required', trigger: 'change' }
+        carparkName: [
+          { required: true, message: '车场名称不能为空', trigger: 'blur' }
         ],
-        timestamp: [
-          {
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
+        parkingLotNum: [
+          { required: true, message: '车位总数不能为空', trigger: 'blur' }
         ],
-        title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
+        contactNumber: [
+          { required: true, message: '联系电话不能为空', trigger: 'blur' }
+        ],
+        address: [
+          { required: true, message: '详细地址不能为空', trigger: 'blur' }
         ]
       },
       tempDetail: {}

@@ -18,7 +18,7 @@
       </el-table-column>
       <el-table-column :label="$t('table.date')" width="150px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <!-- <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.propertyname')" min-width="150px">
@@ -85,8 +85,8 @@ import {
 } from '@/api/estatePaybill'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
-import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+// import { parseTime } from '@/utils'
+
 export default {
   name: 'ComplexTable',
   directives: {
@@ -102,7 +102,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: { Tinymce, UploadExcelComponent },
+  components: { Tinymce },
   data() {
     return {
       options: [
@@ -347,67 +347,6 @@ export default {
       })
       const index = this.list.indexOf(row)
       this.list.splice(index, 1)
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        })
-      )
-    },
-    beforeUpload(file) {
-      const isLt1M = file.size / 1024 / 1024 < 1
-
-      if (isLt1M) {
-        return true
-      }
-
-      this.$message({
-        message: 'Please do not upload files larger than 1m in size.',
-        type: 'warning'
-      })
-      return false
-    },
-    handleSuccess({ results, header }) {
-      // this.$notify({
-      //   title: '成功',
-      //   message: '导入成功',
-      //   type: 'success',
-      //   duration: 2000
-      // })
-      this.tableData = results
-      this.tableHeader = header
-      console.log(this.tableData)
-      console.log(header)
-      // 将数据传给后台，后台存入数据库成功，则重新获取数据列表
-      // this.list = results
-      // this.total = results.length
-      this.getList()
     }
   }
 }

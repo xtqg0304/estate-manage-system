@@ -67,3 +67,11 @@ export function getRoomList(data) {
     data
   })
 }
+/* 获取房产ID 获取房产信息 */
+export function getEstateInfo(data) {
+  return request({
+    url: basicServer + '/estate/getEstateByPrimaryKey',
+    method: 'post',
+    data
+  })
+}

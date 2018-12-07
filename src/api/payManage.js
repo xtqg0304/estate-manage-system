@@ -32,3 +32,29 @@ export function fetchOrderList(data) {
     data
   })
 }
+
+/** 根据订单号 获取详情列表 */
+export function fetchOrderDetail(data) {
+  return request({
+    url: paymentServer + '/property/detail/getOrderDetailListByOutTradeNo',
+    method: 'post',
+    data
+  })
+}
+
+/** 获取物缴订单详情分页列表 */
+export function fetchDetailList(data) {
+  return request({
+    url: paymentServer + '/property/detail/getOrderDetailPage',
+    method: 'post',
+    data
+  })
+}
+/** 获取物业缴费  月报分页查询列表 */
+export function fetchEstatePayMonth(data) {
+  return request({
+    url: paymentServer + '/property/month/getPayMonthPage',
+    method: 'post',
+    data
+  })
+}

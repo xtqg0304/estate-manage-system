@@ -8,7 +8,7 @@
         icon="el-icon-edit"
         @click="handleCreate">{{ $t('table.add') }}</el-button>
       <el-select
-        v-model="listQuery.qryTelephoneElementData[0].serviceType"
+        v-model="listQuery.status"
         placeholder="服务类型"
         clearable
         class="filter-item">
@@ -43,7 +43,7 @@
         label="服务类型"
         width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.serviceType }}</span>
+          <span>{{ scope.row.serviceType | serviceTypefilter }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -127,7 +127,7 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
           label="服务类型"
@@ -135,7 +135,8 @@
           <el-select
             v-model="temp.serviceType"
             class="filter-item"
-            placeholder="请选择服务类型">
+            placeholder="请选择服务类型"
+            style="width:100%">
             <el-option
               v-for="item in statusserviceOptions"
               :key="item.id"
@@ -203,6 +204,13 @@ export default {
         periphery: 'danger'
       }
       return statusMap[status]
+    },
+    serviceTypefilter(status) {
+      const statusMap = {
+        SERVICE_PROPERTY: '物业部门',
+        SERVICE_ROUND: '周边服务'
+      }
+      return statusMap[status]
     }
   },
   components: { Tinymce, Upload },
@@ -215,11 +223,18 @@ export default {
       listQuery: {
         currentPage: 1,
         pageSize: 20,
+        status: '',
         keyword: undefined,
         qryTelephoneElementData: [
           {
+            id: '',
             serviceType: '',
-            serviceName: ''
+            serviceName: '',
+            serviceNumber: '',
+            imageUrl: '',
+            operateUserId: '',
+            updateTime: '',
+            createTime: ''
           }
         ]
       },
@@ -252,19 +267,14 @@ export default {
         create: '新建'
       },
       rules: {
-        type: [
-          { required: true, message: 'type is required', trigger: 'change' }
+        serviceType: [
+          { required: true, message: '服务类型不能为空', trigger: 'change' }
         ],
-        timestamp: [
-          {
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
+        serviceName: [
+          { required: true, message: '服务名称不能为空', trigger: 'blur' }
         ],
-        title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
+        serviceNumber: [
+          { required: true, message: '服务电话不能为空', trigger: 'blur' }
         ]
       }
     }
@@ -272,7 +282,14 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo'
-    ])
+    ]),
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
+    }
   },
   created() {
     this.getList()
@@ -284,7 +301,7 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryTelephoneElementData
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
           } else {
             this.$notify.error({
@@ -303,7 +320,8 @@ export default {
       })
     },
     handleFilter() {
-      this.listQuery.qryTelephoneElementData[0].communityId = this.userInfo.selectCommunity
+      this.listQuery.qryTelephoneElementData[0].communityId = this.communityId
+      this.listQuery.qryTelephoneElementData[0].serviceType = this.listQuery.status
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
       this.listQuery.page = 1
@@ -311,11 +329,15 @@ export default {
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
+      this.listQuery.qryTelephoneElementData[0].communityId = this.communityId
+      this.listQuery.qryTelephoneElementData[0].serviceType = this.listQuery.status
       this.listQuery.limit = val
       this.getList()
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
+      this.listQuery.qryTelephoneElementData[0].communityId = this.communityId
+      this.listQuery.qryTelephoneElementData[0].serviceType = this.listQuery.status
       this.listQuery.page = val
       this.getList()
     },
