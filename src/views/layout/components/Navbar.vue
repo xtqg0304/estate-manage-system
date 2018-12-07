@@ -72,6 +72,10 @@
 </template>
 
 <script>
+import {
+  getBuildingList,
+  getRoomList
+} from '@/api/property'
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
@@ -146,7 +150,6 @@ export default {
       }
       return this.$store.getters.communityList
     }
-
   },
   created() {
     this.selectAppId = this.selectSysId
@@ -226,8 +229,37 @@ export default {
     /** 切换小区 */
     handelChangeCommunity(value) {
       // console.log(value)
+      // let communityIdTemp = value
       this.$store.commit('SET_SELECTCOMMUNITY', value)
       this.getCommunityText()
+      getBuildingList({ id: value }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const buildings = response.data.data
+            const roomList = buildings.map(v => {
+              v.label = v.buildingName
+              v.value = v.id
+              v.children = []
+              return v
+            })
+            for (let i = 0; i < roomList.length; i++) {
+              getRoomList({ communityId: value, buildingId: roomList[i].id }).then(response => {
+                if (response.status === 200) {
+                  if (response.data.code === 200) {
+                    const rooms = response.data.data
+                    roomList[i].children = rooms.map(v => {
+                      v.label = v.room
+                      v.value = v.id
+                      return v
+                    })
+                  }
+                }
+              })
+            }
+            this.$store.commit('SET_ROOMLIST', roomList)
+          }
+        }
+      })
       this.showCommunity = true
     },
     /** 控制显示 小区文字/选择小区下拉 */

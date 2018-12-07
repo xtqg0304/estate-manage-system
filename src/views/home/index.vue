@@ -3,7 +3,6 @@
     <header>
       <div class="header clearfix">
         <a class="header-logo">
-          <!-- <svg-icon icon-class="logo" />星网物联智慧社区云 -->
           <img style="width: 40%;vertical-align: middle;" src="@/assets/images/logo-login.png" >
         </a>
         <div class="time">
@@ -706,8 +705,6 @@ export default {
     ...mapGetters([
       'roles',
       'name'
-      // 'userInfo',
-      // 'permissionSys'
     ]),
     trueName() {
       const sessionData = sessionStorage.getItem('trueName')
@@ -747,16 +744,6 @@ export default {
       self.hoursT = (hours < 10 ? '0' : '') + hours
     }, 1000)
   },
-  // beforeRouteEnter (to, from, next) {
-  //   next(vm => {
-  //     vm.SetRoleAdmin()
-  //   })
-  // },
-  // beforeRouteLeave (to, from, next) {
-  //   this.$store.dispatch('ChangeRoles', to.params.systemName).then(() => {
-  //   })
-  //   next()
-  // },
   beforeRouteLeave(to, from, next) {
     this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)
     this.$store.dispatch('GenerateRoutes', to.params.systemName).then(() => {
@@ -771,12 +758,7 @@ export default {
     this.handelPermission()
   },
   methods: {
-    // SetRoleAdmin () {
-    //   this.$store.dispatch('ChangeRoles', 'admin').then(() => {
-    //   })
-    // },
     handelPermission() {
-      console.log(this.permissionSys)
       this.permissionSys.forEach((value, index) => {
         if (value.name === '物管系统') {
           this.systems.estateSys = value.id
@@ -787,14 +769,14 @@ export default {
         } else if (value.name === '车辆系统') {
           this.systems.vehicleSys = value.id
         } else {
-          console.log(this.systems)
+          console.log('9')
         }
       })
     },
     logout() {
       this.$store.dispatch('LogOut').then(() => {
         this.$router.push({ path: '/login' })
-        // location.reload()// In order to re-instantiate the vue-router object to avoid bugs
+        location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
     },
     showMsg() {

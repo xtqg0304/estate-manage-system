@@ -9,7 +9,7 @@
         @change="communitySelQuery">
         <el-option
           v-for="item in communityList"
-          :key="item"
+          :key="item.selectCommunityName"
           :label="item.selectCommunityName"
           :value="item" />
       </el-select>
@@ -21,7 +21,7 @@
         @change="buildingSelQuery">
         <el-option
           v-for="item in buildingList"
-          :key="item"
+          :key="item.building"
           :label="item.building"
           :value="item" />
       </el-select>
@@ -187,10 +187,9 @@
 
 <script>
 import { getCommunity, getkeyPage, updatekeyPage } from '@/api/device'
-// import { fetchList } from '@/api/estatePaybill'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
-// import { parseTime } from '@/utils'
+import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
@@ -445,6 +444,7 @@ export default {
       statusbillOptions: ['payment', 'cancelaccount', 'invalid', 'nopay'],
       downloadLoading: false,
       // 数据
+      buildingList: [],
       communityList: [],
       keyStatusList: ['可分享钥匙', '不可分享钥匙']
     }
@@ -500,12 +500,15 @@ export default {
     },
     // 跳转到开门日志
     openLog(row) {
+      const type = 'keyManage'
       this.$router.push({
         path:
           '/doorManage/deviceManage/openLog?deviceId=' +
           row.deviceId +
           '&userId=' +
-          this.userInfo.selectCommunity
+          this.userInfo.selectCommunity +
+          '&type=' + type +
+          '&openId=' + row.wxUserId
       })
     },
     // 社区变化事件
@@ -629,6 +632,67 @@ export default {
       })
       const index = this.list.indexOf(row)
       this.list.splice(index, 1)
+    },
+    handleDownload() {
+      // 导出数据
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
+        const filterVal = [
+          'timestamp',
+          'title',
+          'type',
+          'importance',
+          'status'
+        ]
+        const data = this.formatJson(filterVal, this.list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: 'table-list'
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === 'timestamp') {
+            return parseTime(v[j])
+          } else {
+            return v[j]
+          }
+        })
+      )
+    },
+    beforeUpload(file) {
+      const isLt1M = file.size / 1024 / 1024 < 1
+
+      if (isLt1M) {
+        return true
+      }
+
+      this.$message({
+        message: 'Please do not upload files larger than 1m in size.',
+        type: 'warning'
+      })
+      return false
+    },
+    handleSuccess({ results, header }) {
+      // this.$notify({
+      //   title: '成功',
+      //   message: '导入成功',
+      //   type: 'success',
+      //   duration: 2000
+      // })
+      this.tableData = results
+      this.tableHeader = header
+      console.log(this.tableData)
+      console.log(header)
+      // 将数据传给后台，后台存入数据库成功，则重新获取数据列表
+      // this.list = results
+      // this.total = results.length
+      this.getList()
     }
   }
 }

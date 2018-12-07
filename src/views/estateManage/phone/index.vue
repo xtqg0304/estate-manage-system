@@ -68,15 +68,10 @@
         <template slot-scope="scope">
           <span class="link-type">
             <el-popover
-              placement="left"
+              placement="right"
               trigger="hover">
               <img :src="scope.row.imageUrl" style="max-height:200px;" >
               <img slot="reference" :src="scope.row.imageUrl" style="max-height:23px;vertical-align: bottom;" >
-              <!-- <img src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                   style="max-height:200px;">
-              <img slot="reference"
-                   src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                   style="max-height:23px;vertical-align: bottom;"> -->
             </el-popover>
           </span>
         </template>

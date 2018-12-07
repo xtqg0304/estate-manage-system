@@ -28,6 +28,7 @@ const getters = {
   permission: state => state.user.permission,
   communityList: state => state.user.communityList,
   selectCommunity: state => state.user.selectCommunity,
-  selectCommunityName: state => state.user.selectCommunityName
+  selectCommunityName: state => state.user.selectCommunityName,
+  roomList: state => state.user.roomList
 }
 export default getters

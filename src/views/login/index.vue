@@ -18,10 +18,8 @@
 
             <div class="title-container">
               <h3 class="title">
-                <!-- <svg-icon icon-class="logo" /> 星网物联智慧社区云 -->
                 <img style="width:50%" src="@/assets/images/logo-login.png" >
               </h3>
-              <!-- <lang-select class="set-language" /> -->
             </div>
 
             <el-form-item prop="username">
@@ -59,29 +57,10 @@
               type="primary"
               style="width:100%;margin-bottom:30px;"
               @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
-
-              <!-- <div class="tips">
-              <span>{{ $t('login.username') }} : admin</span>
-              <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-            </div>
-            <div class="tips">
-              <span style="margin-right:18px;">{{ $t('login.username') }} : editor</span>
-              <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-            </div>
-
-            <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.thirdparty') }}</el-button> -->
           </el-form>
         </div>
       </el-col>
     </el-row>
-    <!-- <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
-      {{ $t('login.thirdpartyTips') }}
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog> -->
-
   </div>
 </template>
 
@@ -123,10 +102,8 @@ export default {
     }
   },
   created() {
-    // window.addEventListener('hashchange', this.afterQRScan)
   },
   destroyed() {
-    // window.removeEventListener('hashchange', this.afterQRScan)
   },
   methods: {
     showPwd() {
@@ -144,7 +121,6 @@ export default {
             this.$store.dispatch('GetUserCommunity')
             this.loading = false
             this.$router.push({ path: '/home' })
-            console.log('1111')
           }).catch(() => {
             this.loading = false
           })
@@ -153,32 +129,12 @@ export default {
           return false
         }
       })
-    },
-    afterQRScan() {
-      // const hash = window.location.hash.slice(1)
-      // const hashObj = getQueryObject(hash)
-      // const originUrl = window.location.origin
-      // history.replaceState({}, '', originUrl)
-      // const codeMap = {
-      //   wechat: 'code',
-      //   tencent: 'code'
-      // }
-      // const codeName = hashObj[codeMap[this.auth_type]]
-      // if (!codeName) {
-      //   alert('第三方登录失败')
-      // } else {
-      //   this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-      //     this.$router.push({ path: '/' })
-      //   })
-      // }
     }
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg: #283443;
 $light_gray: #eee;

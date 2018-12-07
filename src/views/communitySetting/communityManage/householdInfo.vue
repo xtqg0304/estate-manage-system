@@ -70,8 +70,9 @@
           label="房产名称"
           prop="estateIds" >
           <el-cascader
-            :options="buildings"
+            :options="roomList"
             v-model="temp.estateIds"
+            expand-trigger="hover"
             placeholder="房产名称"
             class="filter-item"
             style="width:100%"/>
@@ -118,8 +119,6 @@ import {
   deleteHousehold
 } from '@/api/houseHold'
 import {
-  getBuildingList,
-  getRoomList,
   getEstateInfo
 } from '@/api/property'
 import waves from '@/directive/waves' // 水波纹指令
@@ -189,8 +188,7 @@ export default {
           { pattern: '[0-9]{3}-[0-9]{3}-[0-9]{4}', message: '请输入正确格式的手机号' }
         ]
 
-      },
-      buildings: []
+      }
     }
   },
   computed: {
@@ -203,11 +201,17 @@ export default {
         this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
       }
       return this.$store.state.user.selectCommunity
+    },
+    roomList() {
+      const sessionData = JSON.parse(sessionStorage.getItem('roomList'))
+      if (this.$store.getters.roomList.length === 0 && sessionData) {
+        this.$store.commit('SET_COMMUNITYLIST', sessionData)// 同步操作
+      }
+      return this.$store.getters.roomList
     }
   },
   created() {
     this.getList()
-    this.getBuilding()
   },
   methods: {
     getList() {
@@ -219,47 +223,6 @@ export default {
             this.list = response.data.data.qryList
             this.total = response.data.data.totalCount
             this.listLoading = false
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
-          }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
-      })
-    },
-    getBuilding() {
-      getBuildingList({ id: this.communityId }).then(response => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            const items = response.data.data
-            this.buildings = items.map(v => {
-              v.label = v.buildingName
-              v.value = v.id
-              v.children = []
-              return v
-            })
-            for (let i = 0; i < this.buildings.length; i++) {
-              getRoomList({ communityId: this.communityId, buildingId: this.buildings[i].id }).then(response => {
-                if (response.status === 200) {
-                  if (response.data.code === 200) {
-                    const items = response.data.data
-                    this.buildings[i].children = items.map(v => {
-                      v.label = v.room
-                      v.value = v.id
-                      return v
-                    })
-                  }
-                }
-              })
-            }
           } else {
             this.$notify.error({
               title: '失败',

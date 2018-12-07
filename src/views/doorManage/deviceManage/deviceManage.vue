@@ -15,7 +15,7 @@
         @change="communitySelQuery">
         <el-option
           v-for="item in communityList"
-          :key="item"
+          :key="item.selectCommunityName"
           :label="item.selectCommunityName"
           :value="item" />
       </el-select>
@@ -27,7 +27,7 @@
         @change="buildingSelQuery">
         <el-option
           v-for="item in buildingList"
-          :key="item"
+          :key="item.building"
           :label="item.building"
           :value="item" />
       </el-select>
@@ -100,17 +100,18 @@
           <span :class="scope.row.devStatus | statusClassFilter">{{ scope.row.devStatus| statusFilter }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="进出标注"
-                       width="120px"
-                       align="center"
-                       sortable
-                       prop="outInFlag">
+      <el-table-column
+        label="进出标注"
+        min-width="150px"
+        align="center"
+        sortable
+        prop="outInFlag">
         <template slot-scope="scope">
           <span>{{ scope.row.outInFlag| outFilter }}</span>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column
-        label="进度"
+        label="设备流量"
         width="180px"
         align="center"
         sortable
@@ -119,7 +120,7 @@
           <el-progress
             :text-inside="true"
             :stroke-width="18"
-            :percentage="scope.row.capacity| capacityFilter"/>
+            :percentage="scope.row.capacity | capacityFilter" />
         </template>
       </el-table-column>
       <el-table-column
@@ -295,7 +296,7 @@
             :autosize="{ minRows: 2, maxRows: 4}"
             v-model="temp.remarks"
             type="textarea"
-            placeholder="请输入内容"/>
+            placeholder="请输入内容" />
         </el-form-item>
 
       </el-form>
@@ -355,12 +356,6 @@
 </template>
 
 <script>
-// import {
-//   fetchList,
-//   fetchTable,
-//   createNotice,
-//   updateNotice
-// } from '@/api/phone'
 import {
   getDevieType,
   getCommunity,
@@ -372,7 +367,6 @@ import {
 } from '@/api/device'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
-// import { parseTime } from '@/utils'
 import Upload from '@/components/Upload/singleImage3'
 import { mapGetters } from 'vuex'
 export default {
@@ -382,9 +376,13 @@ export default {
   },
   filters: {
     capacityFilter(status) {
-      status = status / 51200 * 100
-      status = status.toFixed(2)
-      return status
+      if (status) {
+        console.log(temp)
+        const temp = parseFloat(status).toFixed(2)
+        return parseInt(temp / 51200 * 100)
+      } else {
+        return 0
+      }
     },
     outFilter(status) {
       const statusMap = {
@@ -615,8 +613,6 @@ export default {
   created() {
     // this.userInfo.selectCommunity = "05de5f8008394f1da4857078b754cb49";
     // this.userInfo.selectCommunityName = "小区测试";
-    console.log(this.userInfo)
-    console.log(132)
     // 小区名称
     this.communityList.push(this.userInfo)
     this.listQuery.controllerName = this.userInfo.selectCommunity // 初始化绑定小区id,用来查询
@@ -758,29 +754,12 @@ export default {
     getList() {
       this.listLoading = true
       getDeviceList(this.listQuery).then(response => {
-        console.log(111)
-        console.log(response.data.data.qryInfoData)
         this.listLoading = false
         this.deviceList = response.data.data.qryInfoData
         this.total = response.data.data.totalCount
-        // console.log(this.deviceList)
-        // alert(9)
-        //   this.list = response.data.items
-        //   this.total = response.data.total
-        //   setTimeout(() => {
-        //     this.listLoading = false
-        //   }, 1.5 * 1000)
-        // })
+        console.log(this.deviceList)
+        console.log(132)
       })
-      // fetchList(this.listQuery).then(response => {
-      //   this.list = response.data.items
-      //   this.total = response.data.total
-
-      //   // Just to simulate the time of the request
-      //   setTimeout(() => {
-      //     this.listLoading = false
-      //   }, 1.5 * 1000)
-      // })
     },
     handleFilter() {
       console.log(this.listQuery)
@@ -917,11 +896,6 @@ export default {
           this.temp.deviceTypeId = this.deviceTypeList[i].id
         }
       }
-      // this.temp.buildingName = "测试小区"
-      // this.temp.danyuanName = "测试小区"
-      // 修改/编辑事件
-      // this.temp = Object.assign({}, row) // copy obj
-      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -991,14 +965,6 @@ export default {
         })
         this.getList()
       })
-    },
-    handleFetchPv(pv) {
-      // 获取阅读数据表格
-      // fetchTable(pv).then(response => {
-      //   console.log(response.data.pvData)
-      //   this.pvData = response.data.pvData
-      //   this.dialogPvVisible = true
-      // })
     }
   }
 }

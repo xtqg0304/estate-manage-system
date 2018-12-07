@@ -2,11 +2,11 @@
   <div class="app-container">
     <div class="filter-container">
       <el-cascader
-        :options="buildings"
+        :options="roomList"
         v-model="listQuery.searchEstate"
+        expand-trigger="hover"
         placeholder="房产名称"
-        class="filter-item"
-        @active-item-change="handleChange" />
+        class="filter-item" />
       <el-select v-model="listQuery.statusBill" placeholder="账单状态" clearable class="filter-item">
         <el-option v-for="item in statusbillOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
@@ -79,10 +79,6 @@ import {
   editBillAmount,
   editBillStatus
 } from '@/api/payManage'
-import {
-  getBuildingList,
-  getRoomList
-} from '@/api/property'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
   name: 'ComplexTable',
@@ -139,8 +135,7 @@ export default {
           label: '未缴',
           value: 3
         }
-      ],
-      buildings: []
+      ]
     }
   },
   computed: {
@@ -150,11 +145,17 @@ export default {
         this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
       }
       return this.$store.state.user.selectCommunity
+    },
+    roomList() {
+      const sessionData = JSON.parse(sessionStorage.getItem('roomList'))
+      if (this.$store.getters.roomList.length === 0 && sessionData) {
+        this.$store.commit('SET_COMMUNITYLIST', sessionData)// 同步操作
+      }
+      return this.$store.getters.roomList
     }
   },
   created() {
     this.getList()
-    this.getBuilding()
   },
   methods: {
     getList() {
@@ -175,33 +176,6 @@ export default {
             // this.list = response.data.data.qryList
             this.total = response.data.data.totalCount
             this.listLoading = false
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
-          }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
-      })
-    },
-    getBuilding() {
-      getBuildingList({ id: this.communityId }).then(response => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            const items = response.data.data
-            this.buildings = items.map(v => {
-              v.label = v.buildingName
-              v.value = v.id
-              v.children = []
-              return v
-            })
           } else {
             this.$notify.error({
               title: '失败',
@@ -293,41 +267,6 @@ export default {
             //   type: 'success',
             //   duration: 2000
             // })
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
-          }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
-      })
-    },
-    handleChange(value) {
-      getRoomList({ communityId: this.communityId, buildingId: value[0] }).then(response => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            for (const v of this.buildings) {
-              // 更新后的值插入原来数据的位置
-              if (v.id === value[0]) {
-                const building = Object.assign({}, v)
-                const items = response.data.data
-                building.children = items.map(v => {
-                  v.label = v.room
-                  v.value = v.id
-                  return v
-                })
-                const index = this.buildings.indexOf(v)
-                this.buildings.splice(index, 1, building)
-                break
-              }
-            }
           } else {
             this.$notify.error({
               title: '失败',

@@ -1,21 +1,6 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!-- <el-button class="filter-item"
-                 style="margin-left: 10px;"
-                 type="primary"
-                 icon="el-icon-edit"
-                 @click="handleCreate">{{ $t('table.add') }}</el-button> -->
-      <!-- <el-select v-model="listQuery.deviceStatusName"
-                 placeholder="在线状态"
-                 clearable
-                 class="filter-item"
-                 @change="deviceSel">
-        <el-option v-for="item in deviceStatusList"
-                   :key="item"
-                   :label="item"
-                   :value="item" />
-      </el-select> -->
       <el-select
         v-model="listQuery.communityName"
         placeholder="选择小区"
@@ -24,7 +9,7 @@
         @change="communitySel">
         <el-option
           v-for="item in communityList"
-          :key="item"
+          :key="item.selectCommunityName"
           :label="item.selectCommunityName"
           :value="item" />
       </el-select>
@@ -36,20 +21,10 @@
         @change="buildingSel">
         <el-option
           v-for="item in buildingList"
-          :key="item"
+          :key="item.building"
           :label="item.building"
           :value="item" />
       </el-select>
-      <!-- <el-select v-model="listQuery.danyuanName"
-                 placeholder="选择单元"
-                 clearable
-                 class="filter-item"
-                 @change="danyuanSel">
-        <el-option v-for="item in danyuanList"
-                   :key="item"
-                   :label="item.unit"
-                   :value="item" />
-      </el-select> -->
       <el-date-picker
         v-model="listQuery.time"
         :picker-options="pickerOptions"
@@ -86,18 +61,19 @@
         align="center"
         width="150">
         <template slot-scope="scope">
-          <!-- <span> -->
-          <!-- <el-popover placement="left"
-                        trigger="hover"> -->
-          <!-- <img src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                   style="max-height:200px;"> -->
-          <!-- slot="reference" -->
-          <img
-            :src=" scope.row.picUrl "
-            style="max-height:80px;vertical-align: bottom;">
-            <!-- </el-popover> -->
-            <!-- </span> -->
-            <!-- <span>{{ scope.row.userPciture }}</span> -->
+          <span class="link-type">
+            <el-popover
+              placement="right"
+              trigger="hover">
+              <img
+                :src="scope.row.picUrl"
+                style="max-height:200px;">
+              <img
+                slot="reference"
+                :src="scope.row.picUrl"
+                style="max-height:23px;vertical-align: bottom;">
+            </el-popover>
+          </span>
         </template>
       </el-table-column>
       <el-table-column
@@ -144,76 +120,11 @@
       </el-table-column>
       <el-table-column
         label="开门时间"
-        align="center"
-        width="210">
+        align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.inoutTime | dateFormat(('yyyy-MM-dd hh:mm:ss')) }}</span>
+          <span>{{ scope.row.inoutTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="$t('table.date')"
-                       width="150px"
-                       align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="$t('table.servicename')"
-                       width="120px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.servicename }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="$t('table.servicephone')"
-                       width="120px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.servicephone }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="$t('table.remarks')"
-                       min-width="150px"
-                       align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.remarks }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="$t('table.uploadimg')"
-                       align="center"
-                       width="120">
-        <template slot-scope="scope">
-          <span class="link-type">
-            <el-popover placement="left"
-                        trigger="hover">
-              <img  :src="scope.row.uploadimg" style="max-height:200px;"  >
-              <img  :src="scope.row.uploadimg" slot="reference" style="max-height:23px;vertical-align: bottom;"  >
-              <img src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                   style="max-height:200px;">
-              <img slot="reference"
-                   src="https://cdn.duitang.com/uploads/item/201508/30/20150830105732_nZCLV.jpeg"
-                   style="max-height:23px;vertical-align: bottom;">
-            </el-popover>
-          </span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="$t('table.statusservice')"
-                       class-name="status-col"
-                       width="150">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.statusservice | statusFilter">{{ $t('table.'+scope.row.statusservice) }}</el-tag>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="$t('table.actions')"
-                       align="center"
-                       width="218"
-                       class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button type="primary"
-                     size="mini"
-                     @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button type="danger"
-                     size="mini"
-                     @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
-        </template>
-      </el-table-column> -->
     </el-table>
     <div class="pagination-container">
       <el-pagination
@@ -340,39 +251,12 @@ export default {
   },
   filters: {
     statusFilter(status) {
-      // const statusMap = {
-      //   estate: 'info',
-      //   periphery: 'danger'
-      // }
       const statusMap = {
         0: '否',
         1: '是'
       }
       return statusMap[status]
-    },
-    // 时间格式化
-    dateFormat(value, fmt) {
-      const getDate = new Date(value)
-      const o = {
-        'M+': getDate.getMonth() + 1,
-        'd+': getDate.getDate(),
-        'h+': getDate.getHours(),
-        'm+': getDate.getMinutes(),
-        's+': getDate.getSeconds(),
-        'q+': Math.floor((getDate.getMonth() + 3) / 3),
-        'S': getDate.getMilliseconds()
-      }
-      if (/(y+)/.test(fmt)) {
-        fmt = fmt.replace(RegExp.$1, (getDate.getFullYear() + '').substr(4 - RegExp.$1.length))
-      }
-      for (const k in o) {
-        if (new RegExp('(' + k + ')').test(fmt)) {
-          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
-        }
-      }
-      return fmt
     }
-
   },
   components: { Tinymce, Upload },
   data() {
@@ -386,7 +270,6 @@ export default {
       // 单元数组
       danyuanList: [],
       search: '',
-      // 搜索条件
       listQuery: {
         currentPage: 1,
         pageSize: 20,
@@ -397,19 +280,12 @@ export default {
         buildingId: '',
         danyuanName: '',
         fieldId: '',
-        // field:"",
         inoutDeviceId: '', // 设备记录ID
         inoutuserId: '', // 人员ID
-        // deviceStatus: "",
-        // deviceStatusName: "",
-        // statusservice: undefined,
+        openId: '', // 用户ID
         keyword: ''// 搜索关键字
       },
-      // 设备数据
       deviceTypeList: [],
-      // communityList: [], // 小区
-      // buildingList: [],
-      // danyuanList: [],
       pickerOptions: {
         shortcuts: [{
           text: '最近一周',
@@ -447,18 +323,7 @@ export default {
       ],
       statusserviceOptions: ['estate', 'periphery'],
       showReviewer: false,
-      temp: {
-        // inoutDeviceId: '',
-        // inoutuserId: '',
-        // id: undefined,
-        // timestamp: new Date(),
-        // servicename: '',
-        // statusservice: 'estate',
-        // remarks: '',
-        // servicephone: '',
-        // uploadimg: ''
-
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -522,6 +387,9 @@ export default {
     this.listQuery.controllerName = this.userInfo.selectCommunity// 初始化绑定小区id,用来查询
     this.listQuery.deviceId = this.$route.query.deviceId// 设备记录id
     this.listQuery.inoutuserId = this.$route.query.userId// 绑定人员id
+    if (this.$route.query.type === 'keyManage') {
+      this.listQuery.openId = this.$route.query.openId// 用户Id
+    }
     // 小区数组
     this.communityList.push(this.userInfo)
     // 初始化表格数据
