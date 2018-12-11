@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { paymentServer } from '@/api/api.js'
+import { paymentServer, wayServer } from '@/api/api.js'
 
 /*  获取支付类型分析数据 */
 export function fetchPayTypeAnalysis(data) {
@@ -21,6 +21,23 @@ export function fetchPropertyPayAnalysis(data) {
 export function fetchPropertyPayTrend(data) {
   return request({
     url: paymentServer + '/property/bigData/getPropertyPayTrend',
+    method: 'post',
+    data
+  })
+}
+/*  获取门禁设备分析数据 */
+export function fetchDevicetypeCount(data) {
+  return request({
+    url: wayServer + '/static/getDevicetypeCount',
+    method: 'post',
+    data
+  })
+}
+
+/*  获取报事报修分析数据 */
+export function fetchComplaintStatus(data) {
+  return request({
+    url: wayServer + '/complaint/getComplaintStatus',
     method: 'post',
     data
   })

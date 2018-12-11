@@ -6,6 +6,8 @@
         <el-menu
           class="el-menu-demo"
           mode="vertical"
+          @open="handleOpen"
+          @close="handleClose"
           @select="handleSelect">
           <!-- 一级菜单没有子菜单 -->
           <el-menu-item v-for="child in regionData" v-if="!child.children" :key="child.id" :index="child.id">
@@ -96,14 +98,14 @@
             align="center"
             width="120">
             <template slot-scope="scope">
-              <span>{{ scope.row.id }}</span>
+              <span>{{ scope.row.code }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="区域名称"
             width="120px">
             <template slot-scope="scope">
-              <span>{{ scope.row.servicename }}</span>
+              <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -111,7 +113,7 @@
             min-width="150px"
             align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.remarks }}</span>
+              <span>{{ scope.row.desription }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -157,10 +159,13 @@
             <el-form-item
               label="上级区域"
               prop="statusservice">
-              <el-cascader
-                :options="options"
-                v-model="temp.tempParentId"
-                expand-trigger="hover"/>
+              <el-select :disabled="dialogStatus === 'create'" v-model="temp.parentId" placeholder="上级区域" style="width:100%">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"/>
+              </el-select>
             </el-form-item>
             <el-form-item
               label="区域编码"
@@ -202,7 +207,8 @@ import {
   fetchRegionTree,
   fetchRegionList,
   editRegion,
-  deleteRegion
+  deleteRegion,
+  fetchRegionOptions
 } from '@/api/areaSetting'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
@@ -285,14 +291,25 @@ export default {
       },
       downloadLoading: false,
       regionData: [],
-      defaultActive: ''
+      defaultActive: '',
+      parentId: ''
     }
   },
   created() {
     this.getRegion()
+    this.getRegionOptions()
   },
   methods: {
     // 获取区域树 和 获取区域列表
+    getRegionOptions() {
+      fetchRegionOptions({}).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.options = this.traverse(response.data.data)
+          }
+        }
+      })
+    },
     getRegion() {
       this.listLoading = true
       fetchRegionTree().then(response => {
@@ -395,6 +412,12 @@ export default {
     handleCreate() {
       // 新建一条信息
       this.resetTemp()
+      if (this.parentId) {
+        this.temp.parentId = this.parentId
+      } else {
+        this.temp.parentId = '#'
+      }
+
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -403,7 +426,7 @@ export default {
     },
     createData() {
       console.log(this.temp)
-      this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
+      // this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
@@ -450,7 +473,7 @@ export default {
       // 修改/编辑 确认事件
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
+          // this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
           const tempData = Object.assign({}, this.temp)
           editRegion(tempData).then((response) => {
             if (response.status === 200) {
@@ -489,18 +512,42 @@ export default {
       })
     },
     handleDelete(row) {
-      deleteRegion({ id: row.id }).then((response) => {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteRegion({ id: row.id }).then((response) => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              // 在列表中删除 （将当前id传给后台）
+              const index = this.list.indexOf(row)
+              this.list.splice(index, 1)
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+            }
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    handleSelect(key, keyPath) {
+      this.listLoading = true
+      this.parentId = key
+      fetchRegionList({ parentId: key }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            // 在列表中删除 （将当前id传给后台）
-            const index = this.list.indexOf(row)
-            this.list.splice(index, 1)
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
+            this.list = response.data.data
+            this.total = response.data.data.length
+            this.listLoading = false
           } else {
             this.$notify.error({
               title: '失败',
@@ -516,9 +563,41 @@ export default {
           })
         }
       })
+        .catch(function(error) {
+          console.log(error)
+        })
     },
-    handleSelect(key, keyPath) {
+    handleOpen(key, keyPath) {
       this.listLoading = true
+      this.parentId = key
+      fetchRegionList({ parentId: key }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data
+            this.total = response.data.data.length
+            this.listLoading = false
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    handleClose(key, keyPath) {
+      this.listLoading = true
+      this.parentId = key
       fetchRegionList({ parentId: key }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {

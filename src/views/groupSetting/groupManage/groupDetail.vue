@@ -132,7 +132,7 @@
         </el-form>
       </div>
     </el-card>
-    <el-card class="box-card">
+    <el-card class="box-card" style="margin-top:20px;">
       <div slot="header" class="clearfix">
         <span> 页面设置 </span>
         <span class="pullRight">
@@ -158,49 +158,6 @@
             <Upload v-model="tempGroupInfo.icon" />
           </el-form-item>
         </el-form>
-      </div>
-    </el-card>
-    <el-card class="box-card">
-      <div slot="header" class="clearfix">
-        <span> 系统管理员 </span>
-      </div>
-      <div class="component-item">
-        <div class="icon-item">
-          <i class="el-icon-close"/>
-          <p>
-            <svg-icon icon-class="user" />
-            <span>张华</span>
-          </p>
-          <p>
-            <svg-icon icon-class="phone" />
-            <span>17777778828 </span>
-          </p>
-
-        </div>
-        <div class="icon-item">
-          <i class="el-icon-close"/>
-          <p>
-            <svg-icon icon-class="user" />
-            <span>张华</span>
-          </p>
-          <p>
-            <svg-icon icon-class="phone" />
-            <span>17777778828 </span>
-          </p>
-
-        </div>
-        <div class="icon-item">
-          <i class="el-icon-close"/>
-          <p>
-            <svg-icon icon-class="user" />
-            <span>张华</span>
-          </p>
-          <p>
-            <svg-icon icon-class="phone" />
-            <span>17777778828 </span>
-          </p>
-
-        </div>
       </div>
     </el-card>
   </div>

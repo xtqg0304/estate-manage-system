@@ -32,3 +32,11 @@ export function deleteRegion(data) {
     data
   })
 }
+/*  获取区域列表 */
+export function fetchRegionOptions(data) {
+  return request({
+    url: basicServer + '/region/getRegionListByGroupId',
+    method: 'post',
+    data
+  })
+}

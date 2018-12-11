@@ -44,14 +44,14 @@
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         label="所属区域"
         align="center"
         width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.regionId }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="联系人"
         align="center"
@@ -68,14 +68,14 @@
           <span>{{ scope.row.telephone }}</span>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         label="小区所在城市"
         align="center"
         width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.city }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="详细地址"
         align="center">
@@ -379,28 +379,32 @@ export default {
     },
     handleDelete(row) {
       // 在列表中删除 （将当前id传给后台）
-      this.listLoading = true
-      deleteCommunity({ id: row.id }).then(response => {
-        console.log(response)
-        debugger
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
-            const index = this.list.indexOf(row)
-            this.list.splice(index, 1)
-            this.listLoading = false
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.listLoading = true
+        deleteCommunity({ id: row.id }).then(response => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+              const index = this.list.indexOf(row)
+              this.list.splice(index, 1)
+              this.listLoading = false
+            }
           }
-        } else {
-          this.$message({
-            message: '请求失败成功',
-            type: 'error'
-          })
-        }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }

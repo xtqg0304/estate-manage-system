@@ -220,7 +220,9 @@
 import {
   fetchPayTypeAnalysis,
   fetchPropertyPayAnalysis,
-  fetchPropertyPayTrend
+  fetchPropertyPayTrend,
+  fetchDevicetypeCount,
+  fetchComplaintStatus
 } from '@/api/homeChart'
 import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
@@ -336,37 +338,10 @@ export default {
           }
         }
       },
-      doorAnalysisdata: {
-        chartData: {
-          columns: ['类型', '用户数'],
-          rows: [
-            { '类型': '业主', '用户数': 50 },
-            { '类型': '租客', '用户数': 30 },
-            { '类型': '其他', '用户数': 23 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '门禁分析'
-          }
-        }
-      },
+      doorAnalysisdata: {},
       payTypeAnalysisdata: {},
       eventAnalysisdata: {},
-      eventpercentAnalysisdata: {
-        chartData: {
-          columns: ['状态', '百分比'],
-          rows: [
-            { '状态': '已完成', '百分比': 60 },
-            { '状态': '未完成', '百分比': 40 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '报事完成率'
-          }
-        }
-      },
+      eventpercentAnalysisdata: {},
       vehicleTabledata: {
         tableData: [
           {
@@ -711,6 +686,8 @@ export default {
     this.getPayType()
     this.getPropertyPay()
     this.getPropertyPayTrend()
+    this.getDevicetypeCount()
+    this.getComplaintStatus()
   },
   methods: {
     handelPermission() {
@@ -779,6 +756,60 @@ export default {
           if (response.data.code === 200) {
             console.log(response.data.data)
             this.estatePaydata = Object.assign({}, response.data.data.estatePaydata)
+          }
+        }
+      })
+    },
+    getDevicetypeCount() { // 门禁分析数据
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchDevicetypeCount({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.doorAnalysisdata = {
+              chartData: {
+                columns: ['设备类型', '个数'],
+                rows: []
+              },
+              vChartOptions: {
+                title: {
+                  text: '门禁设备'
+                }
+              }
+            }
+            for (let i = 0, len = response.data.data.deviceList.length; i < len; i++) {
+              this.doorAnalysisdata.chartData.rows.push({ '设备类型': response.data.data.deviceList[i].deviceFactoryName, '个数': response.data.data.deviceList[i].devType })
+            }
+          }
+        }
+      })
+    },
+    getComplaintStatus() { // 获取报事报修分析数据
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchComplaintStatus({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            debugger
+            this.eventpercentAnalysisdata = {
+              chartData: {
+                columns: ['状态', '个数'],
+                rows: []
+              },
+              vChartOptions: {
+                title: {
+                  text: '报事状态'
+                }
+              }
+            }
+            for (let i = 0, len = response.data.data.qryComplaintElementData.length; i < len; i++) {
+              this.eventpercentAnalysisdata.chartData.rows.push({ '状态': response.data.data.qryComplaintElementData[i].status, '个数': response.data.data.qryComplaintElementData[i].statusCount })
+            }
+            debugger
           }
         }
       })
