@@ -123,7 +123,7 @@
                   <ringchart :ringdata="doorAnalysisdata" />
                 </div>
                 <div style="width:50%;height:50%;float:left;">
-                  <ringchart :ringdata="vehicleAnalysisdata" />
+                  <ringchart :ringdata="payTypeAnalysisdata" />
                 </div>
                 <div style="width:50%;height:50%;float:left;">
                   <ringchart :ringdata="eventAnalysisdata" />
@@ -217,6 +217,12 @@
 </template>
 
 <script>
+import {
+  fetchPayTypeAnalysis,
+  fetchPropertyPayAnalysis,
+  fetchPropertyPayTrend
+} from '@/api/homeChart'
+import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import histogram from './histogram'
@@ -233,30 +239,7 @@ export default {
   },
   data() {
     return {
-      estatePaydata: {
-        chartData: {
-          columns: ['日期', '应收金额', '已缴金额', '未缴金额'],
-          rows: [
-            { '日期': '1/1', '应收金额': 4000, '已缴金额': 2000, '未缴金额': 2000 },
-            { '日期': '1/2', '应收金额': 4000, '已缴金额': 3000, '未缴金额': 1000 },
-            { '日期': '1/3', '应收金额': 4000, '已缴金额': 2500, '未缴金额': 1500 },
-            { '日期': '1/4', '应收金额': 4000, '已缴金额': 100, '未缴金额': 3900 },
-            { '日期': '1/5', '应收金额': 4000, '已缴金额': 500, '未缴金额': 3500 },
-            { '日期': '1/6', '应收金额': 4000, '已缴金额': 2000, '未缴金额': 2000 },
-            { '日期': '1/7', '应收金额': 4000, '已缴金额': 4000, '未缴金额': 0 },
-            { '日期': '1/8', '应收金额': 4000, '已缴金额': 2000, '未缴金额': 2000 },
-            { '日期': '1/9', '应收金额': 4000, '已缴金额': 200, '未缴金额': 3800 },
-            { '日期': '1/10', '应收金额': 4000, '已缴金额': 0, '未缴金额': 4000 },
-            { '日期': '1/11', '应收金额': 4000, '已缴金额': 2000, '未缴金额': 2000 },
-            { '日期': '1/12', '应收金额': 4000, '已缴金额': 1000, '未缴金额': 3000 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '缴费趋势'
-          }
-        }
-      },
+      estatePaydata: {},
       vehiclePaydata: {
         chartData: {
           columns: ['日期', '总金额', '临停缴费'],
@@ -368,39 +351,8 @@ export default {
           }
         }
       },
-      vehicleAnalysisdata: {
-        chartData: {
-          columns: ['支付类型', '用户数'],
-          rows: [
-            { '支付类型': '现金', '用户数': 93 },
-            { '支付类型': '支付宝', '用户数': 30 },
-            { '支付类型': '微信', '用户数': 50 },
-            { '支付类型': '银联', '用户数': 70 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '支付分析'
-          }
-        }
-      },
-      eventAnalysisdata: {
-        chartData: {
-          columns: ['类型', '数值'],
-          rows: [
-            { '类型': '水费', '数值': 70 },
-            { '类型': '电费', '数值': 180 },
-            { '类型': '物业费', '数值': 130 },
-            { '类型': '公摊费', '数值': 50 },
-            { '类型': '停车费', '数值': 30 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '缴费分析'
-          }
-        }
-      },
+      payTypeAnalysisdata: {},
+      eventAnalysisdata: {},
       eventpercentAnalysisdata: {
         chartData: {
           columns: ['状态', '百分比'],
@@ -756,6 +708,9 @@ export default {
   },
   created() {
     this.handelPermission()
+    this.getPayType()
+    this.getPropertyPay()
+    this.getPropertyPayTrend()
   },
   methods: {
     handelPermission() {
@@ -785,7 +740,50 @@ export default {
         type: 'success',
         duration: 2000
       })
+    },
+    getPayType() { // 获取一个月内的支付分析
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchPayTypeAnalysis({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            console.log(response.data.data)
+            this.payTypeAnalysisdata = Object.assign({}, response.data.data.eventAnalysisdata)
+          }
+        }
+      })
+    },
+    getPropertyPay() { // 获取一个月内的物缴分析
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchPropertyPayAnalysis({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            console.log(response.data.data)
+            this.eventAnalysisdata = Object.assign({}, response.data.data.eventAnalysisdata)
+          }
+        }
+      })
+    },
+    getPropertyPayTrend() { // 获取一个月内的物缴趋势
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchPropertyPayTrend({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            console.log(response.data.data)
+            this.estatePaydata = Object.assign({}, response.data.data.estatePaydata)
+          }
+        }
+      })
     }
+
   }
 }
 </script>
