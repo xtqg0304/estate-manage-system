@@ -10,15 +10,20 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      // '/basicServer': {
-      //   target: 'https://www.starnetiot-park.top/',
-      //   changeOrigin: true
-      // },
       '/api': {
         target: 'https://www.starnetiot-park.top/',
         pathRewrite: { '^/api': '/' },
         changeOrigin: true
       }
+      // '/basicServer': {
+      //   target: 'https://www.starnetiot-park.top/',
+      //   changeOrigin: true
+      // },
+      // '/payment': {
+      //   target: 'http://10.18.72.240:8600',
+      //   pathRewrite: { '^/payment': '' },
+      //   changeOrigin: true
+      // }
       // '/goodsServer': {
       //   target: 'http://10.18.72.28:8099',
       //   pathRewrite: { '^/goodsServer': '' },

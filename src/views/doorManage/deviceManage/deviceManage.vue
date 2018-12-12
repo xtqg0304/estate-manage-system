@@ -236,7 +236,7 @@
           <el-input v-model="temp.serviceIp" />
         </el-form-item>
         <el-form-item
-          :label="$t('table.relateHouse')"
+          label="关联房产"
           prop="relateHouse">
           <el-select
             v-model="temp.communityName"

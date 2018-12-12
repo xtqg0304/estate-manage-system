@@ -222,8 +222,16 @@ import {
   fetchPropertyPayAnalysis,
   fetchPropertyPayTrend,
   fetchDevicetypeCount,
-  fetchComplaintStatus
+  fetchComplaintStatus,
+  fetchDeviceInoutPage,
+  fetchInOutCountInfo,
+  fetchParkingChargeInfo,
+  fetchParkingRealTimeInfo
+
 } from '@/api/homeChart'
+import {
+  fetchOrderList
+} from '@/api/payManage'
 import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
@@ -242,30 +250,7 @@ export default {
   data() {
     return {
       estatePaydata: {},
-      vehiclePaydata: {
-        chartData: {
-          columns: ['日期', '总金额', '临停缴费'],
-          rows: [
-            { '日期': '1/1', '总金额': 2000, '临停缴费': 100 },
-            { '日期': '1/2', '总金额': 3000, '临停缴费': 500 },
-            { '日期': '1/3', '总金额': 2300, '临停缴费': 100 },
-            { '日期': '1/4', '总金额': 4300, '临停缴费': 100 },
-            { '日期': '1/5', '总金额': 6200, '临停缴费': 700 },
-            { '日期': '1/6', '总金额': 4500, '临停缴费': 100 },
-            { '日期': '1/7', '总金额': 9300, '临停缴费': 400 },
-            { '日期': '1/8', '总金额': 5500, '临停缴费': 200 },
-            { '日期': '1/9', '总金额': 2300, '临停缴费': 150 },
-            { '日期': '1/10', '总金额': 7030, '临停缴费': 150 },
-            { '日期': '1/11', '总金额': 3200, '临停缴费': 200 },
-            { '日期': '1/12', '总金额': 9500, '临停缴费': 100 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '停车收费'
-          }
-        }
-      },
+      vehiclePaydata: {},
       tempstopPaydata: {
         chartData: {
           columns: ['日期', '报修事件', '已完成', '未完成'],
@@ -314,184 +299,14 @@ export default {
           }
         }
       },
-      userVisitdata: {
-        chartData: {
-          columns: ['日期', '正常进出的访客', '异常进出的访客'],
-          rows: [
-            { '日期': '2018-08-08', '正常进出的访客': 2, '异常进出的访客': 120 },
-            { '日期': '2018-08-09', '正常进出的访客': 5, '异常进出的访客': 80 },
-            { '日期': '2018-08-10', '正常进出的访客': 0, '异常进出的访客': 10 },
-            { '日期': '2018-08-11', '正常进出的访客': 1, '异常进出的访客': 50 },
-            { '日期': '2018-08-12', '正常进出的访客': 10, '异常进出的访客': 100 },
-            { '日期': '2018-08-13', '正常进出的访客': 20, '异常进出的访客': 70 },
-            { '日期': '2018-08-14', '正常进出的访客': 2, '异常进出的访客': 120 },
-            { '日期': '2018-08-15', '正常进出的访客': 5, '异常进出的访客': 80 },
-            { '日期': '2018-08-16', '正常进出的访客': 0, '异常进出的访客': 10 },
-            { '日期': '2018-08-17', '正常进出的访客': 1, '异常进出的访客': 50 },
-            { '日期': '2018-08-18', '正常进出的访客': 10, '异常进出的访客': 100 },
-            { '日期': '2018-08-19', '正常进出的访客': 20, '异常进出的访客': 70 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '访客统计'
-          }
-        }
-      },
+      userVisitdata: {},
       doorAnalysisdata: {},
       payTypeAnalysisdata: {},
       eventAnalysisdata: {},
       eventpercentAnalysisdata: {},
-      vehicleTabledata: {
-        tableData: [
-          {
-            '车牌号': '闽A44444',
-            '进场时间': '2018-09-03 15:30',
-            '出场时间': '2018-09-03 16:20',
-            '停车时长': '0小时50分',
-            '金额（元）': '5元'
-          },
-          {
-            '车牌号': '闽A44444',
-            '进场时间': '2018-09-03 15:30',
-            '出场时间': '2018-09-03 16:20',
-            '停车时长': '0小时50分',
-            '金额（元）': '5元'
-          },
-          {
-            '车牌号': '闽A44444',
-            '进场时间': '2018-09-03 15:30',
-            '出场时间': '2018-09-03 16:20',
-            '停车时长': '0小时50分',
-            '金额（元）': '5元'
-          },
-          {
-            '车牌号': '闽A44444',
-            '进场时间': '2018-09-03 15:30',
-            '出场时间': '2018-09-03 16:20',
-            '停车时长': '0小时50分',
-            '金额（元）': '5元'
-          },
-          {
-            '车牌号': '闽A44444',
-            '进场时间': '2018-09-03 15:30',
-            '出场时间': '2018-09-03 16:20',
-            '停车时长': '0小时50分',
-            '金额（元）': '5元'
-          },
-          {
-            '车牌号': '闽A44444',
-            '进场时间': '2018-09-03 15:30',
-            '出场时间': '2018-09-03 16:20',
-            '停车时长': '0小时50分',
-            '金额（元）': '5元'
-          }
-        ],
-        formThead: ['车牌号', '进场时间', '出场时间', '停车时长', '金额（元）'],
-        tableTitle: '停车实时数据',
-        loading: true,
-        dataEmpty: true
-      },
-      userTabledata: {
-        tableData: [
-          {
-            '小区名称': '群升',
-            '用户名': '王某',
-            '登录方式': '公众号',
-            '登录时间': '2018-06-03 16:50:20',
-            '菜单': '缴费'
-          },
-          {
-            '小区名称': '群升',
-            '用户名': '王某',
-            '登录方式': '公众号',
-            '登录时间': '2018-06-03',
-            '菜单': '缴费'
-          },
-          {
-            '小区名称': '群升',
-            '用户名': '王某',
-            '登录方式': '公众号',
-            '登录时间': '2018-06-03',
-            '菜单': '缴费'
-          },
-          {
-            '小区名称': '群升',
-            '用户名': '王某',
-            '登录方式': '公众号',
-            '登录时间': '2018-06-03',
-            '菜单': '缴费'
-          },
-          {
-            '小区名称': '群升',
-            '用户名': '王某',
-            '登录方式': '公众号',
-            '登录时间': '2018-06-03',
-            '菜单': '缴费'
-          },
-          {
-            '小区名称': '群升',
-            '用户名': '王某',
-            '登录方式': '公众号',
-            '登录时间': '2018-06-03',
-            '菜单': '缴费'
-          }
-        ],
-        formThead: ['小区名称', '用户名', '登录方式', '登录时间', '菜单'],
-        tableTitle: '用户实时数据',
-        loading: true,
-        dataEmpty: true
-      },
-      doorTabledata: {
-        tableData: [
-          {
-            '用户': '张**',
-            '类型': '业主',
-            '门禁': '西门',
-            '开门时间': '2018-06-06 15:30:20',
-            '状态': '一键开门'
-          },
-          {
-            '用户': '张**',
-            '类型': '租客',
-            '门禁': '西门',
-            '开门时间': '2018-06-06',
-            '状态': '扫码开门'
-          },
-          {
-            '用户': '张**',
-            '类型': '其他成员',
-            '门禁': '西门',
-            '开门时间': '2018-06-06',
-            '状态': '一键开门'
-          },
-          {
-            '用户': '张**',
-            '类型': '业主',
-            '门禁': '西门',
-            '开门时间': '2018-06-06',
-            '状态': '扫码开门'
-          },
-          {
-            '用户': '张**',
-            '类型': '业主',
-            '门禁': '西门',
-            '开门时间': '2018-06-06',
-            '状态': '一键开门'
-          },
-          {
-            '用户': '张**',
-            '类型': '业主',
-            '门禁': '西门',
-            '开门时间': '2018-06-06',
-            '状态': '一键开门'
-          }
-        ],
-        formThead: ['用户', '类型', '门禁', '开门时间', '状态'],
-        tableTitle: '门禁实时数据',
-        loading: true,
-        dataEmpty: true
-      },
+      vehicleTabledata: {},
+      userTabledata: {},
+      doorTabledata: {},
       systems: {
         /*
         estateSys  物业管理系统
@@ -688,6 +503,11 @@ export default {
     this.getPropertyPayTrend()
     this.getDevicetypeCount()
     this.getComplaintStatus()
+    this.getDeviceInoutPage()
+    this.getInOutCountInfo()
+    this.getParkingChargeInfo()
+    this.getParkingRealTimeInfo()
+    // this.getOrderList()
   },
   methods: {
     handelPermission() {
@@ -794,7 +614,6 @@ export default {
       fetchComplaintStatus({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            debugger
             this.eventpercentAnalysisdata = {
               chartData: {
                 columns: ['状态', '个数'],
@@ -807,9 +626,150 @@ export default {
               }
             }
             for (let i = 0, len = response.data.data.qryComplaintElementData.length; i < len; i++) {
-              this.eventpercentAnalysisdata.chartData.rows.push({ '状态': response.data.data.qryComplaintElementData[i].status, '个数': response.data.data.qryComplaintElementData[i].statusCount })
+              if (response.data.data.qryComplaintElementData[i].status === 'WAITING') {
+                this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '等待处理', '个数': response.data.data.qryComplaintElementData[i].statusCount })
+              } else if (response.data.data.qryComplaintElementData[i].status === 'PROCESSED') {
+                this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '已处理', '个数': response.data.data.qryComplaintElementData[i].statusCount })
+              } else if (response.data.data.qryComplaintElementData[i].status === 'Reply') {
+                this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '回复', '个数': response.data.data.qryComplaintElementData[i].statusCount })
+              } else {
+                console.log('111')
+              }
             }
-            debugger
+          }
+        }
+      })
+    },
+    getDeviceInoutPage() { // 获取门禁实时数据
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchDeviceInoutPage({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), currentPage: 1, pageSize: 10 }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.doorTabledata = {
+              tableData: [],
+              formThead: ['用户', '设备名称', '时间', '状态'],
+              tableTitle: '门禁实时数据',
+              loading: true,
+              dataEmpty: true
+            }
+            let items = []
+            items = response.data.data.qryDeviceData
+            if (items.length > 0) {
+              for (let i = 0; i < items.length; i++) {
+                if (items[i].inoutSuccess === '1') {
+                  this.doorTabledata.tableData.push({
+                    '用户': items[i].inoutuserName,
+                    '设备名称': items[i].deviceName,
+                    '时间': parseTime(items[i].addTime),
+                    '状态': '刷卡成功'
+                  })
+                } else {
+                  this.doorTabledata.tableData.push({
+                    '用户': items[i].inoutuserName,
+                    '设备名称': items[i].deviceName,
+                    '时间': parseTime(items[i].addTime),
+                    '状态': '刷卡失败'
+                  })
+                }
+              }
+              this.doorTabledata.dataEmpty = false
+              this.doorTabledata.loading = false
+            } else {
+              this.doorTabledata.dataEmpty = true
+              this.doorTabledata.loading = false
+            }
+          }
+        }
+      })
+    },
+    getInOutCountInfo() { // 获取进出车辆数据统计
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchInOutCountInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.userVisitdata = Object.assign({}, response.data.data.data)
+          }
+        }
+      })
+    },
+    getParkingChargeInfo() { // 获取停车缴费统计
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchParkingChargeInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            console.log(response.data.data)
+            this.vehiclePaydata = Object.assign({}, response.data.data.data)
+          }
+        }
+      })
+    },
+    getParkingRealTimeInfo() { // 获取停车实时数据
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchParkingRealTimeInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.vehicleTabledata = {
+              tableData: [],
+              formThead: [],
+              tableTitle: '',
+              loading: true,
+              dataEmpty: true
+            }
+            this.vehicleTabledata.tableData = response.data.data.data.tableData
+            this.vehicleTabledata.formThead = response.data.data.data.formThead
+            this.vehicleTabledata.tableTitle = response.data.data.data.tableTitle
+            if (this.vehicleTabledata.tableData.length > 0) {
+              this.vehicleTabledata.dataEmpty = false
+              this.vehicleTabledata.loading = false
+            } else {
+              this.vehicleTabledata.dataEmpty = true
+              this.vehicleTabledata.loading = false
+            }
+          }
+        }
+      })
+    },
+    getOrderList() { // 获取物业缴费订单实时数据
+      fetchOrderList({ currentPage: 1, pageSize: 10 }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.userTabledata = {
+              tableData: [],
+              formThead: ['房产名称', '业主名称', '支付时间', '支付金额', '备注'],
+              tableTitle: '实时物缴数据',
+              loading: true,
+              dataEmpty: true
+            }
+            let items = []
+            items = response.data.data.qryList
+            if (items.length > 0) {
+              for (let i = 0; i < items.length; i++) {
+                this.userTabledata.tableData.push({
+                  '房产名称': items[i].estateName,
+                  '业主名称': items[i].houseHoldName,
+                  '支付时间': items[i].payTime,
+                  '支付金额': items[i].payAmount,
+                  '备注': items[i].couponDemo
+                })
+              }
+              this.userTabledata.dataEmpty = false
+              this.userTabledata.loading = false
+            } else {
+              this.userTabledata.dataEmpty = true
+              this.userTabledata.loading = false
+            }
           }
         }
       })

@@ -16,6 +16,7 @@
         placeholder="结束时间"
         align="right"/>
       <el-select v-model="listQuery.communityId" placeholder="选择小区" clearable class="filter-item">
+        <el-option key="all" label="所有小区" value="all" />
         <el-option v-for="item in communityList" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
@@ -117,7 +118,7 @@ export default {
   },
   created() {
     this.getList()
-    this.communityList.unshift({ id: 'all', name: '所有小区' })
+    // this.communityList.unshift({ id: 'all', name: '所有小区' })
   },
   methods: {
     getList() {

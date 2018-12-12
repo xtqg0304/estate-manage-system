@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { paymentServer, wayServer } from '@/api/api.js'
+import { paymentServer, wayServer, estateServer } from '@/api/api.js'
 
 /*  获取支付类型分析数据 */
 export function fetchPayTypeAnalysis(data) {
@@ -37,7 +37,40 @@ export function fetchDevicetypeCount(data) {
 /*  获取报事报修分析数据 */
 export function fetchComplaintStatus(data) {
   return request({
-    url: wayServer + '/complaint/getComplaintStatus',
+    url: estateServer + '/complaint/getComplaintStatus',
+    method: 'post',
+    data
+  })
+}
+
+/*  获取获取门禁实时数据列表 */
+export function fetchDeviceInoutPage(data) {
+  return request({
+    url: wayServer + '/inout/getDeviceInoutPage',
+    method: 'post',
+    data
+  })
+}
+/*  获取进出车辆数据统计 */
+export function fetchInOutCountInfo(data) {
+  return request({
+    url: paymentServer + '/parkBigData/getInOutCountInfo',
+    method: 'post',
+    data
+  })
+}
+/*  获取停车缴费统计 */
+export function fetchParkingChargeInfo(data) {
+  return request({
+    url: paymentServer + '/parkBigData/getParkingChargeInfo',
+    method: 'post',
+    data
+  })
+}
+/*  获取停车实时数据 */
+export function fetchParkingRealTimeInfo(data) {
+  return request({
+    url: paymentServer + '/parkBigData/getParkingRealTimeInfo',
     method: 'post',
     data
   })

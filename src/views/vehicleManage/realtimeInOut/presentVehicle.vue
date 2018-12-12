@@ -35,7 +35,7 @@
       </el-table-column>
       <el-table-column label="入场时间" min-width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.inoutTime }}</span>
+          <span>{{ scope.row.inoutTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="入场状态" width="110px" align="center">
@@ -234,8 +234,8 @@ export default {
       fetchCarInParkList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            this.list = response.data.data
-            this.total = response.data.totalCount
+            this.list = response.data.data.inParkElementList
+            this.total = response.data.data.totalCount
             this.listLoading = false
           }
         }

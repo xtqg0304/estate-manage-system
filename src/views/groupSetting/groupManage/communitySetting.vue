@@ -93,7 +93,11 @@
           <el-button
             type="primary"
             size="mini"
-            @click="handleDetail(scope.row)">详情</el-button>
+            @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <!-- <el-button
+            type="primary"
+            size="mini"
+            @click="handleDetail(scope.row)">详情</el-button> -->
           <el-button
             type="danger"
             size="mini"
@@ -127,10 +131,22 @@
         <el-form-item
           label="所属区域"
           prop="statusservice">
-          <el-cascader
+          <!-- <el-cascader
             :options="options"
             v-model="temp.regionId"
-            expand-trigger="hover"/>
+            expand-trigger="hover"/> -->
+          <el-select v-model="temp.regionId" filterable placeholder="所属区域" style="width:100%">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="小区编码"
+          prop="code">
+          <el-input :disabled="dialogStatus === 'update'" v-model="temp.code" />
         </el-form-item>
         <el-form-item
           label="小区名称"
@@ -177,7 +193,8 @@ import {
   handelAddCommunity
 } from '@/api/communityManage'
 import {
-  fetchRegionTree
+  // fetchRegionTree,
+  fetchRegionOptions
 } from '@/api/areaSetting'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
@@ -265,21 +282,12 @@ export default {
       })
     },
     getAreaList() {
-      this.listLoading = true
       const _this = this
-      fetchRegionTree().then(response => {
-        console.log(response)
+      fetchRegionOptions({}).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.options = _this.traverse(response.data.data)
-            console.log(this.options)
-            this.listLoading = false
           }
-        } else {
-          this.$message({
-            message: '请求失败成功',
-            type: 'error'
-          })
         }
       })
     },
@@ -359,6 +367,45 @@ export default {
                 this.$notify({
                   title: '成功',
                   message: '创建成功',
+                  type: 'success',
+                  duration: 2000
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    handleUpdate(row) {
+      // 修改/编辑事件
+      this.temp = Object.assign({}, row) // copy obj
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    updateData() {
+      // 修改/编辑 确认事件
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          // this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
+          const tempData = Object.assign({}, this.temp)
+          handelAddCommunity(tempData).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: '修改成功',
                   type: 'success',
                   duration: 2000
                 })

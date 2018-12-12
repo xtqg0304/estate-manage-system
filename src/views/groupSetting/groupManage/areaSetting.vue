@@ -159,7 +159,7 @@
             <el-form-item
               label="上级区域"
               prop="statusservice">
-              <el-select :disabled="dialogStatus === 'create'" v-model="temp.parentId" placeholder="上级区域" style="width:100%">
+              <el-select :disabled="dialogStatus === 'create'" v-model="temp.parentId" filterable placeholder="上级区域" style="width:100%">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
