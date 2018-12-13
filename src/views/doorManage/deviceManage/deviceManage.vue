@@ -27,8 +27,8 @@
         @change="buildingSelQuery">
         <el-option
           v-for="item in buildingList"
-          :key="item.building"
-          :label="item.building"
+          :key="item.id"
+          :label="item.buildingName"
           :value="item" />
       </el-select>
       <el-input
@@ -82,7 +82,7 @@
       </el-table-column>
       <el-table-column
         label="排序"
-        min-width="150px"
+        min-width="80px"
         align="center"
         sortable
         prop="sort">
@@ -102,7 +102,7 @@
       </el-table-column>
       <el-table-column
         label="进出标注"
-        min-width="150px"
+        min-width="120px"
         align="center"
         sortable
         prop="outInFlag">
@@ -112,7 +112,7 @@
       </el-table-column>
       <el-table-column
         label="设备流量"
-        width="180px"
+        width="120px"
         align="center"
         sortable
         prop="capacity">
@@ -215,6 +215,7 @@
             v-model="temp.deviceTypeName"
             class="filter-item"
             placeholder="请选择"
+            style="width:100%"
             @change="deviceTypeSel">
             <el-option
               v-for="item in deviceTypeList"
@@ -258,8 +259,8 @@
             @change="buildingSel">
             <el-option
               v-for="item in buildingList"
-              :key="item.buildingName"
-              :label="item.building"
+              :key="item.id"
+              :label="item.buildingName"
               :value="item" />
           </el-select>
           <el-select
@@ -281,7 +282,8 @@
           <el-select
             v-model="temp.doorNo"
             class="filter-item"
-            placeholder="请选择">
+            placeholder="请选择"
+            style="width:100%">
             <el-option
               v-for="item in doorNoList"
               :key="item"
@@ -359,6 +361,7 @@
 import {
   getDevieType,
   getCommunity,
+  getBuilding,
   crateDeive,
   getDeviceList,
   deleteDvice,
@@ -668,34 +671,51 @@ export default {
       this.listQuery.communityName = val.selectCommunityName
       this.listQuery.communityId = val.selectCommunity
       // 获取小区下的楼栋
+      // const params = {
+      //   communityId: this.userInfo.selectCommunity,
+      //   buildingId: ''
+      // }
       const params = {
-        communityId: this.userInfo.selectCommunity,
-        buildingId: ''
+        id: this.userInfo.selectCommunity
       }
-      getCommunity(params).then(response => {
-        this.buildingList = response.data.data
-        for (const i in this.buildingList) {
-          if (this.listQuery.buildingName === this.buildingList[i].building) {
-            this.buildingSel(this.buildingList[i])
-          }
+      getBuilding(params).then(response => {
+        if (response.data.code === 200) {
+          this.buildingList = response.data.data
         }
+
+        // this.buildingList = response.data.data
+        // for (const i in this.buildingList) {
+        //   if (this.listQuery.buildingName === this.buildingList[i].building) {
+        //     this.buildingSel(this.buildingList[i])
+        //   }
+        // }
       })
+      // getCommunity(params).then(response => {
+      //   this.buildingList = response.data.data
+      //   for (const i in this.buildingList) {
+      //     if (this.listQuery.buildingName === this.buildingList[i].building) {
+      //       this.buildingSel(this.buildingList[i])
+      //     }
+      //   }
+      // })
     },
     // 楼栋变化获取单元
     buildingSelQuery(val) {
       this.listQuery.buildingName = ''
       this.listQuery.buildingId = ''
       this.listQuery.field = ''
-      if (typeof val.building !== 'undefined') {
-        this.listQuery.buildingName = val.building
-        this.listQuery.buildingId = val.buildingId
-        this.listQuery.field = val.buildingId
+      if (typeof val.buildingName !== 'undefined') {
+        this.listQuery.buildingName = val.buildingName
+        this.listQuery.buildingId = val.id
+        this.listQuery.field = val.id
         const params = {
           communityId: this.userInfo.selectCommunity,
-          buildingId: val.buildingId
+          buildingId: val.id
         }
         getCommunity(params).then(response => {
-          this.danyuanList = response.data.data
+          if (response.data.code === 200) {
+            this.danyuanList = response.data.data
+          }
         })
       }
     },
@@ -710,16 +730,17 @@ export default {
       this.temp.communityId = val.selectCommunity
       // 获取小区下的楼栋
       const params = {
-        communityId: this.userInfo.selectCommunity,
-        buildingId: ''
+        id: this.userInfo.selectCommunity
       }
-      getCommunity(params).then(response => {
-        this.buildingList = response.data.data
-        if (this.dialogStatus === 'update') {
+      getBuilding(params).then(response => {
+        if (response.data.code === 200) {
+          this.buildingList = response.data.data
+          if (this.dialogStatus === 'update') {
           // 修改编辑时调用
-          for (const i in this.buildingList) {
-            if (this.temp.buildingName === this.buildingList[i].building) {
-              this.buildingSel(this.buildingList[i])
+            for (const i in this.buildingList) {
+              if (this.temp.buildingName === this.buildingList[i].buildingName) {
+                this.buildingSel(this.buildingList[i])
+              }
             }
           }
         }
@@ -727,14 +748,16 @@ export default {
     },
     // 楼栋变化获取单元
     buildingSel(val) {
-      this.temp.buildingName = val.building
-      this.temp.buildingId = val.buildingId
+      this.temp.buildingName = val.buildingName
+      this.temp.buildingId = val.id
       const params = {
         communityId: this.userInfo.selectCommunity,
-        buildingId: val.buildingId
+        buildingId: val.id
       }
       getCommunity(params).then(response => {
-        this.danyuanList = response.data.data
+        if (response.data.code === 200) {
+          this.danyuanList = response.data.data
+        }
       })
     },
     // 单元变化

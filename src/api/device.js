@@ -9,7 +9,14 @@ export function getCommunity(data) {
     data
   })
 }
-
+/* 获取选中小区下楼栋 */
+export function getBuilding(data) {
+  return request({
+    url: basicServer + '/estate/getBuildingList',
+    method: 'post',
+    data
+  })
+}
 /* 获取设备类型 */
 export function getDevieType(data) {
   return request({

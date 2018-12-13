@@ -21,8 +21,8 @@
         @change="buildingSel">
         <el-option
           v-for="item in buildingList"
-          :key="item.building"
-          :label="item.building"
+          :key="item.id"
+          :label="item.buildingName"
           :value="item" />
       </el-select>
       <el-date-picker
@@ -236,7 +236,8 @@
 <script>
 import {
   getCommunity,
-  getOpenLog
+  getOpenLog,
+  getBuilding
 } from '@/api/device'
 
 import Tinymce from '@/components/Tinymce'
@@ -432,13 +433,14 @@ export default {
       this.listQuery.communityId = val.selectCommunity
       // 获取小区下的楼栋
       const params = {
-        communityId: this.userInfo.selectCommunity,
-        buildingId: ''
+        id: this.userInfo.selectCommunity
       }
-      getCommunity(params).then(response => {
+      getBuilding(params).then(response => {
+        console.log(12321)
         this.buildingList = response.data.data
+        console.log(this.buildingList)
         for (var i in this.buildingList) {
-          if (this.listQuery.buildingName === this.buildingList[i].building) {
+          if (this.listQuery.buildingName === this.buildingList[i].buildinNameg) {
             this.buildingSel(this.buildingList[i])
           }
         }
@@ -449,13 +451,13 @@ export default {
       this.listQuery.buildingName = ''
       this.listQuery.buildingId = ''
       this.listQuery.field = ''
-      if (typeof val.building !== 'undefined') {
-        this.listQuery.buildingName = val.building
-        this.listQuery.buildingId = val.buildingId
-        this.listQuery.field = val.buildingId
+      if (typeof val.buildingName !== 'undefined') {
+        this.listQuery.buildingName = val.buildingName
+        this.listQuery.buildingId = val.id
+        this.listQuery.field = val.id
         const params = {
           communityId: this.userInfo.selectCommunity,
-          buildingId: val.buildingId
+          buildingId: val.id
         }
         getCommunity(params).then(response => {
           this.danyuanList = response.data.data

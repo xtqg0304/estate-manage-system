@@ -65,7 +65,6 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 //     }
 //   }
 // })
-
 router.afterEach(() => {
   NProgress.done() // finish progress bar
 })

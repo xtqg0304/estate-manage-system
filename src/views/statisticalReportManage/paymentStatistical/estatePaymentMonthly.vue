@@ -55,7 +55,7 @@ import {
   fetchEstatePayMonth
 } from '@/api/payManage'
 import waves from '@/directive/waves' // 水波纹指令
-// import { parseTime } from '@/utils'
+import { parseTime } from '@/utils'
 export default {
   name: 'ComplexTable',
   directives: {
@@ -148,6 +148,8 @@ export default {
     handleFilter() {
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime, '{y}-{m}')
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime, '{y}-{m}')
       this.listQuery.currentPage = 1
       this.getList()
     },

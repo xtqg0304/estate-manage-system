@@ -32,10 +32,16 @@ export default {
       // In order to make the cached page re-rendered
       this.$store.dispatch('delAllCachedViews', this.$route)
 
-      const { path } = this.$route
+      // const { path } = this.$route
 
-      this.$router.replace({
-        path: '/redirect' + path
+      // this.$router.replace({
+      //   path: '/redirect' + path
+      // })
+      const { fullPath } = this.$route
+      this.$nextTick(() => {
+        this.$router.replace({
+          path: '/redirect' + fullPath
+        })
       })
     }
   }
@@ -50,4 +56,3 @@ export default {
   vertical-align: -4px!important;
 }
 </style>
-

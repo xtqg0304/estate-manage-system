@@ -75,3 +75,19 @@ export function fetchParkingRealTimeInfo(data) {
     data
   })
 }
+/*  获取报事报修趋势图数据 */
+export function fetchComplaintStatusTrend(data) {
+  return request({
+    url: estateServer + '/complaint/getComplaintStatusTrend',
+    method: 'post',
+    data
+  })
+}
+/*  获取进出记录趋势图数据 */
+export function fetchtDcInoutFlagType(data) {
+  return request({
+    url: wayServer + '/inout/getDcInoutFlagType',
+    method: 'post',
+    data
+  })
+}

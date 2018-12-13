@@ -28,25 +28,25 @@
       fit
       highlight-current-row
       style="width: 100%;min-height:500px;">
-      <el-table-column
+      <!-- <el-table-column
         label="ID"
         align="center"
         width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="开发者ID"
         align="center"
-        width="65">
+        width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.appid }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="开发者秘钥"
-        width="150px"
+        width="280px"
         align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.appsecret }}</span>
@@ -61,7 +61,7 @@
       </el-table-column>
       <el-table-column
         label="商户秘钥"
-        width="120px">
+        width="280px">
         <template slot-scope="scope">
           <span>{{ scope.row.mchkey }}</span>
         </template>
@@ -116,13 +116,13 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;">
-        <el-form-item
+        <!-- <el-form-item
           label="ID"
           prop="id">
           <el-input v-model="temp.id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           label="开发ID"
           prop="appid">
@@ -172,26 +172,26 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
           label="小程序ID"
           prop="id">
-          <el-input v-model="temp.id" />
+          <el-input v-model="temp.id" disabled />
         </el-form-item>
         <el-form-item
           label="公众号"
           prop="wechatMpId">
           <el-select
-            v-model="temp.wechatMpId"
+            v-model="wechatMpId"
             class="filter-item"
             placeholder="请选择公众号"
             style="width:100%" >
-            <!-- <el-option
-              v-for="item in statusserviceOptions"
+            <el-option
+              v-for="item in wechatOptions"
               :key="item.id"
-              :label="item.label"
-              :value="item.id" /> -->
+              :label="item.appname"
+              :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -214,7 +214,9 @@ import {
   fetchsmallList,
   editSmallProject,
   deleteSmallProject,
-  bindPublicAccount
+  bindPublicAccount,
+  fetchWechatList,
+  fetcMaBingMpId
 } from '@/api/wechat'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
@@ -261,11 +263,14 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      wechatOptions: [],
+      wechatMpId: ''
     }
   },
   created() {
     this.getList()
+    this.getWechatList()
   },
   methods: {
     getList() {
@@ -274,21 +279,9 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryList
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
         }
       })
     },
@@ -415,17 +408,29 @@ export default {
     },
     handleDelete(row) {
       // 在列表中删除 （将当前id传给后台）
-      deleteSmallProject({ id: row.id }).then((response) => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            const index = this.list.indexOf(row)
-            this.list.splice(index, 1)
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteSmallProject({ id: row.id }).then((response) => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              const index = this.list.indexOf(row)
+              this.list.splice(index, 1)
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
           } else {
             this.$notify.error({
               title: '失败',
@@ -433,18 +438,27 @@ export default {
               duration: 2000
             })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     handleBind(row) {
       // 绑定事件
       this.temp = Object.assign({}, row) // copy obj
+      this.wechatMpId = ''
+      console.log(this.temp)
+      fetcMaBingMpId({ id: this.temp.id }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.wechatMpId = response.data.data
+          }
+        }
+      })
+      console.log(this.temp)
       this.dialogStatus = 'bind'
       this.dialogBindVisible = true
       this.$nextTick(() => {
@@ -456,7 +470,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          bindPublicAccount({ wechatMaId: tempData.id, wechatMpId: tempData.wechatMpId }).then((response) => {
+          bindPublicAccount({ wechatMaId: tempData.id, wechatMpId: this.wechatMpId }).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 for (const v of this.list) {
@@ -489,6 +503,15 @@ export default {
               })
             }
           })
+        }
+      })
+    },
+    getWechatList() {
+      fetchWechatList({}).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.wechatOptions = response.data.data
+          }
         }
       })
     }

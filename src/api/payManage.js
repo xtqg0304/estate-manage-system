@@ -58,3 +58,11 @@ export function fetchEstatePayMonth(data) {
     data
   })
 }
+/* 获取首页缴费实时数据接口*/
+export function fetchPropertyOrderList(data) {
+  return request({
+    url: paymentServer + '/property/bigData/getPropertyOrderList',
+    method: 'post',
+    data
+  })
+}

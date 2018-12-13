@@ -50,3 +50,20 @@ export function fetchShiftChangeList(data) {
     data
   })
 }
+
+/* 获取临停 / 月卡缴费信息 */
+export function fetchChargeReportInfo(data) {
+  return request({
+    url: paymentServer + '/dataStatistics/getChargeReportInfo',
+    method: 'post',
+    data
+  })
+}
+/* 获取实时缴费记录 */
+export function fetchRealTimeChargeReport(data) {
+  return request({
+    url: paymentServer + '/dataStatistics/getRealTimeChargeReport',
+    method: 'post',
+    data
+  })
+}

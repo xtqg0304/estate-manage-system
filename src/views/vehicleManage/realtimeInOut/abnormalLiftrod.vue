@@ -15,44 +15,89 @@
         type="datetime"
         placeholder="结束时间"
         align="right"/>
-      <!-- <el-select v-model="listQuery.carparkId" placeholder="车场ID" clearable class="filter-item">
+      <el-select v-model="listQuery.carparkId" placeholder="车场ID" clearable class="filter-item">
         <el-option v-for="item in parkListOptions" :key="item.carparkId" :label="item.carparkName" :value="item.carparkId" />
-      </el-select> -->
+      </el-select>
       <!-- <el-select v-model="listQuery.carRoadId" placeholder="车道ID" clearable class="filter-item">
         <el-option v-for="item in laneListOptions" :key="item.carRoadId" :label="item.carRoadName" :value="item.carRoadId" />
       </el-select>
       <el-select v-model="listQuery.carType" placeholder="车场类型" clearable class="filter-item">
         <el-option v-for="item in carTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select> -->
-      <el-input v-model="listQuery.operatorName" placeholder="操作员姓名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.carNo" placeholder="车牌号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column label="车道名称" width="180px">
+      <el-table-column label="车牌号" width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.roadName }}</span>
+          <span>{{ scope.row.carNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="开闸时间" min-width="110px" align="center">
+      <el-table-column label="车场" width="120px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.addTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          <span>{{ scope.row.carparkName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="开闸说明" min-width="110px" align="center">
+      <el-table-column label="入场车道" width="80px">
         <template slot-scope="scope">
-          <span>{{ scope.row.abnormalReason }}</span>
+          <span>{{ scope.row.inCarRoadName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="岗亭名称" width="110px" align="center">
+      <el-table-column label="入场时间" width="180px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.inTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="出场车道" width="110px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.carRoadName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="出场时间" width="180px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.inoutTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="岗亭" width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.postName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作员姓名" width="80px">
+      <el-table-column label="车辆类型" width="80px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.carType }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作员" width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.operatorName }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="停车时长" width="120px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.stayTime | timeStamp }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="应收金额" width="80px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.chargeReceivableAmount }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="实收金额" width="80px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.chargeActualAmount }}</span>
+        </template>
+      </el-table-column> -->
+      <el-table-column label="预缴金额" >
+        <template slot-scope="scope">
+          <span>{{ scope.row.chargePreAmount }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="备注信息" width="80px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.orderRemark }}</span>
+        </template>
+      </el-table-column> -->
     </el-table>
 
     <div class="pagination-container">
@@ -63,7 +108,7 @@
 
 <script>
 import {
-  fetchAbnormalLiftList
+  fetchRealTimeChargeReport
 } from '@/api/parkPayData'
 import {
   fetchCommunityParkList,
@@ -97,6 +142,25 @@ export default {
         6: '新能源车'
       }
       return statusMap[status]
+    },
+    timeStamp(second_time) {
+      var time = parseInt(second_time) + '秒'
+      if (parseInt(second_time) > 60) {
+        var second = parseInt(second_time) % 60
+        var min = parseInt(second_time / 60)
+        time = min + '分' + second + '秒'
+        if (min > 60) {
+          min = parseInt(second_time / 60) % 60
+          var hour = parseInt(parseInt(second_time / 60) / 60)
+          time = hour + '小时' + min + '分' + second + '秒'
+          if (hour > 24) {
+            hour = parseInt(parseInt(second_time / 60) / 60) % 24
+            var day = parseInt(parseInt(parseInt(second_time / 60) / 60) / 24)
+            time = day + '天' + hour + '小时' + min + '分' + second + '秒'
+          }
+        }
+      }
+      return time
     }
   },
   data() {
@@ -134,7 +198,7 @@ export default {
         pageSize: 10,
         outTimeBegin: '',
         outTimeEnd: '',
-        operatorName: '',
+        carNo: '',
         communityId: ''
       },
       carTypeOptions: [
@@ -203,10 +267,10 @@ export default {
     getList() {
       this.listLoading = true
       this.listQuery.communityId = this.communityId
-      fetchAbnormalLiftList(this.listQuery).then(response => {
+      fetchRealTimeChargeReport(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            this.list = response.data.data.abnormalLiftElementList
+            this.list = response.data.data.outParkElementList
             this.total = response.data.data.totalCount
             this.listLoading = false
           }
@@ -227,6 +291,7 @@ export default {
       this.listQuery.currentPage = val
       this.getList()
     }
+
   }
 }
 </script>

@@ -21,19 +21,10 @@
         @change="buildingSelQuery">
         <el-option
           v-for="item in buildingList"
-          :key="item.building"
-          :label="item.building"
+          :key="item.id"
+          :label="item.buildingName"
           :value="item" />
       </el-select>
-      <!-- <el-select
-        v-model="listQuery.danyuanName"
-        placeholder="选择单元"
-        clearable
-        class="filter-item"
-        @change="danyuanSelQuery"
-      >
-        <el-option v-for="item in danyuanList" :key="item" :label="item.unit" :value="item"/>
-      </el-select> -->
       <el-select
         v-model="listQuery.keyStatusName"
         placeholder="权限状态"
@@ -69,7 +60,7 @@
       <el-table-column
         label="用户名称"
         align="center"
-        width="180"
+        width="120"
         sortable
         prop="wxUserName ">
         <template slot-scope="scope">
@@ -79,28 +70,28 @@
       <el-table-column
         label="用户手机"
         align="center"
-        width="180"
+        width="120"
         sortable
         prop="wxUserTelephone ">
         <template slot-scope="scope">
           <span>{{ scope.row.wxUserTelephone }}</span>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         label="角色"
         align="center"
-        width="180"
+        width="80"
         sortable
         prop="role ">
         <template slot-scope="scope">
           <span>员工</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column
         label="设备名称"
         align="center"
-        width="180"
+        width="120"
         sortable
         prop="deviceName  ">
         <template slot-scope="scope">
@@ -111,7 +102,7 @@
       <el-table-column
         label="关联房产"
         align="center"
-        width="180"
+        width="120"
         sortable
         prop="filedName ">
         <template slot-scope="scope">
@@ -133,7 +124,7 @@
       <el-table-column
         label="授权状态"
         align="center"
-        width="180"
+        width="120"
         sortable
         prop="shareStatus  ">
         <template slot-scope="scope">
@@ -154,8 +145,7 @@
 
       <el-table-column
         :label="$t('table.actions')"
-        align="center"
-        width="330">
+        align="center">
         <template slot-scope="scope">
           <el-switch
             :active-value="1"
@@ -186,10 +176,10 @@
 </template>
 
 <script>
-import { getCommunity, getkeyPage, updatekeyPage } from '@/api/device'
+import { getCommunity, getkeyPage, updatekeyPage, getBuilding } from '@/api/device'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
+// import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
@@ -198,10 +188,6 @@ export default {
   },
   filters: {
     keyShareFilter(status) {
-      // const statusMap = {
-      //   estate: 'info',
-      //   periphery: 'danger'
-      // }
       const statusMap = {
         0: '不可分享钥匙',
         1: '可分享钥匙'
@@ -517,13 +503,12 @@ export default {
       this.listQuery.communityId = val.selectCommunity
       // 获取小区下的楼栋
       const params = {
-        communityId: this.userInfo.selectCommunity,
-        buildingId: ''
+        id: this.userInfo.selectCommunity
       }
-      getCommunity(params).then(response => {
+      getBuilding(params).then(response => {
         this.buildingList = response.data.data
         for (var i in this.buildingList) {
-          if (this.listQuery.buildingName === this.buildingList[i].building) {
+          if (this.listQuery.buildingName === this.buildingList[i].buildingName) {
             this.buildingSel(this.buildingList[i])
           }
         }
@@ -534,10 +519,10 @@ export default {
       this.listQuery.buildingName = ''
       this.listQuery.buildingId = ''
       this.listQuery.field = ''
-      if (typeof val.building !== 'undefined') {
-        this.listQuery.buildingName = val.building
-        this.listQuery.buildingId = val.buildingId
-        this.listQuery.field = val.buildingId
+      if (typeof val.buildingName !== 'undefined') {
+        this.listQuery.buildingName = val.buildingName
+        this.listQuery.buildingId = val.id
+        this.listQuery.field = val.id
         const params = {
           communityId: this.userInfo.selectCommunity,
           buildingId: val.buildingId
@@ -561,11 +546,8 @@ export default {
       } else {
         params.enablestatus = 0
       }
-      console.log(params)
       // 修改可用状态
       updatekeyPage(params).then(response => {
-        console.log(123123)
-        console.log(response.data)
         setTimeout(() => {
           this.getList()
         }, 3 * 1000)
@@ -575,11 +557,8 @@ export default {
     getList() {
       this.listLoading = true
       getkeyPage(this.listQuery).then(response => {
-        console.log(313132)
-        console.log(response.data.data.qryWxUserData)
         this.list = response.data.data.qryWxUserData
-        console.log(this.list)
-        this.total = response.data.data.total
+        this.total = response.data.data.totalCount
         this.listLoading = false
       })
     },
@@ -600,9 +579,6 @@ export default {
       this.getList()
     },
     handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
       // 请求后台接口将状态传给后台，如果成功，前端修改数据
       this.$message({
         message: '操作成功',
@@ -632,67 +608,6 @@ export default {
       })
       const index = this.list.indexOf(row)
       this.list.splice(index, 1)
-    },
-    handleDownload() {
-      // 导出数据
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        })
-      )
-    },
-    beforeUpload(file) {
-      const isLt1M = file.size / 1024 / 1024 < 1
-
-      if (isLt1M) {
-        return true
-      }
-
-      this.$message({
-        message: 'Please do not upload files larger than 1m in size.',
-        type: 'warning'
-      })
-      return false
-    },
-    handleSuccess({ results, header }) {
-      // this.$notify({
-      //   title: '成功',
-      //   message: '导入成功',
-      //   type: 'success',
-      //   duration: 2000
-      // })
-      this.tableData = results
-      this.tableHeader = header
-      console.log(this.tableData)
-      console.log(header)
-      // 将数据传给后台，后台存入数据库成功，则重新获取数据列表
-      // this.list = results
-      // this.total = results.length
-      this.getList()
     }
   }
 }

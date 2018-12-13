@@ -28,25 +28,25 @@
       fit
       highlight-current-row
       style="width: 100%;min-height:500px;">
-      <el-table-column
+      <!-- <el-table-column
         label="ID"
         align="center"
         width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="微信公众号开发者ID"
         align="center"
-        width="65">
+        width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.appid }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="开发者秘钥"
-        width="150px"
+        width="280px"
         align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.appsecret }}</span>
@@ -61,14 +61,14 @@
       </el-table-column>
       <el-table-column
         label="商户秘钥"
-        width="120px">
+        width="280px">
         <template slot-scope="scope">
           <span>{{ scope.row.mchkey }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="公众号名称"
-        min-width="150px"
+        min-width="120px"
         align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.appname }}</span>
@@ -88,10 +88,10 @@
         width="230"
         class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             type="success"
             size="mini"
-            @click="handleBind(scope.row)">小区</el-button>
+            @click="handleBind(scope.row)">小区</el-button> -->
           <el-button
             type="primary"
             size="mini"
@@ -126,11 +126,11 @@
         label-position="left"
         label-width="70px"
         style="width: 400px; margin-left:50px;">
-        <el-form-item
+        <!-- <el-form-item
           label="ID"
           prop="id">
           <el-input v-model="temp.id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           label="开发ID"
           prop="appid">
@@ -302,21 +302,9 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.qryList
-            this.total = response.data.totalCount
+            this.total = response.data.data.totalCount
             this.listLoading = false
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
         }
       })
     },

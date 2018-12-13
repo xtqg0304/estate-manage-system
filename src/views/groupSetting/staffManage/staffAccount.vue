@@ -29,7 +29,7 @@
       highlight-current-row
       style="width: 100%;min-height:500px;">
       <el-table-column
-        label="登录名"
+        label="用户名"
         align="center"
         width="65">
         <template slot-scope="scope">
@@ -48,7 +48,7 @@
         label="性别"
         width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.sex }}</span>
+          <span>{{ scope.row.sex | statusFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -63,7 +63,9 @@
         min-width="150px"
         align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.roleIds }}</span>
+          <span v-for="(name,index) in scope.row.roleNames" :key="index" >
+            {{ name }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column
@@ -123,7 +125,7 @@
         <el-form-item
           label="用户名"
           prop="userName">
-          <el-input v-model="temp.userName" />
+          <el-input :disabled="dialogStatus === 'update'" v-model="temp.userName" />
         </el-form-item>
         <!-- <el-form-item
           label="密码"
@@ -165,9 +167,9 @@
             class="filter-item"
             placeholder="请选择"
             style="width:100%">
-            <el-option key="ENABLED" value="ENABLED">可用</el-option>
-            <el-option key="DISABLED" value="DISABLED">禁用</el-option>
-            <el-option key="DELETED" value="DELETED">删除</el-option>
+            <el-option key="ENABLED" label="可用" value="ENABLED"/>
+            <el-option key="DISABLED" label="禁用" value="DISABLED"/>
+            <el-option key="DELETED" label="删除" value="DELETED"/>
           </el-select>
         </el-form-item>
 
@@ -200,13 +202,13 @@
         <el-form-item
           label="用户ID"
           prop="id">
-          <el-input v-model="temp.id" />
+          <el-input v-model="temp.id" disabled />
         </el-form-item>
         <el-form-item
           label="绑定小区"
           prop="communityIdList">
           <el-select
-            v-model="temp.communityIdList"
+            v-model="communityIdList"
             class="filter-item"
             placeholder="请选择小区"
             multiple
@@ -276,13 +278,23 @@ import {
   fetchRole
 } from '@/api/role'
 import {
-  fetchCommunity
+  fetchCommunity,
+  getUserCommunity
 } from '@/api/communityManage'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
   name: 'ComplexTable',
   directives: {
     waves
+  },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        FEMALE: '女',
+        MALE: '男'
+      }
+      return statusMap[status]
+    }
   },
   data() {
     return {
@@ -326,23 +338,10 @@ export default {
         updatePwd: '修改密码'
       },
       rules: {
-        type: [
-          { required: true, message: 'type is required', trigger: 'change' }
-        ],
-        timestamp: [
-          {
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
-        ],
-        title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
-        ]
       },
       roleList: [],
-      communityOptions: []
+      communityOptions: [],
+      communityIdList: []
     }
   },
   created() {
@@ -551,17 +550,29 @@ export default {
     },
     handleDelete(row) {
       // 在列表中删除 （将当前id传给后台）
-      deleteUser({ id: row.id }).then((response) => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            const index = this.list.indexOf(row)
-            this.list.splice(index, 1)
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteUser({ id: row.id }).then((response) => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              const index = this.list.indexOf(row)
+              this.list.splice(index, 1)
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
           } else {
             this.$notify.error({
               title: '失败',
@@ -569,18 +580,27 @@ export default {
               duration: 2000
             })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     handleBind(row) {
-      // 绑定事件
       this.temp = Object.assign({}, row) // copy obj
+      this.communityIdList = []
+      getUserCommunity({ id: this.temp.id }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const items = response.data.data
+            for (let i = 0; i < items.length; i++) {
+              this.communityIdList.push(items[i].id)
+            }
+          }
+        }
+      })
       this.dialogStatus = 'bind'
       this.dialogBindVisible = true
       this.$nextTick(() => {
@@ -592,7 +612,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          userBindCommunity({ userId: tempData.id, communityIdList: tempData.communityIdList }).then((response) => {
+          userBindCommunity({ userId: tempData.id, communityIdList: this.communityIdList }).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
                 for (const v of this.list) {

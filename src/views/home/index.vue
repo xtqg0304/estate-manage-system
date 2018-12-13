@@ -77,6 +77,22 @@
           <router-link :to="{}">
             <li @click="showMsg()">
               <a class="to top ">
+                <svg-icon icon-class="video" />
+              </a>
+              <span>视频监控</span>
+            </li>
+          </router-link>
+          <router-link :to="{}">
+            <li @click="showMsg()">
+              <a class="to top ">
+                <svg-icon icon-class="abnormalAlarm" />
+              </a>
+              <span>周界报警</span>
+            </li>
+          </router-link>
+          <router-link :to="{}">
+            <li @click="showMsg()">
+              <a class="to top ">
                 <svg-icon icon-class="build" />
               </a>
               <span>更多系统</span>
@@ -226,11 +242,12 @@ import {
   fetchDeviceInoutPage,
   fetchInOutCountInfo,
   fetchParkingChargeInfo,
-  fetchParkingRealTimeInfo
-
+  fetchParkingRealTimeInfo,
+  fetchComplaintStatusTrend,
+  fetchtDcInoutFlagType
 } from '@/api/homeChart'
 import {
-  fetchOrderList
+  fetchPropertyOrderList
 } from '@/api/payManage'
 import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
@@ -251,54 +268,8 @@ export default {
     return {
       estatePaydata: {},
       vehiclePaydata: {},
-      tempstopPaydata: {
-        chartData: {
-          columns: ['日期', '报修事件', '已完成', '未完成'],
-          rows: [
-            { '日期': '1/1', '报修事件': 93, '已完成': 30, '未完成': 50 },
-            { '日期': '1/2', '报修事件': 30, '已完成': 50, '未完成': 30 },
-            { '日期': '1/3', '报修事件': 23, '已完成': 60, '未完成': 10 },
-            { '日期': '1/4', '报修事件': 13, '已完成': 40, '未完成': 50 },
-            { '日期': '1/5', '报修事件': 32, '已完成': 30, '未完成': 10 },
-            { '日期': '1/6', '报修事件': 45, '已完成': 10, '未完成': 70 },
-            { '日期': '1/7', '报修事件': 93, '已完成': 34, '未完成': 30 },
-            { '日期': '1/8', '报修事件': 30, '已完成': 22, '未完成': 50 },
-            { '日期': '1/9', '报修事件': 23, '已完成': 3, '未完成': 50 },
-            { '日期': '1/10', '报修事件': 13, '已完成': 10, '未完成': 30 },
-            { '日期': '1/11', '报修事件': 32, '已完成': 20, '未完成': 40 },
-            { '日期': '1/12', '报修事件': 45, '已完成': 30, '未完成': 50 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '报修处理'
-          }
-        }
-      },
-      userActivedata: {
-        chartData: {
-          columns: ['日期', '晚归', '早出', '正常'],
-          rows: [
-            { '日期': '2018-08-08', '晚归': 3, '早出': 2, '正常': 120 },
-            { '日期': '2018-08-09', '晚归': 88, '早出': 5, '正常': 80 },
-            { '日期': '2018-08-10', '晚归': 23, '早出': 0, '正常': 10 },
-            { '日期': '2018-08-11', '晚归': 50, '早出': 1, '正常': 50 },
-            { '日期': '2018-08-12', '晚归': 32, '早出': 10, '正常': 100 },
-            { '日期': '2018-08-13', '晚归': 25, '早出': 20, '正常': 70 },
-            { '日期': '2018-08-14', '晚归': 3, '早出': 2, '正常': 120 },
-            { '日期': '2018-08-15', '晚归': 88, '早出': 5, '正常': 80 },
-            { '日期': '2018-08-16', '晚归': 23, '早出': 0, '正常': 10 },
-            { '日期': '2018-08-17', '晚归': 50, '早出': 1, '正常': 50 },
-            { '日期': '2018-08-18', '晚归': 32, '早出': 10, '正常': 100 },
-            { '日期': '2018-08-19', '晚归': 25, '早出': 20, '正常': 70 }
-          ]
-        },
-        vChartOptions: {
-          title: {
-            text: '进出统计'
-          }
-        }
-      },
+      tempstopPaydata: {},
+      userActivedata: {},
       userVisitdata: {},
       doorAnalysisdata: {},
       payTypeAnalysisdata: {},
@@ -315,132 +286,16 @@ export default {
         vehicleSys 车辆管理系统
         moreSys    更多管理系统
         */
-        estateSys: 'bec59953d1a049ebb6b1964fdcd74bc8',
-        paySys: 'pay',
-        doorSys: 'door',
-        vehicleSys: 'vehicle',
-        // moreSys: 'statisticalReport',
-        moreSys: 'groupSetting'
-        // moreSys: 'communitySetting'
+        estateSys: '',
+        paySys: '',
+        doorSys: '',
+        vehicleSys: '',
+        moreSys: ''
       },
       dateT: '',
       secT: '',
       minT: '',
-      hoursT: '',
-      allSysList: [
-        {
-          icon: 'http://10.18.73.83:20080/resources/images/park.png',
-          serverLink: '',
-          serverName: '车辆出入口系统',
-          sysTag: 'INOUT_PARK_SYS',
-          authority: 'false'
-        },
-        {
-          icon: 'http://10.18.72.34:8082/resources/images/system_icon.png',
-          serverLink: '',
-          serverName: '宿舍管理',
-          sysTag: 'DORMITORY_SUB_SYSTEM',
-          authority: 'false'
-        },
-        {
-          icon: 'http://10.18.73.83:9090/resources/images/system_icon.png',
-          serverLink: '',
-          serverName: '门禁系统',
-          sysTag: 'SMARTWAY_SUB_SYSTEM',
-          authority: 'false'
-        },
-        {
-          icon:
-            'http://10.18.73.83:18888/statics/images/ordericon.png',
-          serverLink: '',
-          serverName: '场地预约',
-          sysTag: 'SiteReservation',
-          authority: 'false'
-
-        },
-        {
-          icon: 'http://10.18.73.83:8080/resources/images/person.png',
-          serverLink: '',
-          serverName: '基础信息',
-          sysTag: 'BASIC_SYSTEM',
-          authority: 'false'
-        },
-        {
-          icon: '',
-          serverLink: 'http://192.168.70.3:9066/',
-          serverName: '可视化系统',
-          sysTag: 'VIDEO_SYSTEM',
-          authority: 'true'
-        }
-      ],
-      sysList: [],
-      token: '',
-      username: '',
-      activeIndex: '0',
-      accessControlData: {
-        total: {
-          text: '',
-          data: ''
-        },
-        real: {
-          text: '',
-          data: ''
-        },
-        percent: {
-          text: '',
-          data: ''
-        }
-      },
-      fieldObjData: {
-        available: {
-          text: '',
-          data: ''
-        },
-        percent: {
-          text: '',
-          data: ''
-        }
-      },
-      vehicleObjData: {
-        inVehicle: {
-          text: '',
-          data: ''
-        },
-        percentInVehicle: {
-          text: '',
-          data: ''
-        },
-        outVehicle: {
-          text: '',
-          data: ''
-        },
-        percentOutVehicle: {
-          text: '',
-          data: ''
-        },
-        retention: {
-          text: '',
-          data: ''
-        },
-        percentRetention: {
-          text: '',
-          data: ''
-        },
-        surplusPark: {
-          text: '',
-          data: ''
-        },
-        inOutVehicle: {
-          text: '',
-          data: ''
-        },
-        percentInOutVehicle: {
-          text: '',
-          data: ''
-        }
-      },
-      domitoryObjData: '',
-      loginoutHref: ''
+      hoursT: ''
     }
   },
   computed: {
@@ -501,13 +356,15 @@ export default {
     this.getPayType()
     this.getPropertyPay()
     this.getPropertyPayTrend()
+    this.getComplaintStatusTrend()
+    this.getDcInoutFlagType()
     this.getDevicetypeCount()
     this.getComplaintStatus()
     this.getDeviceInoutPage()
     this.getInOutCountInfo()
     this.getParkingChargeInfo()
     this.getParkingRealTimeInfo()
-    // this.getOrderList()
+    this.getOrderList()
   },
   methods: {
     handelPermission() {
@@ -576,6 +433,34 @@ export default {
           if (response.data.code === 200) {
             console.log(response.data.data)
             this.estatePaydata = Object.assign({}, response.data.data.estatePaydata)
+          }
+        }
+      })
+    },
+    getComplaintStatusTrend() { // 获取报事报修趋势图数据
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchComplaintStatusTrend({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            console.log(response.data.data)
+            this.tempstopPaydata = Object.assign({}, response.data.data.eventAnalysisdata)
+          }
+        }
+      })
+    },
+    getDcInoutFlagType() { // 获取进出记录趋势图数据
+      const endTime = new Date()
+      let beginTime = new Date()
+      beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
+      beginTime = new Date(beginTime)
+      fetchtDcInoutFlagType({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            console.log(response.data.data)
+            this.userActivedata = Object.assign({}, response.data.data.eventAnalysisdata)
           }
         }
       })
@@ -742,26 +627,25 @@ export default {
       })
     },
     getOrderList() { // 获取物业缴费订单实时数据
-      fetchOrderList({ currentPage: 1, pageSize: 10 }).then(response => {
+      fetchPropertyOrderList({ currentPage: 1, pageSize: 10 }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.userTabledata = {
               tableData: [],
-              formThead: ['房产名称', '业主名称', '支付时间', '支付金额', '备注'],
+              formThead: ['房产名称', '业主名称', '支付时间', '支付金额（元）'],
               tableTitle: '实时物缴数据',
               loading: true,
               dataEmpty: true
             }
             let items = []
-            items = response.data.data.qryList
+            items = response.data.data
             if (items.length > 0) {
               for (let i = 0; i < items.length; i++) {
                 this.userTabledata.tableData.push({
                   '房产名称': items[i].estateName,
                   '业主名称': items[i].houseHoldName,
                   '支付时间': items[i].payTime,
-                  '支付金额': items[i].payAmount,
-                  '备注': items[i].couponDemo
+                  '支付金额（元）': items[i].payAmount
                 })
               }
               this.userTabledata.dataEmpty = false
@@ -904,7 +788,7 @@ header .user-name {
 .navigation li {
   list-style: none;
   float: left;
-  width: calc(20% - 2rem);
+  width: calc(100%/7 - 2rem);
   display: inline-block;
   margin: 1rem;
 }
@@ -943,10 +827,10 @@ header .user-name {
   background-color: #3973d2;
 }
 .navigation a:nth-child(6) a {
-  background-color: #a74cf3;
+  background-color: #E94242;
 }
 .navigation a:nth-child(7) a {
-  background-color: #0fc2d6;
+  background-color: #E3A61F;
 }
 .navigation a:nth-child(8) a {
   background-color: #3973d2;

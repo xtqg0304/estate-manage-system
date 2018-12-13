@@ -48,4 +48,11 @@ export function getUserCommunity(data) {
     data
   })
 }
-
+/*  获取小区绑定的公众号ID */
+export function fetchCommunityBindMpId(data) {
+  return request({
+    url: basicServer + '/comm/link/getCommunityBindMpId',
+    method: 'post',
+    data
+  })
+}

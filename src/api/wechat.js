@@ -65,3 +65,19 @@ export function bindCommunity(data) {
     data
   })
 }
+/*  获取公众号列表 */
+export function fetchWechatList(data) {
+  return request({
+    url: basicServer + '/mp/config/getWechatMPInfoList',
+    method: 'post',
+    data
+  })
+}
+/*  获取小程序绑定的公众号id */
+export function fetcMaBingMpId(data) {
+  return request({
+    url: basicServer + '/ma/config/getMaBingMpId',
+    method: 'post',
+    data
+  })
+}

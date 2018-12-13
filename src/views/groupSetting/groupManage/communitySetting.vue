@@ -31,7 +31,7 @@
       <el-table-column
         label="小区编码"
         align="center"
-        width="65">
+        width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.code }}</span>
         </template>
@@ -39,7 +39,7 @@
       <el-table-column
         label="小区名称"
         align="center"
-        width="65">
+        width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
@@ -55,7 +55,7 @@
       <el-table-column
         label="联系人"
         align="center"
-        width="65">
+        width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.contact }}</span>
         </template>
@@ -63,7 +63,7 @@
       <el-table-column
         label="联系电话"
         align="center"
-        width="65">
+        width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.telephone }}</span>
         </template>
@@ -91,13 +91,13 @@
         class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
+            type="success"
+            size="mini"
+            @click="handleBind(scope.row)">公众号</el-button>
+          <el-button
             type="primary"
             size="mini"
-            @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <!-- <el-button
-            type="primary"
-            size="mini"
-            @click="handleDetail(scope.row)">详情</el-button> -->
+            @click="handleUpdate(scope.row)">编辑</el-button>
           <el-button
             type="danger"
             size="mini"
@@ -126,15 +126,11 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;">
         <el-form-item
           label="所属区域"
           prop="statusservice">
-          <!-- <el-cascader
-            :options="options"
-            v-model="temp.regionId"
-            expand-trigger="hover"/> -->
           <el-select v-model="temp.regionId" filterable placeholder="所属区域" style="width:100%">
             <el-option
               v-for="item in options"
@@ -161,7 +157,7 @@
         <el-form-item
           label="联系电话"
           prop="telephone">
-          <el-input v-model="temp.servicephone" />
+          <el-input v-model="temp.telephone" />
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="temp.memo" type="textarea"/>
@@ -182,6 +178,59 @@
       </div>
     </el-dialog>
 
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogBindVisible">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="100px"
+        style="width: 400px; margin-left:50px;">
+        <el-form-item
+          label="小区名称"
+          prop="id">
+          <el-select
+            v-model="temp.id"
+            disabled
+            class="filter-item"
+            placeholder="请选择小区"
+            style="width:100%" >
+            <el-option
+              v-for="item in communityOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="绑定公众号"
+          prop="wechatId">
+          <el-select
+            v-model="wechatId"
+            class="filter-item"
+            placeholder="请选择公众号"
+            style="width:100%" >
+            <el-option
+              v-for="item in wechatOptions"
+              :key="item.id"
+              :label="item.appname"
+              :value="item.id" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer">
+        <el-button @click="dialogBindVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button
+          v-if="dialogStatus=='bind'"
+          type="primary"
+          @click="bindData">{{ $t('table.confirm') }}</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -189,13 +238,17 @@
 import {
   fetchList,
   deleteCommunity,
-  // fetchAreaList,
-  handelAddCommunity
+  handelAddCommunity,
+  fetchCommunity,
+  fetchCommunityBindMpId
 } from '@/api/communityManage'
 import {
-  // fetchRegionTree,
   fetchRegionOptions
 } from '@/api/areaSetting'
+import {
+  fetchWechatList,
+  bindCommunity
+} from '@/api/wechat'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
   name: 'ComplexTable',
@@ -220,7 +273,7 @@ export default {
         code: '',
         shortName: '',
         name: '',
-        regionId: [],
+        regionId: '',
         provice: '',
         city: '',
         country: '',
@@ -232,11 +285,13 @@ export default {
 
       },
       dialogFormVisible: false,
+      dialogBindVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
         create: '新建',
-        detail: '详情'
+        detail: '详情',
+        bind: '绑定公众号'
       },
       pvData: [],
       rules: {
@@ -255,12 +310,17 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      communityOptions: [],
+      wechatOptions: [],
+      wechatId: ''
     }
   },
   created() {
     this.getList()
     this.getAreaList()
+    this.getCommunityList()
+    this.getWechatList()
   },
   methods: {
     getList() {
@@ -331,7 +391,7 @@ export default {
         code: '',
         shortName: '',
         name: '',
-        regionId: [],
+        regionId: '',
         provice: '',
         city: '',
         country: '',
@@ -362,7 +422,8 @@ export default {
             // debugger
             if (response.status === 200) {
               if (response.data.code === 200) {
-                this.list.unshift(this.temp)
+                // this.list.unshift(this.temp)
+                this.getList()
                 this.dialogFormVisible = false
                 this.$notify({
                   title: '成功',
@@ -389,19 +450,19 @@ export default {
       // 修改/编辑 确认事件
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          // this.temp.parentId = this.temp.tempParentId[this.temp.tempParentId.length - 1]
           const tempData = Object.assign({}, this.temp)
           handelAddCommunity(tempData).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
-                for (const v of this.list) {
-                  // 更新后的值插入原来数据的位置
-                  if (v.id === this.temp.id) {
-                    const index = this.list.indexOf(v)
-                    this.list.splice(index, 1, this.temp)
-                    break
-                  }
-                }
+                // for (const v of this.list) {
+                //   // 更新后的值插入原来数据的位置
+                //   if (v.id === this.temp.id) {
+                //     const index = this.list.indexOf(v)
+                //     this.list.splice(index, 1, this.temp)
+                //     break
+                //   }
+                // }
+                this.getList()
                 this.dialogFormVisible = false
                 this.$notify({
                   title: '成功',
@@ -452,6 +513,82 @@ export default {
           type: 'info',
           message: '已取消删除'
         })
+      })
+    },
+    handleBind(row) {
+      // 绑定事件
+      this.temp = Object.assign({}, row) // copy obj
+      this.wechatId = ''
+      fetchCommunityBindMpId({ id: this.temp.id }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.wechatId = response.data.data
+          }
+        }
+      })
+      this.dialogStatus = 'bind'
+      this.dialogBindVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    bindData() {
+      // 绑定 确认事件
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          bindCommunity({ wechatId: this.wechatId, communityId: tempData.id }).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                for (const v of this.list) {
+                  // 更新后的值插入原来数据的位置
+                  if (v.id === this.temp.id) {
+                    const index = this.list.indexOf(v)
+                    this.list.splice(index, 1, this.temp)
+                    break
+                  }
+                }
+                this.dialogBindVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: response.data.msg,
+                  type: 'success',
+                  duration: 2000
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    getCommunityList() {
+      fetchCommunity({}).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.communityOptions = response.data.data
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: response.data.msg,
+              duration: 2000
+            })
+          }
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.msg,
+            duration: 2000
+          })
+        }
+      })
+    },
+    getWechatList() {
+      fetchWechatList({}).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.wechatOptions = response.data.data
+          }
+        }
       })
     }
   }

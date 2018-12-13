@@ -51,7 +51,7 @@
       <el-table-column
         label="到期时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.effectiveEndTime }}</span>
+          <span>{{ scope.row.effectiveEndTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column

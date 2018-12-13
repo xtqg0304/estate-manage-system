@@ -93,14 +93,14 @@
           fit
           highlight-current-row
           style="width: 100%;min-height:500px;">
-          <el-table-column
+          <!-- <el-table-column
             label="ID"
             align="center"
             width="120">
             <template slot-scope="scope">
               <span>{{ scope.row.id }}</span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             label="图标"
             min-width="150px"
