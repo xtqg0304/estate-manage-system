@@ -264,6 +264,9 @@ export default {
     ringchart,
     tablecomponent
   },
+  filters: {
+
+  },
   data() {
     return {
       estatePaydata: {},
@@ -613,9 +616,19 @@ export default {
               dataEmpty: true
             }
             this.vehicleTabledata.tableData = response.data.data.data.tableData
+            // this.vehicleTabledata.tableData =  [{'车牌号': "1544704320", '进场时间': "1544704320", '出场时间':"1544704320",'停车时长': 90, '金额(元)':"10"}]
+
             this.vehicleTabledata.formThead = response.data.data.data.formThead
             this.vehicleTabledata.tableTitle = response.data.data.data.tableTitle
+            debugger
             if (this.vehicleTabledata.tableData.length > 0) {
+              for (let i = 0; i < this.vehicleTabledata.tableData.length; i++) {
+                this.vehicleTabledata.tableData[i]['进场时间'] = parseTime(this.vehicleTabledata.tableData[i]['进场时间'])
+                this.vehicleTabledata.tableData[i]['出场时间'] = parseTime(this.vehicleTabledata.tableData[i]['出场时间'])
+                this.vehicleTabledata.tableData[i]['停车时长'] = this._timeStamp(this.vehicleTabledata.tableData[i]['停车时长'])
+                debugger
+                console.log(this.vehicleTabledata.tableData[i]['停车时长'])
+              }
               this.vehicleTabledata.dataEmpty = false
               this.vehicleTabledata.loading = false
             } else {
@@ -657,6 +670,25 @@ export default {
           }
         }
       })
+    },
+    _timeStamp(second_time) {
+      var time = parseInt(second_time) + '秒'
+      if (parseInt(second_time) > 60) {
+        var second = parseInt(second_time) % 60
+        var min = parseInt(second_time / 60)
+        time = min + '分' + second + '秒'
+        if (min > 60) {
+          min = parseInt(second_time / 60) % 60
+          var hour = parseInt(parseInt(second_time / 60) / 60)
+          time = hour + '小时' + min + '分' + second + '秒'
+          if (hour > 24) {
+            hour = parseInt(parseInt(second_time / 60) / 60) % 24
+            var day = parseInt(parseInt(parseInt(second_time / 60) / 60) / 24)
+            time = day + '天' + hour + '小时' + min + '分' + second + '秒'
+          }
+        }
+      }
+      return time
     }
 
   }
