@@ -620,14 +620,11 @@ export default {
 
             this.vehicleTabledata.formThead = response.data.data.data.formThead
             this.vehicleTabledata.tableTitle = response.data.data.data.tableTitle
-            debugger
             if (this.vehicleTabledata.tableData.length > 0) {
               for (let i = 0; i < this.vehicleTabledata.tableData.length; i++) {
                 this.vehicleTabledata.tableData[i]['进场时间'] = parseTime(this.vehicleTabledata.tableData[i]['进场时间'])
                 this.vehicleTabledata.tableData[i]['出场时间'] = parseTime(this.vehicleTabledata.tableData[i]['出场时间'])
                 this.vehicleTabledata.tableData[i]['停车时长'] = this._timeStamp(this.vehicleTabledata.tableData[i]['停车时长'])
-                debugger
-                console.log(this.vehicleTabledata.tableData[i]['停车时长'])
               }
               this.vehicleTabledata.dataEmpty = false
               this.vehicleTabledata.loading = false

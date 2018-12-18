@@ -149,6 +149,7 @@ export const map = {
   staffAccount: () => import('@/views/groupSetting/staffManage/staffAccount.vue'),
   publicAccount: () => import('@/views/groupSetting/wechatManage/publicAccount.vue'),
   smallProject: () => import('@/views/groupSetting/wechatManage/smallProject.vue'),
+  message: () => import('@/views/groupSetting/wechatManage/message.vue'),
   sendRecord: () => import('@/views/groupSetting/shortMessageManage/sendRecord.vue'),
   useStatistical: () => import('@/views/groupSetting/shortMessageManage/useStatistical.vue'),
   propertyInfo: () => import('@/views/communitySetting/communityManage/propertyInfo.vue'),
@@ -965,6 +966,17 @@ export const asyncRouterMap = [
         path: 'smallProject',
         component: () => import('@/views/groupSetting/wechatManage/smallProject.vue'),
         name: 'smallProject',
+        meta: {
+          title: 'smallProject',
+          icon: 'publicAccount',
+          noCache: true,
+          roles: ['groupSetting']
+        }
+      },
+      {
+        path: 'message',
+        component: () => import('@/views/groupSetting/wechatManage/message.vue'),
+        name: 'message',
         meta: {
           title: 'smallProject',
           icon: 'publicAccount',

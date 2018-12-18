@@ -155,11 +155,11 @@
           <el-button
             type="text"
             size="small"
-            @click="getKey(scope.row)">获取钥匙</el-button>
+            @click="getKey(scope.row)">二维码</el-button>
           <el-button
             type="text"
             size="small"
-            @click="getCode(scope.row)">二维码</el-button>
+            @click="getCode(scope.row)">获取钥匙</el-button>
           <el-button
             type="text"
             size="small"
@@ -366,7 +366,8 @@ import {
   getDeviceList,
   deleteDvice,
   updateDvice,
-  getCode
+  getCode,
+  getQrcode
 } from '@/api/device'
 import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // 水波纹指令
@@ -639,20 +640,21 @@ export default {
     },
     getKey(row) {
       this.qrcode = ''
-      this.codeTitle = '获取钥匙 请扫二维码获取门禁权限'
+      this.codeTitle = '二维码 请扫二维码开门'
       this.dialogForKey = true
       const params = {
         id: row.deviceId,
         userId: this.userInfo.selectCommunity
       }
-      getCode(params).then(response => {
+      getQrcode(params).then(response => {
+        console.log(response)
         this.qrcode = response.data.data
       })
     },
     // 获取绑定的二维码
     getCode(row) {
       this.qrcode = ''
-      this.codeTitle = '二维码 请扫二维码开门'
+      this.codeTitle = '获取钥匙 请扫二维码获取门禁权限'
       this.dialogForKey = true
       const params = {
         id: row.deviceId,

@@ -61,10 +61,19 @@ export function updateDvice(data) {
   })
 }
 
-/* 绑定获取钥匙*/
+/* 绑定钥匙 */
 export function getCode(data) {
   return request({
     url: wayServer + '/qrcode/getQrcodeUser',
+    method: 'post',
+    data
+  })
+}
+
+/* 远程开门 */
+export function getQrcode(data) {
+  return request({
+    url: wayServer + '/qrcode/getQrcode',
     method: 'post',
     data
   })
