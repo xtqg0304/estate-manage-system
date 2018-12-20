@@ -1,67 +1,80 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
-      <el-date-picker v-model="listQuery.starttoendimestamp" :picker-options="pickerOptions" :range-separator="$t('table.to')" :start-placeholder="$t('table.startdate')" :end-placeholder="$t('table.enddate')" class="filter-item-rangedate" type="daterange" />
-      <el-select v-model="listQuery.statusPayment" :placeholder="$t('table.statuspayment')" clearable class="filter-item">
-        <el-option v-for="item in statuspaymentOptions" :key="item" :label="$t('table.'+item)" :value="item" />
+      <el-date-picker
+        v-model="listQuery.inTimeBegin"
+        :picker-options="timePickerOptions"
+        class="filter-item-rangedate"
+        type="datetime"
+        placeholder="开始时间"
+        align="right"/>
+      <el-date-picker
+        v-model="listQuery.inTimeEnd"
+        :picker-options="timePickerOptions"
+        class="filter-item-rangedate"
+        type="datetime"
+        placeholder="结束时间"
+        align="right"/>
+      <el-select v-model="listQuery.carparkId" placeholder="车场ID" clearable class="filter-item">
+        <el-option v-for="item in parkListOptions" :key="item.carparkId" :label="item.carparkName" :value="item.carparkId" />
       </el-select>
-      <el-input v-model="listQuery.keyword" :placeholder="$t('table.keyword')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <!-- <el-select v-model="listQuery.carRoadId" placeholder="车道ID" clearable class="filter-item">
+        <el-option v-for="item in laneListOptions" :key="item.carRoadId" :label="item.carRoadName" :value="item.carRoadId" />
+      </el-select>
+      <el-select v-model="listQuery.carType" placeholder="车场类型" clearable class="filter-item">
+        <el-option v-for="item in carTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select> -->
+      <el-input v-model="listQuery.carNo" placeholder="车牌号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
     <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column :label="$t('table.id')" align="center" width="65">
+      <el-table-column label="小区名称" width="180px">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.communityName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.date')" width="150px" align="center">
+      <el-table-column label="日期" min-width="110px" align="center">
         <template slot-scope="scope">
-          <!-- <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+          <span>{{ scope.row.payDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.propertyname')" min-width="150px">
+      <el-table-column label="订单数量" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.propertyname }}</span>
+          <span>{{ scope.row.orderCount }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownername')" width="110px" align="center">
+      <el-table-column label="现金金额" width="80px">
         <template slot-scope="scope">
-          <span>{{ scope.row.ownername }}</span>
+          <span>{{ scope.row.cashSum }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownerphone')" width="110px" align="center">
+      <el-table-column label="支付宝金额" align="center" width="95">
         <template slot-scope="scope">
-          <span>{{ scope.row.ownerphone }}</span>
+          <span>{{ scope.row.aliSum }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.feesofpay')" align="center" width="95">
+      <el-table-column label="微信金额" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <span>{{ scope.row.feesofpay }}</span>
+          <span>{{ scope.row.wxSum }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.statepayment')" align="center" width="95">
+      <el-table-column label="总金额" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.statepayment | statusFilter">{{ $t('table.'+scope.row.statepayment) }}</el-tag>
+          <span>{{ scope.row.paymentTotalSum }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.statuspayment')" class-name="status-col" width="100">
+      <el-table-column label="优惠金额" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.statuspayment | statusFilter">{{ $t('table.'+scope.row.statuspayment) }}</el-tag>
+          <span>{{ scope.row.discountSum }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="实际金额" class-name="status-col" width="100">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">{{ $t('table.publish') }}
-          </el-button>
-          <el-button v-if="scope.row.status!='draft'" size="mini" @click="handleModifyStatus(scope.row,'draft')">{{ $t('table.draft') }}
-          </el-button>
-          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">{{ $t('table.delete') }}
-          </el-button>
+          <span>{{ scope.row.realSum }}</span>
         </template>
       </el-table-column>
     </el-table>
+
     <div class="pagination-container">
       <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
@@ -70,54 +83,63 @@
 
 <script>
 import {
-  fetchList
-} from '@/api/estatePayrecord'
-import Tinymce from '@/components/Tinymce'
+  fetchParkPayReportMonthList
+} from '@/api/parkPayData'
+import {
+  fetchCommunityParkList,
+  fetchLaneList
+} from '@/api/parkManage'
 import waves from '@/directive/waves' // 水波纹指令
-// import { parseTime } from '@/utils'
-
+import { parseTime } from '@/utils'
 export default {
   name: 'ComplexTable',
   directives: {
     waves
   },
   filters: {
-    statusFilter(status) {
+    inoutStatusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        0: '自动放行',
+        1: '手动放行',
+        2: '禁止入场',
+        3: '离线数据'
+      }
+      return statusMap[status]
+    },
+    carNoColorFilter(status) {
+      const statusMap = {
+        0: '未知',
+        1: '蓝底白字',
+        2: '黄底黑字',
+        3: '白底黑字',
+        4: '黑底白字',
+        5: '绿底白字',
+        6: '新能源车'
       }
       return statusMap[status]
     }
   },
-  components: { Tinymce },
   data() {
     return {
-      pickerOptions: {
+      timePickerOptions: {
         shortcuts: [{
-          text: '最近一周',
+          text: '今天',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
+            picker.$emit('pick', new Date())
           }
         }, {
-          text: '最近一个月',
+          text: '昨天',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
           }
         }, {
-          text: '最近三个月',
+          text: '一周前',
           onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
           }
         }]
       },
@@ -128,86 +150,105 @@ export default {
       total: null,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20,
-        statusPayment: undefined,
-        keyword: undefined,
-        starttoendimestamp: undefined
+        currentPage: 1,
+        pageSize: 10,
+        carNo: '',
+        carparkId: '',
+        carRoadId: '',
+        inTimeBegin: '',
+        inTimeEnd: '',
+        communityId: '',
+        carType: ''
       },
-      sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
+      carTypeOptions: [
+        {
+          label: '临时车',
+          value: '临时车'
+        },
+        {
+          label: '月租车',
+          value: '月租车'
+        },
+        {
+          label: '预约车',
+          value: '预约车'
+        },
+        {
+          label: '免费车',
+          value: '免费车'
+        },
+        {
+          label: '黑名单车',
+          value: '黑名单车'
+        },
+        {
+          label: '包次车',
+          value: '包次车'
+        }
       ],
-      statusOptions: ['published', 'draft', 'deleted'],
-      statuspaymentOptions: ['cash', 'alipay', 'wechat', 'unionpay'],
-      downloadLoading: false
+      parkListOptions: [],
+      laneListOptions: []
+    }
+  },
+  computed: {
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
     }
   },
   created() {
+    this.getParkList()
+    this.getLaneList()
     this.getList()
   },
   methods: {
+    getParkList() {
+      fetchCommunityParkList({ serviceId: this.communityId, searchType: 0 }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.parkListOptions = response.data.data
+          }
+        }
+      })
+    },
+    getLaneList() {
+      fetchLaneList({ serviceId: this.communityId, searchType: 0 }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.laneListOptions = response.data.data
+          }
+        }
+      })
+    },
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+      this.listQuery.communityId = this.communityId
+      fetchParkPayReportMonthList(this.listQuery).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.list = response.data.data.payReportDetailElementList
+            this.total = response.data.data.totalCount
+            this.listLoading = false
+          }
+        }
       })
     },
     handleFilter() {
-      console.log(this.listQuery)
-      // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
+      this.listQuery.inTimeBegin = this.listQuery.inTimeBegin && parseTime(this.listQuery.inTimeBegin)
+      this.listQuery.inTimeEnd = this.listQuery.inTimeEnd && parseTime(this.listQuery.inTimeEnd)
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
-      // 每页显示多少条数据
-      this.listQuery.limit = val
+      this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
-      // 显示第几页的数据
-      this.listQuery.page = val
+      this.listQuery.currentPage = val
       this.getList()
-    },
-    handleModifyStatus(row, status) {
-      // 改变当前按钮的状态
-      // console.log(row)
-      // console.log(status)
-      // 请求后台接口将状态传给后台，如果成功，前端修改数据
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
-    },
-    resetTemp() {
-      // 重新初始化新建对象的默认值
-      this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
-      }
-    },
-    handleDelete(row) {
-      // 在列表中删除 （将当前id传给后台）
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
     }
   }
 }
@@ -227,5 +268,8 @@ export default {
 }
 .editor-custom-btn-container {
   top: 0 !important;
+}
+.edit-input{
+  width:100px;
 }
 </style>

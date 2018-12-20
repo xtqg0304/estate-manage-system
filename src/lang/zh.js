@@ -18,6 +18,7 @@ export default {
     wechatManage: '微信管理',
     publicAccount: '公众号',
     smallProject: '小程序',
+    messagePush: '推送模板',
     shortMessageManage: '短信管理',
     sendRecord: '发送记录',
     useStatistical: '用量统计',

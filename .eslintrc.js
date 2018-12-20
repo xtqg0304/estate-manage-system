@@ -24,16 +24,17 @@ module.exports = {
     //     }
     //   }
     // ]
-    'vue/max-attributes-per-line': [
-      2,
-      {
-        singleline: 10,
-        multiline: {
-          max: 1,
-          allowFirstLine: false
-        }
-      }
-    ],
+    'vue/max-attributes-per-line': 0, // 属性折行方式和 prettier 有冲突，禁用规则
+    // 'vue/max-attributes-per-line': [
+    //   2,
+    //   {
+    //     singleline: 10,
+    //     multiline: {
+    //       max: 1,
+    //       allowFirstLine: false
+    //     }
+    //   }
+    // ],
     'vue/name-property-casing': ['error', 'PascalCase'],
     'accessor-pairs': 2,
     'arrow-spacing': [

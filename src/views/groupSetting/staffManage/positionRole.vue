@@ -220,20 +220,20 @@ export default {
         create: '新建'
       },
       rules: {
-        type: [
-          { required: true, message: 'type is required', trigger: 'change' }
-        ],
-        timestamp: [
-          {
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
-        ],
-        title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
-        ]
+        // type: [
+        //   { required: true, message: 'type is required', trigger: 'change' }
+        // ],
+        // timestamp: [
+        //   {
+        //     type: 'date',
+        //     required: true,
+        //     message: 'timestamp is required',
+        //     trigger: 'change'
+        //   }
+        // ],
+        // title: [
+        //   { required: true, message: 'title is required', trigger: 'blur' }
+        // ]
       },
       roleList: [],
       navTreeList: [],
@@ -368,7 +368,7 @@ export default {
     createData() {
       console.log(this.temp)
       this.temp.status = 'ENABLED'
-      this.temp.roleTag = parseInt(Math.random() * 100) + 1024
+      // this.temp.roleTag = parseInt(Math.random() * 100) + 1024
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
@@ -541,7 +541,7 @@ export default {
     updateRoleAuthData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.temp.permissionList = this.$refs.tree.getCheckedNodes(false, false)
+          this.temp.permissionList = this.$refs.tree.getCheckedNodes(false, true)
           console.log('this.temp.permissionList')
           console.log(JSON.stringify(this.temp.permissionList))
           const tempData = Object.assign({}, this.temp)

@@ -81,3 +81,27 @@ export function fetcMaBingMpId(data) {
     data
   })
 }
+/*  获取消息推送模板列表 */
+export function fetchWxMsgPage(data) {
+  return request({
+    url: basicServer + '/wxmsg/getWxMsgPage',
+    method: 'post',
+    data
+  })
+}
+/*  添加/修改 消息推送模板 */
+export function editWxMsg(data) {
+  return request({
+    url: basicServer + '/wxmsg/mergeWxMsg',
+    method: 'post',
+    data
+  })
+}
+/*  删除 消息推送模板  */
+export function deleteWxMsg(data) {
+  return request({
+    url: basicServer + '/wxmsg/deleteWxMsg',
+    method: 'post',
+    data
+  })
+}

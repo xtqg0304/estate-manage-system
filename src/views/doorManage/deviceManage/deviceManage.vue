@@ -975,20 +975,32 @@ export default {
       })
     },
     handleDelete(row) {
-      // const deviceId = row.deviceId
-      const params = {
-        id: row.deviceId
-      }
-      // 添加设备
-      deleteDvice(params).then(response => {
-        // 在列表中删除 （将当前id传给后台）
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
+      // 在列表中删除 （将当前id传给后台）
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // const deviceId = row.deviceId
+        const params = {
+          id: row.deviceId
+        }
+        // 添加设备
+        deleteDvice(params).then(response => {
+          // 在列表中删除 （将当前id传给后台）
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
         })
-        this.getList()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }

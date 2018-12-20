@@ -14,10 +14,10 @@ export default {
   props: {
     ringdata: {
       type: Object,
-      default: function () { }
+      default: function() { }
     }
   },
-  data () {
+  data() {
     this.chartSettings = {
       roseType: 'radius',
       limitShowNum: 10,
@@ -60,7 +60,8 @@ export default {
         '#407fff', '#a682e6', '#00cccd', '#db5c6d', '#f59956', '#c8b2f4'
       ],
       series: {
-        barMaxWidth: 20
+        barMaxWidth: 20,
+        type: 'pie'
       },
       toolbox: {
         show: true,
@@ -86,15 +87,15 @@ export default {
     }
   },
   watch: {
-    ringdata (oldValue, newValue) {
+    ringdata(oldValue, newValue) {
       this.getData()
     }
   },
-  created () {
-    this.getData()
+  created() {
+    // this.getData()
   },
   methods: {
-    getData () {
+    getData() {
       this.loading = true
       if (this.ringdata.chartData) {
         this.vChartOptions.title.text = this.ringdata.vChartOptions.title.text

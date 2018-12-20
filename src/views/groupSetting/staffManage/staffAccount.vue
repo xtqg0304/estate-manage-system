@@ -59,6 +59,13 @@
         </template>
       </el-table-column>
       <el-table-column
+        label="账号状态"
+        width="120px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.status | userStatusFilter }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         label="岗位"
         min-width="150px"
         align="center">
@@ -294,6 +301,15 @@ export default {
         MALE: '男'
       }
       return statusMap[status]
+    },
+    userStatusFilter(status) {
+      const statusMap = {
+        'ENABLED': '可用',
+        'DISABLED': '禁用',
+        'DELETED': '删除'
+
+      }
+      return statusMap[status]
     }
   },
   data() {
@@ -338,6 +354,11 @@ export default {
         updatePwd: '修改密码'
       },
       rules: {
+        userName: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { min: 2, message: '不能少于两个字符', trigger: 'blur' },
+          { pattern: /[\u4E00-\u9FA5\uF900-\uFA2D]/, message: '用户名不能含中文字符' }
+        ]
       },
       roleList: [],
       communityOptions: [],

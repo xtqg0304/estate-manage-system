@@ -14,10 +14,10 @@ export default {
   props: {
     linedata: {
       type: Object,
-      default: function () { }
+      default: function() { }
     }
   },
-  data () {
+  data() {
     this.vChartOptions = {
       grid: {
         show: false,
@@ -128,7 +128,8 @@ export default {
         }
       },
       series: {
-        barMaxWidth: 20
+        barMaxWidth: 20,
+        type: 'line'
       },
       toolbox: {
         show: true,
@@ -157,15 +158,15 @@ export default {
     }
   },
   watch: {
-    linedata (oldValue, newValue) {
+    linedata(oldValue, newValue) {
       this.getData()
     }
   },
-  created () {
-    this.getData()
+  created() {
+    // this.getData()
   },
   methods: {
-    getData () {
+    getData() {
       this.loading = true
       if (this.linedata.chartData) {
         this.vChartOptions.title.text = this.linedata.vChartOptions.title.text

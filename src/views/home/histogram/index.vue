@@ -15,10 +15,10 @@ export default {
   props: {
     histogramdata: {
       type: Object,
-      default: function () { }
+      default: function() { }
     }
   },
-  data () {
+  data() {
     this.vChartOptions = {
       grid: {
         show: false,
@@ -129,7 +129,8 @@ export default {
         }
       },
       series: {
-        barMaxWidth: 20
+        barMaxWidth: 20,
+        type: 'bar'
       },
       toolbox: {
         show: true,
@@ -158,15 +159,15 @@ export default {
     }
   },
   watch: {
-    histogramdata (oldValue, newValue) {
+    histogramdata(oldValue, newValue) {
       this.getData()
     }
   },
-  created () {
-    this.getData()
+  created() {
+    // this.getData()
   },
   methods: {
-    getData () {
+    getData() {
       this.loading = true
       if (this.histogramdata.chartData) {
         this.vChartOptions.title.text = this.histogramdata.vChartOptions.title.text

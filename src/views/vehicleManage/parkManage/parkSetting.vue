@@ -16,14 +16,6 @@
       highlight-current-row
       style="width: 100%;min-height:500px;">
       <el-table-column
-        label="车场编码"
-        align="center"
-        width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.carparkKey }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
         label="车场名称"
         width="150px"
         align="center">
@@ -47,22 +39,33 @@
       </el-table-column>
       <el-table-column
         label="详细地址"
-        min-width="150px"
+        width="120px"
         align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.address }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        label="车场编码"
+        align="center"
+        width="200">
+        <template slot-scope="scope">
+          <span>{{ scope.row.carparkKey }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         :label="$t('table.actions')"
         align="center"
-        width="230"
         class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             type="primary"
             size="mini"
             @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleLink(scope.row)">配置</el-button>
           <el-button
             type="success"
             size="mini"
@@ -437,19 +440,32 @@ export default {
     },
     handleDelete(row) {
       // 在列表中删除 （将当前id传给后台）
-      const formdata = new FormData()
-      formdata.append('carparkId', row.id)
-      deleteCarpark(formdata).then((response) => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            const index = this.list.indexOf(row)
-            this.list.splice(index, 1)
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 在列表中删除 （将当前id传给后台）
+        const formdata = new FormData()
+        formdata.append('carparkId', row.id)
+        deleteCarpark(formdata).then((response) => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              const index = this.list.indexOf(row)
+              this.list.splice(index, 1)
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
           } else {
             this.$notify.error({
               title: '失败',
@@ -457,13 +473,12 @@ export default {
               duration: 2000
             })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     handleDetail(row) {
@@ -491,6 +506,9 @@ export default {
           })
         }
       })
+    },
+    handleLink(row) {
+      window.location.href = `http://${row.macAddress}.tdzntech.com:9898`
     }
   }
 }

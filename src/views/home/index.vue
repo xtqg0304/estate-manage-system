@@ -1,15 +1,15 @@
 <template>
-  <div class="home-bg" >
+  <div class="home-bg">
     <header>
       <div class="header clearfix">
         <a class="header-logo">
-          <img style="width: 40%;vertical-align: middle;" src="@/assets/images/logo-login.png" >
+          <img style="width: 40%;vertical-align: middle;"
+               src="@/assets/images/logo-login.png">
         </a>
         <div class="time">
           <div class="clock">
-            <i
-              id="Date"
-              class="el-icon-time">{{ dateT }}</i>
+            <i id="Date"
+               class="el-icon-time">{{ dateT }}</i>
             <ul>
               <li id="hours">{{ hoursT }} </li>
               <li id="point">:</li>
@@ -105,12 +105,10 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div
-              class="main-box "
-              style="width:100%;height:100%;">
-              <div
-                class="main-box-content "
-                style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
 
                 <div style="height:50%; ">
                   <linechart :linedata="userActivedata" />
@@ -128,12 +126,10 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div
-              class="main-box "
-              style="width:100%;height:100%;">
-              <div
-                class="main-box-content "
-                style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
 
                 <div style="width:50%;height:50%;float:left;">
                   <ringchart :ringdata="doorAnalysisdata" />
@@ -157,12 +153,10 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div
-              class="main-box "
-              style="width:100%;height:100%;">
-              <div
-                class="main-box-content "
-                style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
                 <div style="height:33.33%; ">
                   <histogram :histogramdata="estatePaydata" />
                 </div>
@@ -182,12 +176,10 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div
-              class="main-box "
-              style="width:100%;height:100%;">
-              <div
-                class="main-box-content "
-                style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="userTabledata" />
               </div>
             </div>
@@ -199,12 +191,10 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div
-              class="main-box "
-              style="width:100%;height:100%;">
-              <div
-                class="main-box-content "
-                style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="doorTabledata" />
               </div>
             </div>
@@ -216,12 +206,10 @@
       <li class="dataVisual-item ">
         <div class="dataVisual-item-t numbox ">
           <div class="dataVisual-bgImg numb ">
-            <div
-              class="main-box "
-              style="width:100%;height:100%;">
-              <div
-                class="main-box-content "
-                style="width:100%;min-height:300px;height:100%; ">
+            <div class="main-box "
+                 style="width:100%;height:100%;">
+              <div class="main-box-content "
+                   style="width:100%;min-height:300px;height:100%; ">
                 <tablecomponent :tabledata="vehicleTabledata" />
               </div>
             </div>
@@ -380,8 +368,6 @@ export default {
           this.systems.doorSys = value.id
         } else if (value.name === '车辆系统') {
           this.systems.vehicleSys = value.id
-        } else {
-          console.log('9')
         }
       })
     },
@@ -406,7 +392,6 @@ export default {
       fetchPayTypeAnalysis({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            console.log(response.data.data)
             this.payTypeAnalysisdata = Object.assign({}, response.data.data.eventAnalysisdata)
           }
         }
@@ -420,7 +405,6 @@ export default {
       fetchPropertyPayAnalysis({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            console.log(response.data.data)
             this.eventAnalysisdata = Object.assign({}, response.data.data.eventAnalysisdata)
           }
         }
@@ -434,7 +418,6 @@ export default {
       fetchPropertyPayTrend({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            console.log(response.data.data)
             this.estatePaydata = Object.assign({}, response.data.data.estatePaydata)
           }
         }
@@ -448,7 +431,6 @@ export default {
       fetchComplaintStatusTrend({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            console.log(response.data.data)
             this.tempstopPaydata = Object.assign({}, response.data.data.eventAnalysisdata)
           }
         }
@@ -462,7 +444,6 @@ export default {
       fetchtDcInoutFlagType({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            console.log(response.data.data)
             this.userActivedata = Object.assign({}, response.data.data.eventAnalysisdata)
           }
         }
@@ -487,8 +468,10 @@ export default {
                 }
               }
             }
-            for (let i = 0, len = response.data.data.deviceList.length; i < len; i++) {
-              this.doorAnalysisdata.chartData.rows.push({ '设备类型': response.data.data.deviceList[i].deviceFactoryName, '个数': response.data.data.deviceList[i].devType })
+            if (response.data.data.deviceList.length > 0) {
+              for (let i = 0, len = response.data.data.deviceList.length; i < len; i++) {
+                this.doorAnalysisdata.chartData.rows.push({ '设备类型': response.data.data.deviceList[i].deviceFactoryName, '个数': response.data.data.deviceList[i].devType })
+              }
             }
           }
         }
@@ -513,15 +496,15 @@ export default {
                 }
               }
             }
-            for (let i = 0, len = response.data.data.qryComplaintElementData.length; i < len; i++) {
-              if (response.data.data.qryComplaintElementData[i].status === 'WAITING') {
-                this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '等待处理', '个数': response.data.data.qryComplaintElementData[i].statusCount })
-              } else if (response.data.data.qryComplaintElementData[i].status === 'PROCESSED') {
-                this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '已处理', '个数': response.data.data.qryComplaintElementData[i].statusCount })
-              } else if (response.data.data.qryComplaintElementData[i].status === 'Reply') {
-                this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '回复', '个数': response.data.data.qryComplaintElementData[i].statusCount })
-              } else {
-                console.log('111')
+            if (response.data.data.qryComplaintElementData.length > 0) {
+              for (let i = 0, len = response.data.data.qryComplaintElementData.length; i < len; i++) {
+                if (response.data.data.qryComplaintElementData[i].status === 'WAITING') {
+                  this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '等待处理', '个数': response.data.data.qryComplaintElementData[i].statusCount })
+                } else if (response.data.data.qryComplaintElementData[i].status === 'PROCESSED') {
+                  this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '已处理', '个数': response.data.data.qryComplaintElementData[i].statusCount })
+                } else if (response.data.data.qryComplaintElementData[i].status === 'Reply') {
+                  this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '回复', '个数': response.data.data.qryComplaintElementData[i].statusCount })
+                }
               }
             }
           }
@@ -537,15 +520,13 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.doorTabledata = {
-              tableData: [],
               formThead: ['用户', '设备名称', '时间', '状态'],
-              tableTitle: '门禁实时数据',
-              loading: true,
-              dataEmpty: true
+              tableTitle: '门禁实时数据'
             }
             let items = []
             items = response.data.data.qryDeviceData
             if (items.length > 0) {
+              this.doorTabledata.tableData = []
               for (let i = 0; i < items.length; i++) {
                 if (items[i].inoutSuccess === '1') {
                   this.doorTabledata.tableData.push({
@@ -563,11 +544,8 @@ export default {
                   })
                 }
               }
-              this.doorTabledata.dataEmpty = false
-              this.doorTabledata.loading = false
             } else {
-              this.doorTabledata.dataEmpty = true
-              this.doorTabledata.loading = false
+              this.doorTabledata.tableData = []
             }
           }
         }
@@ -594,7 +572,6 @@ export default {
       fetchParkingChargeInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: '' }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            console.log(response.data.data)
             this.vehiclePaydata = Object.assign({}, response.data.data.data)
           }
         }
@@ -609,28 +586,25 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.vehicleTabledata = {
-              tableData: [],
               formThead: [],
-              tableTitle: '',
-              loading: true,
-              dataEmpty: true
+              tableTitle: ''
             }
-            this.vehicleTabledata.tableData = response.data.data.data.tableData
-            // this.vehicleTabledata.tableData =  [{'车牌号': "1544704320", '进场时间': "1544704320", '出场时间':"1544704320",'停车时长': 90, '金额(元)':"10"}]
-
             this.vehicleTabledata.formThead = response.data.data.data.formThead
             this.vehicleTabledata.tableTitle = response.data.data.data.tableTitle
-            if (this.vehicleTabledata.tableData.length > 0) {
-              for (let i = 0; i < this.vehicleTabledata.tableData.length; i++) {
-                this.vehicleTabledata.tableData[i]['进场时间'] = parseTime(this.vehicleTabledata.tableData[i]['进场时间'])
-                this.vehicleTabledata.tableData[i]['出场时间'] = parseTime(this.vehicleTabledata.tableData[i]['出场时间'])
-                this.vehicleTabledata.tableData[i]['停车时长'] = this._timeStamp(this.vehicleTabledata.tableData[i]['停车时长'])
+            const items = response.data.data.data.tableData
+            if (items.length > 0) {
+              this.vehicleTabledata.tableData = []
+              for (let i = 0; i < items.length; i++) {
+                this.vehicleTabledata.tableData.push({
+                  '车牌号': items[i]['车牌号'],
+                  '进场时间': parseTime(items[i]['进场时间']),
+                  '出场时间': parseTime(items[i]['出场时间']),
+                  '停车时长': this._timeStamp(items[i]['停车时长']),
+                  '金额(元)': items[i]['金额(元)']
+                })
               }
-              this.vehicleTabledata.dataEmpty = false
-              this.vehicleTabledata.loading = false
             } else {
-              this.vehicleTabledata.dataEmpty = true
-              this.vehicleTabledata.loading = false
+              this.vehicleTabledata.tableData = []
             }
           }
         }
@@ -641,28 +615,23 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.userTabledata = {
-              tableData: [],
-              formThead: ['房产名称', '业主名称', '支付时间', '支付金额（元）'],
-              tableTitle: '实时物缴数据',
-              loading: true,
-              dataEmpty: true
+              formThead: ['房产名称', '业主名称', '支付时间', '金额（元）'],
+              tableTitle: '实时物缴数据'
             }
             let items = []
             items = response.data.data
             if (items.length > 0) {
+              this.userTabledata.tableData = []
               for (let i = 0; i < items.length; i++) {
                 this.userTabledata.tableData.push({
                   '房产名称': items[i].estateName,
                   '业主名称': items[i].houseHoldName,
                   '支付时间': items[i].payTime,
-                  '支付金额（元）': items[i].payAmount
+                  '金额（元）': items[i].payAmount
                 })
               }
-              this.userTabledata.dataEmpty = false
-              this.userTabledata.loading = false
             } else {
-              this.userTabledata.dataEmpty = true
-              this.userTabledata.loading = false
+              this.userTabledata.tableData = []
             }
           }
         }
@@ -695,8 +664,8 @@ export default {
 <style scoped>
 @import url(../../../static/css/index.css);
 .home-bg {
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
   min-width: 1000px;
   background-color: #162238;
 }
@@ -810,14 +779,14 @@ header .user-name {
   padding-bottom: 4em;
 }
 .navigation:after {
-  content: '';
+  content: "";
   display: block;
   clear: both;
 }
 .navigation li {
   list-style: none;
   float: left;
-  width: calc(100%/7 - 2rem);
+  width: calc(100% / 7 - 2rem);
   display: inline-block;
   margin: 1rem;
 }
@@ -856,10 +825,10 @@ header .user-name {
   background-color: #3973d2;
 }
 .navigation a:nth-child(6) a {
-  background-color: #E94242;
+  background-color: #e94242;
 }
 .navigation a:nth-child(7) a {
-  background-color: #E3A61F;
+  background-color: #e3a61f;
 }
 .navigation a:nth-child(8) a {
   background-color: #3973d2;

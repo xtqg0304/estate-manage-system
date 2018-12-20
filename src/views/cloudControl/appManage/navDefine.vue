@@ -1,63 +1,90 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20" class="tac">
+    <el-row :gutter="20"
+            class="tac">
       <el-col :span="8">
         <h5>菜单树</h5>
-        <el-menu
-          :unique-opened="true"
-          :default-active="defaultActive"
-          class="el-menu-demo"
-          mode="vertical"
-          @open="handleOpen"
-          @close="handleClose"
-          @select="handleSelect">
+        <el-menu :unique-opened="true"
+                 :default-active="defaultActive"
+                 class="el-menu-demo"
+                 mode="vertical"
+                 @open="handleOpen"
+                 @close="handleClose"
+                 @select="handleSelect">
           <!-- 一级菜单没有子菜单 -->
-          <el-menu-item v-for="child in navData" v-if="!child.children" :key="child.id" :index="JSON.stringify(child)">
-            <i class="el-icon-menu"/>
+          <el-menu-item v-for="child in navData"
+                        v-if="!child.children"
+                        :key="child.id"
+                        :index="JSON.stringify(child)">
+            <i class="el-icon-menu" />
             <span slot="title">{{ child.name }}</span>
           </el-menu-item>
           <!-- 一级菜单有子菜单 -->
-          <el-submenu v-for="child in navData" v-if="child.children" :key="child.id" :index="JSON.stringify(child)">
+          <el-submenu v-for="child in navData"
+                      v-if="child.children"
+                      :key="child.id"
+                      :index="JSON.stringify(child)">
             <template slot="title">
-              <i class="el-icon-location"/>
+              <i class="el-icon-location" />
               <span>{{ child.name }}</span>
             </template>
             <!-- 二级菜单没有子菜单 -->
-            <el-menu-item v-for="child1 in child.children" v-if="!child1.children" :key="child1.id" :index="JSON.stringify(child1)">
-              <i class="el-icon-menu"/>
+            <el-menu-item v-for="child1 in child.children"
+                          v-if="!child1.children"
+                          :key="child1.id"
+                          :index="JSON.stringify(child1)">
+              <i class="el-icon-menu" />
               <span slot="title">{{ child1.name }}</span>
             </el-menu-item>
             <!-- 二级菜单有子菜单 -->
-            <el-submenu v-for="child1 in child.children" v-if="child1.children" :key="child1.id" :index="JSON.stringify(child1)">
+            <el-submenu v-for="child1 in child.children"
+                        v-if="child1.children"
+                        :key="child1.id"
+                        :index="JSON.stringify(child1)">
               <template slot="title">
-                <i class="el-icon-location"/>
+                <i class="el-icon-location" />
                 <span>{{ child1.name }}</span>
               </template>
               <!-- 三级菜单没有子菜单 -->
-              <el-menu-item v-for="child2 in child1.children" v-if="!child2.children" :key="child2.id" :index="JSON.stringify(child2)">
-                <i class="el-icon-menu"/>
+              <el-menu-item v-for="child2 in child1.children"
+                            v-if="!child2.children"
+                            :key="child2.id"
+                            :index="JSON.stringify(child2)">
+                <i class="el-icon-menu" />
                 <span slot="title">{{ child2.name }}</span>
               </el-menu-item>
               <!-- 三级菜单有子菜单 -->
-              <el-submenu v-for="child2 in child1.children" v-if="child2.children" :key="child2.id" :index="JSON.stringify(child2)">
+              <el-submenu v-for="child2 in child1.children"
+                          v-if="child2.children"
+                          :key="child2.id"
+                          :index="JSON.stringify(child2)">
                 <template slot="title">
-                  <i class="el-icon-location"/>
+                  <i class="el-icon-location" />
                   <span>{{ child2.name }}</span>
                 </template>
                 <!-- 四级菜单没有子菜单 -->
-                <el-menu-item v-for="child3 in child2.children" v-if="!child3.children" :key="child3.id" :index="JSON.stringify(child3)">
-                  <i class="el-icon-menu"/>
+                <el-menu-item v-for="child3 in child2.children"
+                              v-if="!child3.children"
+                              :key="child3.id"
+                              :index="JSON.stringify(child3)">
+                  <i class="el-icon-menu" />
                   <span slot="title">{{ child3.name }}</span>
                 </el-menu-item>
                 <!-- 四级菜单有子菜单 -->
-                <el-submenu v-for="child3 in child2.children" v-if="child3.children" :key="child3.id" :index="JSON.stringify(child3)">
+                <el-submenu v-for="child3 in child2.children"
+                            v-if="child3.children"
+                            :key="child3.id"
+                            :index="JSON.stringify(child3)">
                   <template slot="title">
-                    <i class="el-icon-location"/>
+                    <i class="el-icon-location" />
                     <span>{{ child3.name }}</span>
                   </template>
                   <!-- 五级菜单没有子菜单 -->
-                  <el-menu-item v-for="child4 in child3.children" v-if="!child4.children" :key="child4.id" :index="JSON.stringify(child4)">
-                    <i class="el-icon-menu"/>
+                  <el-menu-item v-for="child4 in child3.children"
+                                v-if="!child4.children"
+                                :key="child4.id"
+                                :index="JSON.stringify(child4)">
+                    <i class="el-icon-menu" />
                     <span slot="title">{{ child4.name }}</span>
                   </el-menu-item>
                 </el-submenu>
@@ -68,159 +95,136 @@
       </el-col>
       <el-col :span="16">
         <div class="filter-container">
-          <el-button
-            class="filter-item"
-            style="margin-left: 10px;"
-            type="primary"
-            icon="el-icon-edit"
-            @click="handleCreate">{{ $t('table.add') }}</el-button>
-          <el-input
-            v-model="listQuery.searchKey"
-            placeholder="关键字"
-            style="width: 200px;"
-            class="filter-item"
-            @keyup.enter.native="handleFilter" />
-          <el-button
-            v-waves
-            class="filter-item"
-            type="primary"
-            icon="el-icon-search"
-            @click="handleFilter">{{ $t('table.search') }}</el-button>
+          <el-button class="filter-item"
+                     style="margin-left: 10px;"
+                     type="primary"
+                     icon="el-icon-edit"
+                     @click="handleCreate">{{ $t('table.add') }}</el-button>
+          <el-input v-model="listQuery.searchKey"
+                    placeholder="关键字"
+                    style="width: 200px;"
+                    class="filter-item"
+                    @keyup.enter.native="handleFilter" />
+          <el-button v-waves
+                     class="filter-item"
+                     type="primary"
+                     icon="el-icon-search"
+                     @click="handleFilter">{{ $t('table.search') }}</el-button>
         </div>
-        <el-table
-          v-loading="listLoading"
-          :key="tableKey"
-          :data="list"
-          border
-          fit
-          highlight-current-row
-          style="width: 100%;min-height:500px;">
-          <el-table-column
-            label="ID"
-            align="center"
-            width="120">
+        <el-table v-loading="listLoading"
+                  :key="tableKey"
+                  :data="list"
+                  border
+                  fit
+                  highlight-current-row
+                  style="width: 100%;min-height:500px;">
+          <el-table-column label="ID"
+                           align="center"
+                           width="120">
             <template slot-scope="scope">
               <span>{{ scope.row.id }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="导航名称"
-            align="center"
-            width="120">
+          <el-table-column label="导航名称"
+                           align="center"
+                           width="120">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="图标"
-            width="120px">
+          <el-table-column label="图标"
+                           width="120px">
             <template slot-scope="scope">
               <span>{{ scope.row.icon }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="链接地址/路由地址"
-            min-width="150px"
-            align="center">
+          <el-table-column label="链接地址/路由地址"
+                           min-width="150px"
+                           align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.link }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('table.actions')"
-            align="center"
-            width="230"
-            class-name="small-padding fixed-width">
+          <el-table-column :label="$t('table.actions')"
+                           align="center"
+                           width="230"
+                           class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button
-                type="primary"
-                size="mini"
-                @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-              <el-button
-                type="danger"
-                size="mini"
-                @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
+              <el-button type="primary"
+                         size="mini"
+                         @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+              <el-button type="danger"
+                         size="mini"
+                         @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
             </template>
           </el-table-column>
         </el-table>
 
         <div class="pagination-container">
-          <el-pagination
-            :current-page="listQuery.currentPage"
-            :page-sizes="[10,20,30, 50]"
-            :page-size="listQuery.pageSize"
-            :total="total"
-            background
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" />
+          <el-pagination :current-page="listQuery.currentPage"
+                         :page-sizes="[10,20,30, 50]"
+                         :page-size="listQuery.pageSize"
+                         :total="total"
+                         background
+                         layout="total, sizes, prev, pager, next, jumper"
+                         @size-change="handleSizeChange"
+                         @current-change="handleCurrentChange" />
         </div>
 
-        <el-dialog
-          :title="textMap[dialogStatus]"
-          :visible.sync="dialogFormVisible">
-          <el-form
-            ref="dataForm"
-            :rules="rules"
-            :model="temp"
-            label-position="left"
-            label-width="100px"
-            style="width: 400px; margin-left:50px;">
-            <el-form-item
-              label="应用ID"
-              prop="appId">
-              <el-input v-model="temp.appId" disabled/>
+        <el-dialog :title="textMap[dialogStatus]"
+                   :visible.sync="dialogFormVisible">
+          <el-form ref="dataForm"
+                   :rules="rules"
+                   :model="temp"
+                   label-position="left"
+                   label-width="100px"
+                   style="width: 400px; margin-left:50px;">
+            <el-form-item label="应用ID"
+                          prop="appId">
+              <el-input v-model="temp.appId"
+                        disabled />
             </el-form-item>
-            <el-form-item
-              label="父节点ID"
-              prop="parentId">
-              <el-input v-model="temp.parentId" disabled/>
+            <el-form-item label="父节点ID"
+                          prop="parentId">
+              <el-input v-model="temp.parentId"
+                        disabled />
             </el-form-item>
-            <el-form-item
-              label="名称"
-              prop="navName">
+            <el-form-item label="名称"
+                          prop="navName">
               <el-input v-model="temp.navName" />
             </el-form-item>
-            <el-form-item
-              label="优先级"
-              prop="priority">
+            <el-form-item label="优先级"
+                          prop="priority">
               <el-input v-model="temp.priority" />
             </el-form-item>
             <!--router start -->
-            <el-form-item
-              label="路由地址"
-              prop="linkPath">
+            <el-form-item label="路由地址"
+                          prop="linkPath">
               <el-input v-model="temp.linkPath" />
             </el-form-item>
-            <el-form-item
-              label="路由组件"
-              prop="linkComponent">
+            <el-form-item label="路由组件"
+                          prop="linkComponent">
               <el-input v-model="temp.linkComponent" />
             </el-form-item>
-            <el-form-item
-              label="路由名称"
-              prop="linkName">
+            <el-form-item label="路由名称"
+                          prop="linkName">
               <el-input v-model="temp.linkName" />
             </el-form-item>
-            <el-form-item
-              label="路由重定向"
-              prop="linkRedirect">
+            <el-form-item label="路由重定向"
+                          prop="linkRedirect">
               <el-input v-model="temp.linkRedirect" />
             </el-form-item>
-            <el-form-item
-              label="路由标题"
-              prop="linkMetaTitle">
+            <el-form-item label="路由标题"
+                          prop="linkMetaTitle">
               <el-input v-model="temp.linkMetaTitle" />
             </el-form-item>
-            <el-form-item
-              label="路由图标"
-              prop="linkMetaIcon">
+            <el-form-item label="路由图标"
+                          prop="linkMetaIcon">
               <el-input v-model="temp.linkMetaIcon" />
             </el-form-item>
             <!--router  end -->
-            <el-form-item
-              label="应用图标"
-              prop="icon">
+            <el-form-item label="应用图标"
+                          prop="icon">
               <el-input v-model="temp.icon" />
             </el-form-item>
             <el-form-item label="是否可见">
@@ -230,18 +234,15 @@
               </el-radio-group>
             </el-form-item>
           </el-form>
-          <div
-            slot="footer"
-            class="dialog-footer">
+          <div slot="footer"
+               class="dialog-footer">
             <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-            <el-button
-              v-if="dialogStatus=='create'"
-              type="primary"
-              @click="createData">{{ $t('table.confirm') }}</el-button>
-            <el-button
-              v-else
-              type="primary"
-              @click="updateData">{{ $t('table.confirm') }}</el-button>
+            <el-button v-if="dialogStatus=='create'"
+                       type="primary"
+                       @click="createData">{{ $t('table.confirm') }}</el-button>
+            <el-button v-else
+                       type="primary"
+                       @click="updateData">{{ $t('table.confirm') }}</el-button>
           </div>
         </el-dialog>
 
@@ -623,18 +624,31 @@ export default {
       })
     },
     handleDelete(row) {
-      deleteNav({ id: row.id, appId: this.listQuery.appId }).then((response) => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            // 在列表中删除 （将当前id传给后台）
-            const index = this.list.indexOf(row)
-            this.list.splice(index, 1)
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
+      // 在列表中删除 （将当前id传给后台）
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteNav({ id: row.id, appId: this.listQuery.appId }).then((response) => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              // 在列表中删除 （将当前id传给后台）
+              const index = this.list.indexOf(row)
+              this.list.splice(index, 1)
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
           } else {
             this.$notify.error({
               title: '失败',
@@ -642,13 +656,12 @@ export default {
               duration: 2000
             })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
-        }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     handleSelect(key, keyPath) {

@@ -18,6 +18,7 @@ export default {
     wechatManage: 'WechatManage',
     publicAccount: 'PublicAccount',
     smallProject: 'SmallProject',
+    messagePush: 'MessagePush',
     shortMessageManage: 'ShortMessageManage',
     sendRecord: 'SendRecord',
     useStatistical: 'UseStatistical',

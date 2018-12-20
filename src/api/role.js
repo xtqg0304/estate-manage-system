@@ -65,10 +65,18 @@ export function getRoleNavPermList(data) {
   })
 }
 
+// /* 获取角色拥有的全部权限列表 */
+// export function getRoleAllPermList(data) {
+//   return request({
+//     url: basicServer + '/app/getRoleAllPermList',
+//     method: 'post',
+//     data
+//   })
+// }
 /* 获取角色拥有的全部权限列表 */
 export function getRoleAllPermList(data) {
   return request({
-    url: basicServer + '/app/getRoleAllPermList',
+    url: basicServer + '/app/getRoleAllPermLeafList',
     method: 'post',
     data
   })
