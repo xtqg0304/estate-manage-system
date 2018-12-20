@@ -4,7 +4,8 @@
       <div class="header clearfix">
         <a class="header-logo">
           <!-- <svg-icon icon-class="logo" />星网物联智慧社区云 -->
-           <img style="width: 40%;vertical-align: middle;"src="@/assets/images/logo-login.png" >
+          <img style="width: 40%;vertical-align: middle;"
+               src="@/assets/images/logo-login.png">
         </a>
         <div class="time">
           <div class="clock">
@@ -38,12 +39,13 @@
       </div>
     </header>
     <div class="clearfix">
-      <div class="chartLeft" >
+      <div class="chartLeft">
         <ul class="dataVisual-con">
           <li class="dataVisual-item ">
             <div class="dataVisual-item-t numbox ">
               <div class="dataVisual-bgImg numb ">
-                <div class="main-box" style="width:100%;height:100%;">
+                <div class="main-box"
+                     style="width:100%;height:100%;">
                   <linechart :linedata="userActivedata" />
                 </div>
               </div>
@@ -54,9 +56,10 @@
           <li class="dataVisual-item ">
             <div class="dataVisual-item-t numbox ">
               <div class="dataVisual-bgImg numb ">
-                <div class="main-box" style="width:100%;height:100%;">
+                <div class="main-box"
+                     style="width:100%;height:100%;">
                   <div class="main-box-content "
-                      style="width:100%;min-height:300px;height:100%; ">
+                       style="width:100%;min-height:300px;height:100%; ">
 
                     <!-- <div style="width:50%;height:50%;float:left;">
                       <ringchart :ringdata="doorAnalysisdata" />
@@ -83,27 +86,27 @@
             <div class="dataVisual-item-t numbox ">
               <div class="dataVisual-bgImg numb ">
                 <div class="main-box "
-                    style="width:100%;height:100%;">
-                    <div class="item">
-                      <p>121313</p>
-                      <p>数值</p>
-                    </div>
-                    <div class="item">
-                      <p>121313</p>
-                      <p>数值</p>
-                    </div>
-                    <div class="item">
-                      <p>121313</p>
-                      <p>数值</p>
-                    </div>
-                    <div class="item">
-                      <p>121313</p>
-                      <p>数值</p>
-                    </div>
-                    <div class="item">
-                      <p>121313</p>
-                      <p>数值</p>
-                    </div>
+                     style="width:100%;height:100%;">
+                  <div class="item">
+                    <p>121313</p>
+                    <p>数值</p>
+                  </div>
+                  <div class="item">
+                    <p>121313</p>
+                    <p>数值</p>
+                  </div>
+                  <div class="item">
+                    <p>121313</p>
+                    <p>数值</p>
+                  </div>
+                  <div class="item">
+                    <p>121313</p>
+                    <p>数值</p>
+                  </div>
+                  <div class="item">
+                    <p>121313</p>
+                    <p>数值</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -113,8 +116,9 @@
           <li class="dataVisual-item ">
             <div class="dataVisual-item-t numbox ">
               <div class="dataVisual-bgImg numb ">
-                <div class="main-box" style="width:100%;height:100%;">
-                  <mapchart ></mapchart>
+                <div class="main-box"
+                     style="width:100%;height:100%;">
+                  <mapchart />
                 </div>
               </div>
             </div>
@@ -126,7 +130,8 @@
           <li class="dataVisual-item ">
             <div class="dataVisual-item-t numbox ">
               <div class="dataVisual-bgImg numb ">
-                <div class="main-box" style="width:100%;height:100%;">
+                <div class="main-box"
+                     style="width:100%;height:100%;">
                   <histogram :histogramdata="estatePaydata" />
                 </div>
               </div>
@@ -137,7 +142,8 @@
           <li class="dataVisual-item ">
             <div class="dataVisual-item-t numbox ">
               <div class="dataVisual-bgImg numb ">
-                <div class="main-box" style="width:100%;height:100%;">
+                <div class="main-box"
+                     style="width:100%;height:100%;">
                   <histogram :histogramdata="vehiclePaydata" />
                 </div>
               </div>
@@ -151,7 +157,8 @@
         <li class="dataVisual-item ">
           <div class="dataVisual-item-t numbox ">
             <div class="dataVisual-bgImg numb ">
-              <div class="main-box " style="width:100%;height:100%;">
+              <div class="main-box "
+                   style="width:100%;height:100%;">
                 <histogram :histogramdata="tempstopPaydata" />
               </div>
             </div>
@@ -163,9 +170,9 @@
           <div class="dataVisual-item-t numbox ">
             <div class="dataVisual-bgImg numb ">
               <div class="main-box "
-                  style="width:100%;height:100%;">
+                   style="width:100%;height:100%;">
                 <div class="main-box-content "
-                    style="width:100%;min-height:300px;height:100%; ">
+                     style="width:100%;min-height:300px;height:100%; ">
                   <tablecomponent :tabledata="doorTabledata" />
                 </div>
               </div>
@@ -178,9 +185,9 @@
           <div class="dataVisual-item-t numbox ">
             <div class="dataVisual-bgImg numb ">
               <div class="main-box "
-                  style="width:100%;height:100%;">
+                   style="width:100%;height:100%;">
                 <div class="main-box-content "
-                    style="width:100%;min-height:300px;height:100%; ">
+                     style="width:100%;min-height:300px;height:100%; ">
                   <tablecomponent :tabledata="vehicleTabledata" />
                 </div>
               </div>
@@ -210,7 +217,7 @@ export default {
     mapchart,
     tablecomponent
   },
-  data () {
+  data() {
     return {
       estatePaydata: {
         chartData: {
@@ -684,7 +691,7 @@ export default {
       'name'
     ])
   },
-  mounted () {
+  mounted() {
     const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
     const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
     const newDate = new Date()
@@ -707,24 +714,24 @@ export default {
       self.hoursT = (hours < 10 ? '0' : '') + hours
     }, 1000)
   },
-  beforeRouteEnter (to, from, next) {
+  beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.SetRoleAdmin()
     })
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     this.$store.dispatch('ChangeRoles', to.params.systemName).then(() => {
     })
     next()
   },
-  created () {
+  created() {
   },
   methods: {
-    SetRoleAdmin () {
+    SetRoleAdmin() {
       this.$store.dispatch('ChangeRoles', 'admin').then(() => {
       })
     },
-    logout () {
+    logout() {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
@@ -736,8 +743,8 @@ export default {
 <style scoped>
 @import url(../../../static/css/index.css);
 .home-bg {
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
   min-width: 1000px;
   background-color: #162238;
 }
@@ -850,7 +857,7 @@ header .user-name {
   padding-bottom: 4em;
 }
 .navigation:after {
-  content: '';
+  content: "";
   display: block;
   clear: both;
 }
@@ -920,57 +927,61 @@ header .user-name {
   font-size: 1.2rem;
   color: #adc1dc;
 }
-.chartCenter .item:nth-child(1) p:nth-child(1){
-  color:#ff4a69;
+.chartCenter .item:nth-child(1) p:nth-child(1) {
+  color: #ff4a69;
 }
-.chartCenter .item:nth-child(2) p:nth-child(1){
-  color:#ff9c4d;
+.chartCenter .item:nth-child(2) p:nth-child(1) {
+  color: #ff9c4d;
 }
-.chartCenter .item:nth-child(3) p:nth-child(1){
-  color:#ffe410;
+.chartCenter .item:nth-child(3) p:nth-child(1) {
+  color: #ffe410;
 }
-.chartCenter .item:nth-child(4) p:nth-child(1){
-  color:#00ff9c;
+.chartCenter .item:nth-child(4) p:nth-child(1) {
+  color: #00ff9c;
 }
-.chartCenter .item:nth-child(5) p:nth-child(1){
-  color:#03f4fd;
+.chartCenter .item:nth-child(5) p:nth-child(1) {
+  color: #03f4fd;
 }
-.chartLeft, .chartRight{
-  float:left;
-  width:25%;
+.chartLeft,
+.chartRight {
+  float: left;
+  width: 25%;
 }
-.chartLeft .dataVisual-con, .chartRight .dataVisual-con{
+.chartLeft .dataVisual-con,
+.chartRight .dataVisual-con {
   width: 100%;
   margin: 0;
 }
-.chartLeft .dataVisual-con:nth-child(1),.chartRight .dataVisual-con:nth-child(1){
+.chartLeft .dataVisual-con:nth-child(1),
+.chartRight .dataVisual-con:nth-child(1) {
   margin-bottom: 10px;
 }
-.chartLeft .dataVisual-con .dataVisual-item-t,.chartRight .dataVisual-con .dataVisual-item-t{
+.chartLeft .dataVisual-con .dataVisual-item-t,
+.chartRight .dataVisual-con .dataVisual-item-t {
   padding-bottom: 250px;
 }
-.chartCenter{
-  float:left;
+.chartCenter {
+  float: left;
   width: 50%;
 }
-.chartCenter .dataVisual-con{
+.chartCenter .dataVisual-con {
   width: 100%;
   margin: 0;
 }
-.chartCenter .dataVisual-con:nth-child(1){
+.chartCenter .dataVisual-con:nth-child(1) {
   margin-bottom: 10px;
 }
-.chartCenter .dataVisual-con:nth-child(1) .dataVisual-item-t{
- padding-bottom: 100px;
+.chartCenter .dataVisual-con:nth-child(1) .dataVisual-item-t {
+  padding-bottom: 100px;
 }
-.chartCenter .dataVisual-con:nth-child(2) .dataVisual-item-t{
- padding-bottom: 400px;
+.chartCenter .dataVisual-con:nth-child(2) .dataVisual-item-t {
+  padding-bottom: 400px;
 }
-.dataVisual-con-table{
+.dataVisual-con-table {
   width: 25%;
   margin: 0;
 }
-.dataVisual-con-table:nth-child(2){
+.dataVisual-con-table:nth-child(2) {
   width: 50%;
   margin: 0;
 }
@@ -978,6 +989,6 @@ header .user-name {
   padding-bottom: 160px;
 }
 .dataVisual-con-table .dataVisual-item {
-  margin-top:10px;
+  margin-top: 10px;
 }
 </style>
