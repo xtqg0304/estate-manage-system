@@ -1,5 +1,18 @@
 import request from '@/utils/request'
-import { paymentServer } from '@/api/api.js'
+import {
+  paymentServer
+} from '@/api/api.js'
+/*  导入账单信息 */
+export function importBill(data) {
+  return request({
+    url: paymentServer + '/property/import/bill',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/multipart/form-data; charset=UTF-8'
+    },
+    data
+  })
+}
 /*  获取物缴账单分页列表 */
 export function fetchBillList(data) {
   return request({

@@ -1,43 +1,69 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-date-picker
-        v-model="listQuery.beginTime"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="开始时间"
-        align="right"/>
-      <el-date-picker
-        v-model="listQuery.endTime"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="结束时间"
-        align="right"/>
-      <el-select v-model="listQuery.communityId" placeholder="选择小区" clearable class="filter-item">
-        <el-option key="all" label="所有小区" value="all" />
-        <el-option v-for="item in communityList" :key="item.id" :label="item.name" :value="item.id" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 @click="handleDownload"> 导出 </el-button>
+      <el-date-picker v-model="listQuery.beginTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="开始时间"
+                      align="right" />
+      <el-date-picker v-model="listQuery.endTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="结束时间"
+                      align="right" />
+      <el-select v-model="listQuery.communityId"
+                 placeholder="选择小区"
+                 clearable
+                 class="filter-item">
+        <el-option key="all"
+                   label="所有小区"
+                   value="all" />
+        <el-option v-for="item in communityList"
+                   :key="item.id"
+                   :label="item.name"
+                   :value="item.id" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column label="小区名字" width="180px">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="小区名字"
+                       width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.communityName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="月份" min-width="110px" align="center">
+      <el-table-column label="月份"
+                       min-width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payMonth }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总订单数" width="110px" align="center">
+      <el-table-column label="总订单数"
+                       width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.orderCount }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="电子收费" width="100px">
+      <el-table-column label="电子收费"
+                       width="100px">
         <template slot-scope="scope">
           <span>{{ scope.row.paySum }}</span>
         </template>
@@ -45,7 +71,14 @@
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -162,6 +195,11 @@ export default {
       // 显示第几页的数据
       this.listQuery.currentPage = val
       this.getList()
+    },
+    /* 导出月报 */
+    handleDownload() {
+      const url = `http://${window.location.host}/api/payment/property/month/exportOrderMonthExcel?communityId=${this.listQuery.communityId}&beginTime=${this.listQuery.beginTime}&endTime=${this.listQuery.endTime}`
+      window.location.href = url
     }
   }
 }
@@ -182,7 +220,7 @@ export default {
 .editor-custom-btn-container {
   top: 0 !important;
 }
-.edit-input{
-  width:100px;
+.edit-input {
+  width: 100px;
 }
 </style>

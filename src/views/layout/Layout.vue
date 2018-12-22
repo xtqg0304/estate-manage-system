@@ -1,13 +1,20 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+  <div :class="classObj"
+       class="app-wrapper">
+    <div v-if="device==='mobile'&&sidebar.opened"
+         class="drawer-bg"
+         @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
     <div class="main-container">
-      <navbar/>
-      <tags-view/>
+      <navbar />
+      <tags-view />
       <app-main />
-      <el-tooltip placement="top" content="返回顶部">
-        <back-to-top :custom-style="myBackToTopStyle" :visibility-height="500" :back-position="50" transition-name="fade" />
+      <el-tooltip placement="top"
+                  content="返回顶部">
+        <back-to-top :custom-style="myBackToTopStyle"
+                     :visibility-height="500"
+                     :back-position="50"
+                     transition-name="fade" />
       </el-tooltip>
     </div>
   </div>
@@ -70,7 +77,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-@import 'src/styles/mixin.scss';
+@import "src/styles/mixin.scss";
 .app-wrapper {
   @include clearfix;
   position: relative;

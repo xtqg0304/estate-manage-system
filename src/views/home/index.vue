@@ -3,8 +3,9 @@
     <header>
       <div class="header clearfix">
         <a class="header-logo">
-          <img style="width: 40%;vertical-align: middle;"
-               src="@/assets/images/logo-login.png">
+          <!-- <img style="width: 40%;vertical-align: middle;"
+               src="@/assets/images/logo-login.png"> -->
+          物业宝
         </a>
         <div class="time">
           <div class="clock">
@@ -528,7 +529,7 @@ export default {
             if (items.length > 0) {
               this.doorTabledata.tableData = []
               for (let i = 0; i < items.length; i++) {
-                if (items[i].inoutSuccess === '1') {
+                if (items[i].inoutSuccess === 1) {
                   this.doorTabledata.tableData.push({
                     '用户': items[i].inoutuserName,
                     '设备名称': items[i].deviceName,
@@ -712,8 +713,7 @@ header .clock ul li {
 }
 header .clock #point {
   position: relative;
-  -moz-animation: mymove 1s ease infinite;
-  -webkit-animation: mymove 1s ease infinite;
+  animation: mymove 1s ease infinite;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -733,22 +733,7 @@ header .user-name {
   right: 0.5rem;
   font-size: 1.5em;
 }
-@-webkit-keyframes mymove {
-  0% {
-    opacity: 1;
-    text-shadow: 0 0 20px #00c6ff;
-  }
-  50% {
-    opacity: 0;
-    text-shadow: none;
-  }
-  100% {
-    opacity: 1;
-    text-shadow: 0 0 20px #00c6ff;
-  }
-}
-
-@-moz-keyframes mymove {
+@keyframes mymove {
   0% {
     opacity: 1;
     text-shadow: 0 0 20px #00c6ff;
@@ -787,7 +772,7 @@ header .user-name {
   list-style: none;
   float: left;
   width: calc(100% / 7 - 2rem);
-  display: inline-block;
+  /* display: inline-block; */
   margin: 1rem;
 }
 .navigation li span {

@@ -1,11 +1,23 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
-    <el-menu :show-timeout="200" :default-active="$route.path" :collapse="isCollapse" mode="vertical" background-color="#304156" text-color="#bfcbd9" active-text-color="#409EFF">
-      <router-link id="logo-img" to="/home">
-        <img src="@/assets/images/logo.png" alt="">
-        <span>仟泰科技</span>
+    <el-menu :show-timeout="200"
+             :default-active="$route.path"
+             :collapse="isCollapse"
+             mode="vertical"
+             background-color="#304156"
+             text-color="#bfcbd9"
+             active-text-color="#409EFF">
+      <router-link id="logo-img"
+                   to="/home">
+        <img src="@/assets/images/logo.png"
+             alt="">
+        <!-- <span>仟泰科技</span> -->
+        <span>物业宝</span>
       </router-link>
-      <sidebar-item v-for="route in permission_routers" :key="route.name" :item="route" :base-path="route.path" />
+      <sidebar-item v-for="route in permission_routers"
+                    :key="route.name"
+                    :item="route"
+                    :base-path="route.path" />
     </el-menu>
   </el-scrollbar>
 </template>
@@ -73,24 +85,24 @@ export default {
 }
 </script>
 <style scoped>
-#logo-img{
-  margin:15px 0;
+#logo-img {
+  margin: 15px 0;
   margin-left: 13px;
 }
-#logo-img img{
+#logo-img img {
   width: 30px;
   margin-right: 15px;
 }
-#logo-img span{
-  font-size:20px;
-  color:#bfcbd9;
-  display:inline-block;
+#logo-img span {
+  font-size: 20px;
+  color: #bfcbd9;
+  display: inline-block;
 }
 .el-menu--collapse #logo-img {
-  margin:15px 0;
+  margin: 15px 0;
   margin-left: 3px !important;
 }
 .el-menu--collapse #logo-img span {
-  display:none;
+  display: none;
 }
 </style>

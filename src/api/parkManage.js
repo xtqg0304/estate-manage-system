@@ -1,5 +1,7 @@
 import request from '@/utils/request'
-import { paymentServer } from '@/api/api.js'
+import {
+  paymentServer
+} from '@/api/api.js'
 
 /* 获取车场信息列表 */
 export function fetchList(data) {
@@ -94,6 +96,14 @@ export function fetchMonthlyMembersList(data) {
 export function fetchMonthlyPackagesList(data) {
   return request({
     url: paymentServer + '/communityParkInfo/getCommunityMemberInfo',
+    method: 'post',
+    data
+  })
+}
+/* 生成二维码*/
+export function fetchQrcodePark(data) {
+  return request({
+    url: paymentServer + '/qrcode/getQrcodePark',
     method: 'post',
     data
   })

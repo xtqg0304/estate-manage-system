@@ -1,22 +1,30 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-date-picker
-        v-model="listQuery.inTimeBegin"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="开始时间"
-        align="right"/>
-      <el-date-picker
-        v-model="listQuery.inTimeEnd"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="结束时间"
-        align="right"/>
-      <el-select v-model="listQuery.carparkId" placeholder="车场ID" clearable class="filter-item">
-        <el-option v-for="item in parkListOptions" :key="item.carparkId" :label="item.carparkName" :value="item.carparkId" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 @click="handleDownload"> 导出 </el-button>
+      <el-date-picker v-model="listQuery.inTimeBegin"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="开始时间"
+                      align="right" />
+      <el-date-picker v-model="listQuery.inTimeEnd"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="结束时间"
+                      align="right" />
+      <el-select v-model="listQuery.carparkId"
+                 placeholder="车场ID"
+                 clearable
+                 class="filter-item">
+        <el-option v-for="item in parkListOptions"
+                   :key="item.carparkId"
+                   :label="item.carparkName"
+                   :value="item.carparkId" />
       </el-select>
       <!-- <el-select v-model="listQuery.carRoadId" placeholder="车道ID" clearable class="filter-item">
         <el-option v-for="item in laneListOptions" :key="item.carRoadId" :label="item.carRoadName" :value="item.carRoadId" />
@@ -24,56 +32,86 @@
       <el-select v-model="listQuery.carType" placeholder="车场类型" clearable class="filter-item">
         <el-option v-for="item in carTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select> -->
-      <el-input v-model="listQuery.carNo" placeholder="车牌号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-input v-model="listQuery.carNo"
+                placeholder="车牌号"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column label="车牌号码" width="180px">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="车牌号码"
+                       width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.carNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入场时间" min-width="110px" align="center">
+      <el-table-column label="入场时间"
+                       min-width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inoutTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入场状态" width="110px" align="center">
+      <!-- <el-table-column label="入场状态" width="110px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inoutStatus | inoutStatusFilter }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="车场名称" width="80px">
+      </el-table-column> -->
+      <el-table-column label="车场名称"
+                       width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.carparkName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入场车道" align="center" width="95">
+      <el-table-column label="入场车道"
+                       align="center"
+                       width="95">
         <template slot-scope="scope">
           <span>{{ scope.row.carRoadName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="岗亭名称" class-name="status-col" width="100">
+      <el-table-column label="岗亭名称"
+                       class-name="status-col"
+                       width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.postName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="车牌颜色" class-name="status-col" width="100">
+      <el-table-column label="车牌颜色"
+                       class-name="status-col"
+                       width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.carNoColor | carNoColorFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="车辆类型" class-name="status-col" width="100">
+      <el-table-column label="车辆类型"
+                       class-name="status-col"
+                       width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.carType }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作员" class-name="status-col" width="100">
+      <el-table-column label="操作员"
+                       class-name="status-col"
+                       width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.operatorName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注信息" class-name="status-col" width="100">
+      <el-table-column label="备注信息"
+                       class-name="status-col"
+                       width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
@@ -81,7 +119,14 @@
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -254,6 +299,11 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.currentPage = val
       this.getList()
+    },
+    /* 导出 */
+    handleDownload() {
+      const url = `http://${window.location.host}/api/payment/dataStatistics/exportCarInParkInfo?currentPage=${this.listQuery.currentPage}&pageSize=${this.listQuery.pageSize}&carNo=${this.listQuery.carNo}&carparkId=${this.listQuery.carparkId}&carRoadId=${this.listQuery.carRoadId}&inTimeBegin=${this.listQuery.inTimeBegin}&inTimeEnd=${this.listQuery.inTimeEnd}&communityId=${this.listQuery.communityId}&carType=${this.listQuery.carType}`
+      window.location.href = url
     }
   }
 }
@@ -274,7 +324,7 @@ export default {
 .editor-custom-btn-container {
   top: 0 !important;
 }
-.edit-input{
-  width:100px;
+.edit-input {
+  width: 100px;
 }
 </style>

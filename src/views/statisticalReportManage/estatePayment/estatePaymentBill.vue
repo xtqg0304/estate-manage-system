@@ -1,74 +1,156 @@
 <template>
   <div class="app-container">
+    <el-upload ref="upload"
+               :http-request="submitUpload"
+               :limit="1"
+               :auto-upload="false"
+               :on-exceed="handleExceed"
+               class="upload-property"
+               action=""
+               multiple>
+      <el-button slot="trigger"
+                 size="small"
+                 type="primary"
+                 icon="el-icon-plus">上传文件</el-button>
+      <el-button style="margin-left: 10px;"
+                 size="small"
+                 type="success"
+                 icon="el-icon-upload"
+                 @click="submitAssess">导入</el-button>
+    </el-upload>
     <div class="filter-container">
-      <el-cascader
-        :options="roomList"
-        v-model="listQuery.searchEstate"
-        expand-trigger="hover"
-        placeholder="房产名称"
-        class="filter-item" />
-      <el-select v-model="listQuery.statusBill" placeholder="账单状态" clearable class="filter-item">
-        <el-option v-for="item in statusbillOptions" :key="item.value" :label="item.label" :value="item.value" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 @click="handleDownload"> 模版下载 </el-button>
+
+      <el-cascader :options="roomList"
+                   v-model="listQuery.searchEstate"
+                   expand-trigger="hover"
+                   placeholder="房产名称"
+                   class="filter-item" />
+      <el-select v-model="listQuery.statusBill"
+                 placeholder="账单状态"
+                 clearable
+                 class="filter-item">
+        <el-option v-for="item in statusbillOptions"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value" />
       </el-select>
-      <el-input v-model="listQuery.searchKey" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-input v-model="listQuery.searchKey"
+                placeholder="关键字"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column :label="$t('table.propertyname')" min-width="150px">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column :label="$t('table.propertyname')"
+                       min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.estateName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownername')" width="110px" align="center">
+      <el-table-column :label="$t('table.ownername')"
+                       width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.houseHoldName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownerphone')" width="110px" align="center">
+      <el-table-column :label="$t('table.ownerphone')"
+                       width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.houseHoldPhone }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.monthofpay')" width="80px">
+      <el-table-column :label="$t('table.monthofpay')"
+                       width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.payMonth }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.projectofpay')" align="center" width="95">
+      <el-table-column :label="$t('table.projectofpay')"
+                       align="center"
+                       width="95">
         <template slot-scope="scope">
           <span>{{ scope.row.payCategory | typeFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.feesofpay')" align="center" width="300">
+      <el-table-column :label="$t('table.feesofpay')"
+                       align="center"
+                       width="300">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-input v-model="scope.row.payAmount" class="edit-input" size="small"/>
-            <el-button class="cancel-btn" size="small" icon="el-icon-refresh" type="warning" @click="cancelEdit(scope.row)">cancel</el-button>
-            <el-button type="success" size="small" icon="el-icon-circle-check-outline" @click="confirmEdit(scope.row)">Ok</el-button>
+            <el-input v-model="scope.row.payAmount"
+                      class="edit-input"
+                      size="small" />
+            <el-button class="cancel-btn"
+                       size="small"
+                       icon="el-icon-refresh"
+                       type="warning"
+                       @click="cancelEdit(scope.row)">cancel</el-button>
+            <el-button type="success"
+                       size="small"
+                       icon="el-icon-circle-check-outline"
+                       @click="confirmEdit(scope.row)">Ok</el-button>
           </template>
           <span v-else>
             {{ scope.row.payAmount }}
-            <el-button v-if="scope.row.editButton" type="primary" size="small" icon="el-icon-edit" @click="scope.row.edit=!scope.row.edit">Edit</el-button>
+            <el-button v-if="scope.row.editButton"
+                       type="primary"
+                       size="small"
+                       icon="el-icon-edit"
+                       @click="scope.row.edit=!scope.row.edit">Edit</el-button>
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.statusbill')" class-name="status-col" width="100">
+      <el-table-column :label="$t('table.statusbill')"
+                       class-name="status-col"
+                       width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.billStatus | statusFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')"
+                       align="center"
+                       width="230"
+                       class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.editButton" size="mini" type="success" @click="handleModifyStatus(scope.row, 4)">销账
+          <el-button v-if="scope.row.editButton"
+                     size="mini"
+                     type="success"
+                     @click="handleModifyStatus(scope.row, 4)">销账
           </el-button>
-          <el-button v-if="scope.row.editButton" size="mini" @click="handleModifyStatus(scope.row, 2)">作废
+          <el-button v-if="scope.row.editButton"
+                     size="mini"
+                     @click="handleModifyStatus(scope.row, 2)">作废
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -77,7 +159,8 @@
 import {
   fetchBillList,
   editBillAmount,
-  editBillStatus
+  editBillStatus,
+  importBill
 } from '@/api/payManage'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
@@ -282,6 +365,46 @@ export default {
           })
         }
       })
+    },
+    /* 下载账单导入模板功能 */
+    handleDownload() {
+      const url = `http://${window.location.host}/api/payment/property/export/billModule?communityId=${this.communityId}`
+      window.location.href = url
+    },
+    /* 限制只能上传一个文件 */
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 1个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    },
+    /* 导入数据 */
+    submitUpload(content) { // 自定义的上传方法
+      const formdata = new FormData()
+      formdata.append('file', content.file)
+      formdata.append('communityId', this.communityId) // 获取小区id
+      importBill(formdata)
+        .then(response => {
+          if (response.status === 200) {
+            if (response.data.code === 200) {
+              this.$notify({
+                title: '成功',
+                message: '导入成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: response.data.msg,
+                duration: 2000
+              })
+            }
+          }
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    submitAssess() {
+      this.$refs.upload.submit()
     }
   }
 }
@@ -302,7 +425,7 @@ export default {
 .editor-custom-btn-container {
   top: 0 !important;
 }
-.edit-input{
-  width:100px;
+.edit-input {
+  width: 100px;
 }
 </style>
