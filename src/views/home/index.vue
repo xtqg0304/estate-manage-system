@@ -669,7 +669,7 @@ export default {
         id: sessionStorage.getItem('userId')
       }
       getUserCommunity(data).then((res) => {
-        if (res.code === 200) {
+        if (res.data.code === 200) {
           const communityList = res.data.data
           communityList.forEach(v => {
             this.communityIds.push(v.id)
