@@ -57,7 +57,7 @@
         </template>
       </el-table-column>
       <el-table-column label="入场时间"
-                       min-width="110px"
+                       width="310px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inoutTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
@@ -69,14 +69,13 @@
         </template>
       </el-table-column> -->
       <el-table-column label="车场名称"
-                       width="120px">
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.carparkName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="入场车道"
-                       align="center"
-                       width="95">
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.carRoadName }}</span>
         </template>
@@ -88,13 +87,13 @@
           <span>{{ scope.row.postName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="车牌颜色"
+      <!-- <el-table-column label="车牌颜色"
                        class-name="status-col"
                        width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.carNoColor | carNoColorFilter }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="车辆类型"
                        class-name="status-col"
                        width="100">

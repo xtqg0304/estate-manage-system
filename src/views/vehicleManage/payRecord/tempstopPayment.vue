@@ -52,32 +52,35 @@
         </template>
       </el-table-column>
       <el-table-column label="支付类型"
-                       width="110px"
+                       width="180px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payType | statusFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="支付时间"
-                       width="180px"
+                       width="310px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="实际金额"
+                       align="center"
                        width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.realFee }}</span>
         </template>
       </el-table-column>
       <el-table-column label="总金额"
+                       align="center"
                        width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.totalFee }}</span>
         </template>
       </el-table-column>
       <el-table-column label="优惠金额"
+                       align="center"
                        width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.discountFee }}</span>

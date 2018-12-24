@@ -272,7 +272,8 @@ export default {
       const statusMap = {
         '0': '车场缴费成功模板',
         '1': '车辆进出模板',
-        '2': '车辆入场通知'
+        '2': '车辆入场通知',
+        '3': '小区公告模版'
       }
       return statusMap[status]
     }
@@ -334,6 +335,10 @@ export default {
         {
           id: '2',
           name: '车辆入场通知'
+        },
+        {
+          id: '3',
+          name: '小区公告模版'
         }
       ],
       wechatMpId: ''

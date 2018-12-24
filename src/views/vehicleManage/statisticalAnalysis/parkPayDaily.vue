@@ -51,62 +51,68 @@
               highlight-current-row
               style="width: 100%;min-height:500px;">
       <el-table-column label="小区名称"
-                       width="180px">
+                       align="center"
+                       min-width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.communityName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="日期"
-                       min-width="110px"
+                       width="310px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payDate }}</span>
         </template>
       </el-table-column>
       <el-table-column label="订单数量"
-                       width="110px"
+                       width="130px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.orderCount }}</span>
         </template>
       </el-table-column>
       <el-table-column label="现金金额"
-                       width="80px">
+                       align="center"
+                       width="130px">
         <template slot-scope="scope">
           <span>{{ scope.row.cashSum }}</span>
         </template>
       </el-table-column>
       <el-table-column label="支付宝金额"
                        align="center"
-                       width="95">
+                       width="130">
         <template slot-scope="scope">
           <span>{{ scope.row.aliSum }}</span>
         </template>
       </el-table-column>
       <el-table-column label="微信金额"
                        class-name="status-col"
-                       width="100">
+                       align="center"
+                       width="130">
         <template slot-scope="scope">
           <span>{{ scope.row.wxSum }}</span>
         </template>
       </el-table-column>
       <el-table-column label="总金额"
                        class-name="status-col"
-                       width="100">
+                       align="center"
+                       width="130">
         <template slot-scope="scope">
           <span>{{ scope.row.paymentTotalSum }}</span>
         </template>
       </el-table-column>
       <el-table-column label="优惠金额"
                        class-name="status-col"
-                       width="100">
+                       align="center"
+                       width="130">
         <template slot-scope="scope">
           <span>{{ scope.row.discountSum }}</span>
         </template>
       </el-table-column>
       <el-table-column label="实际金额"
                        class-name="status-col"
-                       width="100">
+                       align="center"
+                       width="130">
         <template slot-scope="scope">
           <span>{{ scope.row.realSum }}</span>
         </template>

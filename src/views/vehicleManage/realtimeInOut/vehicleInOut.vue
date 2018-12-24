@@ -57,28 +57,27 @@
         </template>
       </el-table-column>
       <el-table-column label="进出时间"
-                       min-width="110px"
+                       width="310px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inoutTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进出场状态"
+      <el-table-column label="进出场类型"
                        width="110px"
                        align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.inoutStatus | inoutStatusFilter }}</span>
+          <span>{{ scope.row.inoutFlag| inoutStatusFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="车场名称"
-                       width="120px">
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.carparkName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="车道名称"
-                       align="center"
-                       width="95">
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.carRoadName }}</span>
         </template>
@@ -90,13 +89,13 @@
           <span>{{ scope.row.postName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="车牌颜色"
+      <!-- <el-table-column label="车牌颜色"
                        class-name="status-col"
                        width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.carNoColor | carNoColorFilter }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="车辆类型"
                        class-name="status-col"
                        width="100">
@@ -207,7 +206,7 @@ export default {
         carRoadId: '',
         postId: '',
         communityId: '',
-        inOutFlag: 0,
+        inOutFlag: '',
         carType: '',
         inOutTimeBegin: '',
         inOutTimeEnd: ''
@@ -282,6 +281,7 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data.inParkElementList
+            console.log('list', this.list)
             this.total = response.data.data.totalCount
             this.listLoading = false
           }
