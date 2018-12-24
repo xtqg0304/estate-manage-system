@@ -490,6 +490,21 @@ export default {
     },
     updateData() {
       // 修改/编辑 确认事件
+      this.provinceOptions.forEach(v => {
+        if (v.id === this.temp.province) {
+          this.temp.provinceName = v.name
+        }
+      })
+      this.cityOptions.forEach(v => {
+        if (v.id === this.temp.city) {
+          this.temp.cityName = v.name
+        }
+      })
+      this.countryOptions.forEach(v => {
+        if (v.id === this.temp.county) {
+          this.temp.countyName = v.name
+        }
+      })
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
