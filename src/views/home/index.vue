@@ -235,6 +235,7 @@ import {
   fetchComplaintStatusTrend,
   fetchtDcInoutFlagType
 } from '@/api/homeChart'
+import { getUserCommunity } from '@/api/communityManage'
 import {
   fetchPropertyOrderList
 } from '@/api/payManage'
@@ -340,6 +341,7 @@ export default {
       const hours = new Date().getHours()
       self.hoursT = (hours < 10 ? '0' : '') + hours
     }, 1000)
+    this._handelCommunityIds()
   },
   beforeRouteLeave(to, from, next) {
     this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)
@@ -352,7 +354,6 @@ export default {
     next()
   },
   created() {
-    this._handelCommunityIds()
     this.handelPermission()
     this.getPayType()
     this.getPropertyPay()
@@ -362,9 +363,6 @@ export default {
     this.getDevicetypeCount()
     this.getComplaintStatus()
     this.getDeviceInoutPage()
-    this.getInOutCountInfo()
-    this.getParkingChargeInfo()
-    this.getParkingRealTimeInfo()
     this.getOrderList()
   },
   methods: {
@@ -667,11 +665,22 @@ export default {
       return time
     },
     _handelCommunityIds() {
-      this.communityList.forEach(v => {
-        this.communityIds.push(v.id)
+      const data = {
+        id: sessionStorage.getItem('userId')
+      }
+      getUserCommunity(data).then((res) => {
+        if (res.code === 200) {
+          const communityList = res.data.data
+          communityList.forEach(v => {
+            this.communityIds.push(v.id)
+          })
+          // 确保 communityList 有值才调用接口
+          this.getInOutCountInfo()
+          this.getParkingRealTimeInfo()
+          this.getParkingChargeInfo()
+        }
       })
     }
-
   }
 }
 </script>
