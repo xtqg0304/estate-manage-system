@@ -287,7 +287,8 @@ export default {
       dateT: '',
       secT: '',
       minT: '',
-      hoursT: ''
+      hoursT: '',
+      communityIds: []
     }
   },
   computed: {
@@ -308,6 +309,13 @@ export default {
         this.$store.commit('SET_PERMISSION', sessionData)// 同步操作
       }
       return this.$store.getters.permission
+    },
+    communityList() {
+      const sessionData = JSON.parse(sessionStorage.getItem('communityList'))
+      if (this.$store.getters.communityList.length === 0 && sessionData) {
+        this.$store.commit('SET_COMMUNITYLIST', sessionData)// 同步操作
+      }
+      return this.$store.getters.communityList
     }
   },
   mounted() {
@@ -344,6 +352,7 @@ export default {
     next()
   },
   created() {
+    this._handelCommunityIds()
     this.handelPermission()
     this.getPayType()
     this.getPropertyPay()
@@ -557,7 +566,7 @@ export default {
       let beginTime = new Date()
       beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
       beginTime = new Date(beginTime)
-      fetchInOutCountInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: '' }).then(response => {
+      fetchInOutCountInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: this.communityIds }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.userVisitdata = Object.assign({}, response.data.data.data)
@@ -570,7 +579,7 @@ export default {
       let beginTime = new Date()
       beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
       beginTime = new Date(beginTime)
-      fetchParkingChargeInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: '' }).then(response => {
+      fetchParkingChargeInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: this.communityIds }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.vehiclePaydata = Object.assign({}, response.data.data.data)
@@ -583,7 +592,7 @@ export default {
       let beginTime = new Date()
       beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
       beginTime = new Date(beginTime)
-      fetchParkingRealTimeInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: '' }).then(response => {
+      fetchParkingRealTimeInfo({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityId: this.communityIds }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.vehicleTabledata = {
@@ -656,6 +665,11 @@ export default {
         }
       }
       return time
+    },
+    _handelCommunityIds() {
+      this.communityList.forEach(v => {
+        this.communityIds.push(v.id)
+      })
     }
 
   }
