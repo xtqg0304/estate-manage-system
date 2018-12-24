@@ -81,7 +81,7 @@
       </el-table-column>
       <el-table-column label="优惠金额"
                        align="center"
-                       width="180px">
+                       width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.discountFee }}</span>
         </template>
