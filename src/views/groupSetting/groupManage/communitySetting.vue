@@ -1,45 +1,39 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-input
-        v-model="listQuery.name"
-        placeholder="请输入小区名字或编号"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter" />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-button class="filter-item"
+                 style="margin-left: 10px;"
+                 type="primary"
+                 icon="el-icon-edit"
+                 @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-input v-model="listQuery.name"
+                placeholder="请输入小区名字或编号"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table
-      v-loading="listLoading"
-      :key="tableKey"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;min-height:500px;">
-      <el-table-column
-        label="小区编码"
-        align="center"
-        width="120">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="小区编码"
+                       align="center"
+                       width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.code }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="小区名称"
-        align="center"
-        width="120">
+      <el-table-column label="小区名称"
+                       align="center"
+                       width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
@@ -52,18 +46,16 @@
           <span>{{ scope.row.regionId }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column
-        label="联系人"
-        align="center"
-        width="120">
+      <el-table-column label="联系人"
+                       align="center"
+                       width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.contact }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="联系电话"
-        align="center"
-        width="120">
+      <el-table-column label="联系电话"
+                       align="center"
+                       width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.telephone }}</span>
         </template>
@@ -76,158 +68,172 @@
           <span>{{ scope.row.city }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column
-        label="详细地址"
-        align="center">
+      <el-table-column label="详细地址"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.site }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        :label="$t('table.actions')"
-        align="center"
-        width="230"
-        class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')"
+                       align="center"
+                       width="230"
+                       class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            type="success"
-            size="mini"
-            @click="handleBind(scope.row)">公众号</el-button>
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(scope.row)">编辑</el-button>
-          <el-button
-            type="danger"
-            size="mini"
-            @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="success"
+                     size="mini"
+                     @click="handleBind(scope.row)">公众号</el-button>
+          <el-button type="primary"
+                     size="mini"
+                     @click="handleUpdate(scope.row)">编辑</el-button>
+          <el-button type="danger"
+                     size="mini"
+                     @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination
-        :current-page="listQuery.page"
-        :page-sizes="[10,20,30, 50]"
-        :page-size="listQuery.limit"
-        :total="total"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="100px"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item
-          label="所属区域"
-          prop="statusservice">
-          <el-select v-model="temp.regionId" filterable placeholder="所属区域" style="width:100%">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"/>
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm"
+               :rules="rules"
+               :model="temp"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="所属区域"
+                      prop="statusservice">
+          <el-select v-model="temp.regionId"
+                     filterable
+                     placeholder="所属区域"
+                     style="width:100%">
+            <el-option v-for="item in options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="小区编码"
-          prop="code">
-          <el-input :disabled="dialogStatus === 'update'" v-model="temp.code" />
+        <el-form-item label="小区编码"
+                      prop="code">
+          <el-input :disabled="dialogStatus === 'update'"
+                    v-model="temp.code" />
         </el-form-item>
-        <el-form-item
-          label="小区名称"
-          prop="name">
+        <el-form-item label="小区名称"
+                      prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item
-          label="联系人"
-          prop="contactname">
+        <el-form-item label="所属省"
+                      prop="province">
+          <el-select v-model="temp.province"
+                     filterable
+                     placeholder="请选择省"
+                     style="width:100%"
+                     @change="getCityOfProvince">
+            <el-option v-for="item in provinceOptions"
+                       :key="item.id"
+                       :label="item.name"
+                       :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属市"
+                      prop="city">
+          <el-select v-model="temp.city"
+                     placeholder="请选择市"
+                     style="width:100%"
+                     @change="getCountyOfCity">
+            <el-option v-for="item in cityOptions"
+                       :key="item.id"
+                       :label="item.name"
+                       :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属区"
+                      prop="county">
+          <el-select v-model="temp.county"
+                     style="width:100%"
+                     placeholder="请选择区/县">
+            <el-option v-for="item in countryOptions"
+                       :key="item.id"
+                       :label="item.name"
+                       :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="联系人"
+                      prop="contactname">
           <el-input v-model="temp.contact" />
         </el-form-item>
-        <el-form-item
-          label="联系电话"
-          prop="telephone">
+        <el-form-item label="联系电话"
+                      prop="telephone">
           <el-input v-model="temp.telephone" />
         </el-form-item>
         <el-form-item label="备注">
-          <el-input v-model="temp.memo" type="textarea"/>
+          <el-input v-model="temp.memo"
+                    type="textarea" />
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer">
+      <div slot="footer"
+           class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='create'"
-          type="primary"
-          @click="createData">{{ $t('table.confirm') }}</el-button>
-        <el-button
-          v-else
-          type="primary"
-          @click="updateData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='create'"
+                   type="primary"
+                   @click="createData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-else
+                   type="primary"
+                   @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogBindVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="100px"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item
-          label="小区名称"
-          prop="id">
-          <el-select
-            v-model="temp.id"
-            disabled
-            class="filter-item"
-            placeholder="请选择小区"
-            style="width:100%" >
-            <el-option
-              v-for="item in communityOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id" />
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogBindVisible">
+      <el-form ref="dataForm"
+               :rules="rules"
+               :model="temp"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="小区名称"
+                      prop="id">
+          <el-select v-model="temp.id"
+                     disabled
+                     class="filter-item"
+                     placeholder="请选择小区"
+                     style="width:100%">
+            <el-option v-for="item in communityOptions"
+                       :key="item.id"
+                       :label="item.name"
+                       :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="绑定公众号"
-          prop="wechatId">
-          <el-select
-            v-model="wechatId"
-            class="filter-item"
-            placeholder="请选择公众号"
-            style="width:100%" >
-            <el-option
-              v-for="item in wechatOptions"
-              :key="item.id"
-              :label="item.appname"
-              :value="item.id" />
+        <el-form-item label="绑定公众号"
+                      prop="wechatId">
+          <el-select v-model="wechatId"
+                     class="filter-item"
+                     placeholder="请选择公众号"
+                     style="width:100%">
+            <el-option v-for="item in wechatOptions"
+                       :key="item.id"
+                       :label="item.appname"
+                       :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer">
+      <div slot="footer"
+           class="dialog-footer">
         <el-button @click="dialogBindVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='bind'"
-          type="primary"
-          @click="bindData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='bind'"
+                   type="primary"
+                   @click="bindData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
 
@@ -242,6 +248,11 @@ import {
   fetchCommunity,
   fetchCommunityBindMpId
 } from '@/api/communityManage'
+import {
+  fetchProvince,
+  fetchCounty,
+  fetchCity
+} from '@/api/groupManage'
 import {
   fetchRegionOptions
 } from '@/api/areaSetting'
@@ -274,14 +285,17 @@ export default {
         shortName: '',
         name: '',
         regionId: '',
-        provice: '',
-        city: '',
-        country: '',
+        province: undefined,
+        city: undefined,
+        county: undefined,
         site: '',
         zipCode: '',
         contanct: '',
         telephone: '',
-        memo: ''
+        memo: '',
+        provinceName: '',
+        cityName: '',
+        countyName: ''
 
       },
       dialogFormVisible: false,
@@ -313,7 +327,10 @@ export default {
       downloadLoading: false,
       communityOptions: [],
       wechatOptions: [],
-      wechatId: ''
+      wechatId: '',
+      provinceOptions: [],
+      countryOptions: [],
+      cityOptions: []
     }
   },
   created() {
@@ -321,6 +338,7 @@ export default {
     this.getAreaList()
     this.getCommunityList()
     this.getWechatList()
+    this.getProvinceList()
   },
   methods: {
     getList() {
@@ -392,14 +410,17 @@ export default {
         shortName: '',
         name: '',
         regionId: '',
-        provice: '',
-        city: '',
-        country: '',
+        province: undefined,
+        city: undefined,
+        county: undefined,
         site: '',
         zipCode: '',
         contanct: '',
         telephone: '',
-        memo: ''
+        memo: '',
+        provinceName: '',
+        cityName: '',
+        countyName: ''
       }
     },
     handleCreate() {
@@ -412,6 +433,21 @@ export default {
       })
     },
     createData() {
+      this.provinceOptions.forEach(v => {
+        if (v.id === this.temp.province) {
+          this.temp.provinceName = v.name
+        }
+      })
+      this.cityOptions.forEach(v => {
+        if (v.id === this.temp.city) {
+          this.temp.cityName = v.name
+        }
+      })
+      this.countryOptions.forEach(v => {
+        if (v.id === this.temp.county) {
+          this.temp.countyName = v.name
+        }
+      })
       console.log(this.temp)
       // 新建 提交确认
       this.$refs['dataForm'].validate(valid => {
@@ -439,7 +475,13 @@ export default {
     },
     handleUpdate(row) {
       // 修改/编辑事件
+      this.getProvinceList()
+      this.getCityOfProvince(row.province)
+      this.getCountyOfCity(row.city)
       this.temp = Object.assign({}, row) // copy obj
+      this.temp.province = parseInt(this.temp.province)
+      this.temp.city = parseInt(this.temp.city)
+      this.temp.county = parseInt(this.temp.county)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -587,6 +629,34 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.wechatOptions = response.data.data
+          }
+        }
+      })
+    },
+    getProvinceList() {
+      fetchProvince({ name: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            console.log(response)
+            this.provinceOptions = response.data.data
+          }
+        }
+      })
+    },
+    getCityOfProvince(id) {
+      fetchCity({ parentId: id, name: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.cityOptions = response.data.data
+          }
+        }
+      })
+    },
+    getCountyOfCity(id) {
+      fetchCounty({ parentId: id, name: '' }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.countryOptions = response.data.data
           }
         }
       })

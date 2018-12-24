@@ -1,5 +1,7 @@
 import request from '@/utils/request'
-import { basicServer } from '@/api/api.js'
+import {
+  basicServer
+} from '@/api/api.js'
 /*  获取小区table数据列表 */
 export function fetchList(data) {
   return request({

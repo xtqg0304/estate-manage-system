@@ -87,10 +87,10 @@ export default {
     }
     return {
       loginForm: {
-        username: 'root',
-        password: 'starnet@234'
-        // username: '',
-        // password: ''
+        // username: 'root',
+        // password: 'starnet@234'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur' }],

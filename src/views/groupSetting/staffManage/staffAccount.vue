@@ -279,6 +279,14 @@ export default {
     }
   },
   data() {
+    const validateUserName = (rule, value, callback) => {
+      const reg = /(^\s+)|(\s+$)/g
+      if (reg.test(value)) {
+        callback(new Error('用户名不能含有空格'))
+      } else {
+        callback()
+      }
+    }
     return {
       tableKey: 0,
       list: null,
@@ -321,7 +329,7 @@ export default {
       },
       rules: {
         userName: [
-          { required: true, message: '不能为空', trigger: 'blur' },
+          { required: true, trigger: 'blur', validator: validateUserName },
           { min: 2, message: '不能少于两个字符', trigger: 'blur' },
           { pattern: /^[a-zA-Z0-9_]{0,}$/, message: '用户名不能含中文字符' }
         ]
