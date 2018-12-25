@@ -1,5 +1,23 @@
 <template>
   <div class="app-container">
+    <div class="filter-container">
+      <el-date-picker v-model="listQuery.endTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="结束时间"
+                      align="right" />
+      <el-input v-model="listQuery.carNo"
+                placeholder="车牌号"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
+    </div>
     <el-table v-loading="listLoading"
               :key="tableKey"
               :data="list"
@@ -70,7 +88,7 @@
 import {
   fetchMonthlyMembersList
 } from '@/api/parkManage'
-// import { parseTime } from '@/utils'
+import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
@@ -85,6 +103,28 @@ export default {
   },
   data() {
     return {
+      timePickerOptions: {
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date())
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
+          }
+        }, {
+          text: '一周前',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
+          }
+        }]
+      },
       tableKey: 0,
       list: null,
       total: null,
@@ -93,14 +133,24 @@ export default {
         page: 1,
         pageSize: 20,
         serviceId: '',
-        searchType: 0
+        searchType: 0,
+        endTime: '',
+        carNo: ''
+
       }
     }
   },
   computed: {
     ...mapGetters([
       'userInfo'
-    ])
+    ]),
+    communityId() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.state.user.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.state.user.selectCommunity
+    }
   },
   created() {
     this.getList()
@@ -120,6 +170,7 @@ export default {
       })
     },
     handleFilter() {
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       this.listQuery.page = 1
       this.getList()
     },

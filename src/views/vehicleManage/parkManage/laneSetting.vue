@@ -64,6 +64,10 @@
                      type="primary"
                      @click="handleCreateCode(scope.row)">生成二维码
           </el-button>
+          <el-button size="large"
+                     type="primary"
+                     @click="handleOpen(scope.row)">远程开闸
+          </el-button>
         </template>
       </el-table-column>
       <el-table-column v-if="listQuery.parkType === 0"
@@ -101,7 +105,8 @@
 <script>
 import {
   fetchLaneList,
-  fetchQrcodePark
+  fetchQrcodePark,
+  openGateRemote
 } from '@/api/parkManage'
 // import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
@@ -204,6 +209,20 @@ export default {
             this.QrcodePark = response.data.data
             this.$alert(`<img src="${this.QrcodePark}" >`, '此二维码仅显示一次，请妥善保存', {
               dangerouslyUseHTMLString: true
+            })
+          }
+        }
+      })
+    },
+    handleOpen(row) {
+      openGateRemote({ channelID: row.carRoadId, serviceId: this.userInfo.selectCommunity, searchType: this.listQuery.searchType, parkType: this.listQuery.parkType }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            this.$notify({
+              title: '成功',
+              message: '开闸成功',
+              type: 'success',
+              duration: 2000
             })
           }
         }
