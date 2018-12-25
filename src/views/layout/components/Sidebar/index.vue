@@ -9,7 +9,7 @@
              active-text-color="#409EFF">
       <router-link id="logo-img"
                    to="/home">
-        <!-- <img src="@/assets/images/logo.png"
+        <!-- <img src="@/assets/images/qiantai-logo.png"
              alt=""> -->
         <img :src="logoUrl"
              alt="logo">
@@ -126,7 +126,7 @@ export default {
   display: inline-block;
   color: #ffff;
   position: relative;
-  top: -10px;
+  top: -8px;
 }
 .el-menu--collapse #logo-img {
   margin: 15px 0;

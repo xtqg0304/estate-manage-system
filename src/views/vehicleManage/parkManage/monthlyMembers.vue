@@ -53,7 +53,7 @@
       </el-table-column>
     </el-table>
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.currentPage"
+      <el-pagination :current-page="listQuery.page"
                      :page-sizes="[10,20,30, 50]"
                      :page-size="listQuery.pageSize"
                      :total="total"
@@ -90,7 +90,7 @@ export default {
       total: null,
       listLoading: true,
       listQuery: {
-        currentPage: 1,
+        page: 1,
         pageSize: 20,
         serviceId: '',
         searchType: 0
@@ -113,14 +113,14 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data
-            this.total = response.data.msg
+            this.total = parseInt(response.data.msg)
             this.listLoading = false
           }
         }
       })
     },
     handleFilter() {
-      this.listQuery.currentPage = 1
+      this.listQuery.page = 1
       this.getList()
     },
     handleSizeChange(val) {
@@ -128,7 +128,7 @@ export default {
       this.getList()
     },
     handleCurrentChange(val) {
-      this.listQuery.currentPage = val
+      this.listQuery.page = val
       this.getList()
     }
   }
