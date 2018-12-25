@@ -358,10 +358,7 @@ export default {
     this.getPayType()
     this.getPropertyPay()
     this.getPropertyPayTrend()
-    this.getComplaintStatusTrend()
-    this.getDcInoutFlagType()
     this.getDevicetypeCount()
-    this.getComplaintStatus()
     this.getDeviceInoutPage()
     this.getOrderList()
   },
@@ -436,7 +433,7 @@ export default {
       let beginTime = new Date()
       beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
       beginTime = new Date(beginTime)
-      fetchComplaintStatusTrend({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+      fetchComplaintStatusTrend({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityIdList: this.communityIds }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.tempstopPaydata = Object.assign({}, response.data.data.eventAnalysisdata)
@@ -449,7 +446,7 @@ export default {
       let beginTime = new Date()
       beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
       beginTime = new Date(beginTime)
-      fetchtDcInoutFlagType({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+      fetchtDcInoutFlagType({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityIdList: this.communityIds }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.userActivedata = Object.assign({}, response.data.data.eventAnalysisdata)
@@ -490,7 +487,7 @@ export default {
       let beginTime = new Date()
       beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
       beginTime = new Date(beginTime)
-      fetchComplaintStatus({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+      fetchComplaintStatus({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityIdList: this.communityIds }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.eventpercentAnalysisdata = {
@@ -678,6 +675,9 @@ export default {
           this.getInOutCountInfo()
           this.getParkingRealTimeInfo()
           this.getParkingChargeInfo()
+          this.getComplaintStatusTrend()
+          this.getDcInoutFlagType()
+          this.getComplaintStatus()
         }
       })
     }
