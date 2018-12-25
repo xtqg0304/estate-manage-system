@@ -9,8 +9,10 @@
              active-text-color="#409EFF">
       <router-link id="logo-img"
                    to="/home">
-        <img src="@/assets/images/logo.png"
-             alt="">
+        <!-- <img src="@/assets/images/logo.png"
+             alt=""> -->
+        <img :src="logoUrl"
+             alt="logo">
         <!-- <span>仟泰科技</span> -->
         <span>物业宝</span>
       </router-link>
@@ -31,6 +33,7 @@ export default {
   components: { SidebarItem, Item },
   data() {
     return {
+      logoUrl: ''
     }
   },
   computed: {
@@ -47,6 +50,20 @@ export default {
         this.$store.commit('SET_ROUTERS', sessionData)// 同步操作
       }
       return this.$store.getters.permission_routers
+    },
+    selectCommunity() {
+      const sessionData = sessionStorage.getItem('selectCommunity')
+      if (this.$store.getters.selectCommunity === '' && sessionData) {
+        this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
+      }
+      return this.$store.getters.selectCommunity
+    },
+    communityList() {
+      const sessionData = JSON.parse(sessionStorage.getItem('communityList'))
+      if (this.$store.getters.communityList.length === 0 && sessionData) {
+        this.$store.commit('SET_COMMUNITYLIST', sessionData)// 同步操作
+      }
+      return this.$store.getters.communityList
     }
   },
 
@@ -62,6 +79,7 @@ export default {
     // }
   },
   created() {
+    this.getLogo()
   },
   updated() {
     // const eleLi = document.getElementsByClassName('menu-wrapper')[0].firstElementChild.firstElementChild
@@ -81,6 +99,15 @@ export default {
     //   eleSpan.setAttribute('style', 'color: #bfcbd9 !important;vertical-align: -0.3em;font-size: 20px;')
     // } else {
     // }
+  },
+  methods: {
+    getLogo() {
+      for (let i = 0; i < this.communityList.length; i++) {
+        if (this.communityList[i].id === this.selectCommunity) {
+          this.logoUrl = this.communityList[i].shortName
+        }
+      }
+    }
   }
 }
 </script>
@@ -97,6 +124,9 @@ export default {
   font-size: 20px;
   color: #bfcbd9;
   display: inline-block;
+  color: #ffff;
+  position: relative;
+  top: -10px;
 }
 .el-menu--collapse #logo-img {
   margin: 15px 0;

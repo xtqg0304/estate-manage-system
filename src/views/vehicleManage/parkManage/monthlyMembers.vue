@@ -1,66 +1,67 @@
 <template>
   <div class="app-container">
-    <el-table
-      v-loading="listLoading"
-      :key="tableKey"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;min-height:500px;">
-      <el-table-column
-        label="车牌号码"
-        width="150px"
-        align="center">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="车牌号码"
+                       width="150px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.memberNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="车主姓名"
-        width="120px">
+      <el-table-column label="车主姓名"
+                       width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.driverName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="车主信息"
-        width="120px">
+      <el-table-column label="车主信息"
+                       width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.driverInfo }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="联系方式">
+      <el-table-column label="联系方式">
         <template slot-scope="scope">
           <span>{{ scope.row.driverTelephoneNumber }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="车场名称">
+      <el-table-column label="车场名称">
         <template slot-scope="scope">
           <span>{{ scope.row.carParkName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="套餐名称">
+      <el-table-column label="套餐名称">
         <template slot-scope="scope">
           <span>{{ scope.row.memberTypeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="到期时间">
+      <el-table-column label="到期时间">
         <template slot-scope="scope">
           <span>{{ scope.row.effectiveEndTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="有效车数">
+      <el-table-column label="有效车数">
         <template slot-scope="scope">
           <span>{{ scope.row.validMemberCount }}</span>
         </template>
       </el-table-column>
     </el-table>
+    <div class="pagination-container">
+      <el-pagination :current-page="listQuery.currentPage"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.pageSize"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
+    </div>
 
   </div>
 </template>
@@ -87,7 +88,13 @@ export default {
       tableKey: 0,
       list: null,
       total: null,
-      listLoading: true
+      listLoading: true,
+      listQuery: {
+        currentPage: 1,
+        pageSize: 20,
+        serviceId: '',
+        searchType: 0
+      }
     }
   },
   computed: {
@@ -101,26 +108,28 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchMonthlyMembersList({ serviceId: this.userInfo.selectCommunity, searchType: 0 }).then(response => {
+      this.listQuery.serviceId = this.userInfo.selectCommunity
+      fetchMonthlyMembersList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.list = response.data.data
+            this.total = response.data.msg
             this.listLoading = false
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
         }
       })
+    },
+    handleFilter() {
+      this.listQuery.currentPage = 1
+      this.getList()
+    },
+    handleSizeChange(val) {
+      this.listQuery.pageSize = val
+      this.getList()
+    },
+    handleCurrentChange(val) {
+      this.listQuery.currentPage = val
+      this.getList()
     }
   }
 }
@@ -138,7 +147,7 @@ export default {
 .pagination-container {
   text-align: right;
 }
-.filter-container{
+.filter-container {
   text-align: left;
 }
 .editor-custom-btn-container {

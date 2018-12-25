@@ -1,221 +1,204 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button
-        class="filter-item"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-button class="filter-item"
+                 type="primary"
+                 icon="el-icon-edit"
+                 @click="handleCreate">{{ $t('table.add') }}</el-button>
     </div>
-    <el-table
-      v-loading="listLoading"
-      :key="tableKey"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;min-height:500px;">
-      <el-table-column
-        label="车场名称"
-        width="150px"
-        align="center">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="车场名称"
+                       width="150px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.carparkName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="车位总数"
-        width="120px">
+      <el-table-column label="车位总数"
+                       width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.parkingLotNum }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="在线状态"
-        width="120px">
+      <el-table-column label="在线状态"
+                       width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.status | statusFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="详细地址"
-        width="120px"
-        align="center">
+      <el-table-column label="详细地址"
+                       width="120px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.address }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="车场编码"
-        align="center"
-        width="200">
+      <el-table-column label="车场编码"
+                       align="center"
+                       width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.carparkKey }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('table.actions')"
-        align="center"
-        class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')"
+                       align="center"
+                       class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleLink(scope.row)">配置</el-button>
-          <el-button
-            type="success"
-            size="mini"
-            @click="handleDetail(scope.row)">{{ $t('table.detail') }}</el-button>
-          <el-button
-            type="danger"
-            size="mini"
-            @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
+          <el-button type="primary"
+                     size="mini"
+                     @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button type="primary"
+                     size="mini"
+                     @click="handleLink(scope.row)">配置</el-button>
+          <el-button type="success"
+                     size="mini"
+                     @click="handleDetail(scope.row)">{{ $t('table.detail') }}</el-button>
+          <el-button type="danger"
+                     size="mini"
+                     @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="100px"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item
-          label="车场ID"
-          prop="id">
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm"
+               :rules="rules"
+               :model="temp"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="车场ID"
+                      prop="id">
           {{ temp.id }}
         </el-form-item>
-        <el-form-item
-          label="车场编码"
-          prop="carparkKey ">
+        <el-form-item label="车场编码"
+                      prop="carparkKey ">
           <el-input v-model="temp.carparkKey " />
         </el-form-item>
-        <el-form-item
-          label="隶属小区"
-          prop="selectCommunityName">
+        <el-form-item label="隶属小区"
+                      prop="selectCommunityName">
           {{ userInfo.selectCommunityName }}
         </el-form-item>
-        <el-form-item
-          label="车场名称"
-          prop="carparkName">
+        <el-form-item label="本地车场配置"
+                      prop="parkType">
+          <!-- <el-input v-model="temp.parkType" /> -->
+          <el-select v-model="temp.parkType"
+                     :disabled="dialogStatus === 'update' "
+                     class="filter-item"
+                     placeholder="车场配置"
+                     style="width:100%">
+            <el-option v-for="item in parkTypeOptions"
+                       :key="item.id"
+                       :label="item.name"
+                       :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="车场名称"
+                      prop="carparkName">
           <el-input v-model="temp.carparkName" />
         </el-form-item>
-        <el-form-item
-          label="车场总数"
-          prop="parkingLotNum">
+        <el-form-item label="车场总数"
+                      prop="parkingLotNum">
           <el-input v-model="temp.parkingLotNum" />
         </el-form-item>
-        <el-form-item
-          label="联系电话"
-          prop="contactNumber">
+        <el-form-item label="联系电话"
+                      prop="contactNumber">
           <el-input v-model="temp.contactNumber" />
         </el-form-item>
-        <el-form-item
-          label="经纬度"
-          prop="remarks">
+        <el-form-item label="经纬度"
+                      prop="remarks">
           <el-col :span="11">
             <el-input v-model="temp.lon" />
           </el-col>
-          <el-col :span="2" class="line" style="text-align:center">-</el-col>
+          <el-col :span="2"
+                  class="line"
+                  style="text-align:center">-</el-col>
           <el-col :span="11">
             <el-input v-model="temp.lat" />
           </el-col>
         </el-form-item>
-        <el-form-item
-          label="详细地址"
-          prop="address">
-          <el-input v-model="temp.address" type="textarea" />
+        <el-form-item label="详细地址"
+                      prop="address">
+          <el-input v-model="temp.address"
+                    type="textarea" />
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer">
+      <div slot="footer"
+           class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='create'"
-          type="primary"
-          @click="createData">{{ $t('table.confirm') }}</el-button>
-        <el-button
-          v-else
-          type="primary"
-          @click="updateData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='create'"
+                   type="primary"
+                   @click="createData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-else
+                   type="primary"
+                   @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogDetailVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="tempDetail"
-        label-position="left"
-        label-width="100px"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item
-          label="车场ID"
-          prop="id">
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogDetailVisible">
+      <el-form ref="dataForm"
+               :rules="rules"
+               :model="tempDetail"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="车场ID"
+                      prop="id">
           {{ tempDetail.id }}
         </el-form-item>
-        <el-form-item
-          label="车场编码"
-          prop="carparkKey ">
+        <el-form-item label="车场编码"
+                      prop="carparkKey ">
           {{ tempDetail.carparkKey }}
         </el-form-item>
-        <el-form-item
-          label="隶属小区"
-          prop="selectCommunityName">
+        <el-form-item label="隶属小区"
+                      prop="selectCommunityName">
           {{ userInfo.selectCommunityName }}
         </el-form-item>
-        <el-form-item
-          label="车场名称"
-          prop="carparkName ">
+        <el-form-item label="车场名称"
+                      prop="carparkName ">
           {{ tempDetail.carparkName }}
         </el-form-item>
-        <el-form-item
-          label="车场总数"
-          prop="parkingLotNum">
+        <el-form-item label="车场总数"
+                      prop="parkingLotNum">
           {{ tempDetail.parkingLotNum }}
         </el-form-item>
-        <el-form-item
-          label="联系电话"
-          prop="contactNumber">
+        <el-form-item label="联系电话"
+                      prop="contactNumber">
           {{ tempDetail.contactNumber }}
         </el-form-item>
-        <el-form-item
-          label="经纬度"
-          prop="remarks">
+        <el-form-item label="经纬度"
+                      prop="remarks">
           <el-col :span="11">
             {{ tempDetail.lon }}
           </el-col>
-          <el-col :span="2" class="line" style="text-align:center">-</el-col>
+          <el-col :span="2"
+                  class="line"
+                  style="text-align:center">-</el-col>
           <el-col :span="11">
             {{ tempDetail.lat }}
           </el-col>
         </el-form-item>
-        <el-form-item
-          label="详细地址"
-          prop="address">
+        <el-form-item label="详细地址"
+                      prop="address">
           {{ tempDetail.address }}
         </el-form-item>
-        <el-form-item
-          label="车场密钥"
-          prop="address"
-          style="word-wrap: break-word;">
+        <el-form-item label="车场密钥"
+                      prop="address"
+                      style="word-wrap: break-word;">
           {{ tempDetail.secretKey }}
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer">
+      <div slot="footer"
+           class="dialog-footer">
         <el-button @click="dialogDetailVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button type="primary" @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
+        <el-button type="primary"
+                   @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
 
@@ -261,6 +244,7 @@ export default {
         id: undefined,
         carparkName: '',
         servicparkingLotNum: '',
+        parkType: undefined,
         lon: '',
         lat: '',
         communityId: '',
@@ -291,7 +275,17 @@ export default {
           { required: true, message: '详细地址不能为空', trigger: 'blur' }
         ]
       },
-      tempDetail: {}
+      tempDetail: {},
+      parkTypeOptions: [
+        {
+          id: 0,
+          name: '星网物联停车场'
+        },
+        {
+          id: 1,
+          name: '智能腾达停车场'
+        }
+      ]
     }
   },
   computed: {
@@ -334,6 +328,7 @@ export default {
         id: undefined,
         carparkName: '',
         servicparkingLotNum: '',
+        parkType: undefined,
         lon: '',
         lat: '',
         communityId: '',
@@ -508,7 +503,8 @@ export default {
       })
     },
     handleLink(row) {
-      window.location.href = `http://${row.macAddress}.tdzntech.com:9898`
+      // window.location.href = `http://${row.macAddress}.tdzntech.com:9898`
+      window.open(`http://${row.macAddress}.tdzntech.com:9898`, '_blank')
     }
   }
 }
@@ -526,7 +522,7 @@ export default {
 .pagination-container {
   text-align: right;
 }
-.filter-container{
+.filter-container {
   text-align: left;
 }
 .editor-custom-btn-container {

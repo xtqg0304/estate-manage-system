@@ -133,6 +133,10 @@
                       prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
+        <el-form-item label="logoUrl"
+                      prop="shortName">
+          <el-input v-model="temp.shortName" />
+        </el-form-item>
         <el-form-item label="所属省"
                       prop="province">
           <el-select v-model="temp.province"

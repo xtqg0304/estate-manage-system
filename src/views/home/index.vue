@@ -3,8 +3,8 @@
     <header>
       <div class="header clearfix">
         <a class="header-logo">
-          <!-- <img style="width: 40%;vertical-align: middle;"
-               src="@/assets/images/logo-login.png"> -->
+          <img style="width: 8%;vertical-align: middle;"
+               src="@/assets/images/logo.png">
           物业宝
         </a>
         <div class="time">
