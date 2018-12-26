@@ -207,7 +207,8 @@ export default {
             imageUrl: '',
             operateUserId: '',
             updateTime: '',
-            createTime: ''
+            createTime: '',
+            communityId: ''
           }
         ]
       },
@@ -231,7 +232,8 @@ export default {
         memo: '',
         operateUserId: '',
         updateTime: '',
-        createTime: ''
+        createTime: '',
+        communityId: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -270,6 +272,9 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      // const communityId = sessionStorage.getItem('selectCommunity')
+      this.listQuery.qryTelephoneElementData[0].communityId = this.communityId
+      // console.log('this.listQuery', this.listQuery)
       fetchList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
@@ -336,7 +341,8 @@ export default {
         memo: '',
         operateUserId: '',
         updateTime: '',
-        createTime: ''
+        createTime: '',
+        communityId: ''
       }
     },
     handleCreate() {
@@ -354,6 +360,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           this.temp.createTime = parseTime(new Date())
+          this.temp.communityId = this.communityId
           editTelephone(this.temp).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
