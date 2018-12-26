@@ -1,61 +1,88 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20" class="tac">
+    <el-row :gutter="20"
+            class="tac">
       <el-col :span="8">
         <h5>应用管理</h5>
-        <el-menu
-          class="el-menu-demo"
-          mode="vertical"
-          @open="handleOpen"
-          @close="handleClose"
-          @select="handleSelect">
+        <el-menu class="el-menu-demo"
+                 mode="vertical"
+                 @open="handleOpen"
+                 @close="handleClose"
+                 @select="handleSelect">
           <!-- 一级菜单没有子菜单 -->
-          <el-menu-item v-for="child in appData" v-if="!child.children" :key="child.id" :index="child.id">
-            <i class="el-icon-menu"/>
+          <el-menu-item v-for="child in appData"
+                        v-if="!child.children"
+                        :key="child.id"
+                        :index="child.id">
+            <i class="el-icon-menu" />
             <span slot="title">{{ child.name }}</span>
           </el-menu-item>
           <!-- 一级菜单有子菜单 -->
-          <el-submenu v-for="child in appData" v-if="child.children" :key="child.id" :index="child.id">
+          <el-submenu v-for="child in appData"
+                      v-if="child.children"
+                      :key="child.id"
+                      :index="child.id">
             <template slot="title">
-              <i class="el-icon-location"/>
+              <i class="el-icon-location" />
               <span>{{ child.name }}</span>
             </template>
             <!-- 二级菜单没有子菜单 -->
-            <el-menu-item v-for="child1 in child.children" v-if="!child1.children" :key="child1.id" :index="child1.id">
-              <i class="el-icon-menu"/>
+            <el-menu-item v-for="child1 in child.children"
+                          v-if="!child1.children"
+                          :key="child1.id"
+                          :index="child1.id">
+              <i class="el-icon-menu" />
               <span slot="title">{{ child1.name }}</span>
             </el-menu-item>
             <!-- 二级菜单有子菜单 -->
-            <el-submenu v-for="child1 in child.children" v-if="child1.children" :key="child1.id" :index="child1.id">
+            <el-submenu v-for="child1 in child.children"
+                        v-if="child1.children"
+                        :key="child1.id"
+                        :index="child1.id">
               <template slot="title">
-                <i class="el-icon-location"/>
+                <i class="el-icon-location" />
                 <span>{{ child1.name }}</span>
               </template>
               <!-- 三级菜单没有子菜单 -->
-              <el-menu-item v-for="child2 in child1.children" v-if="!child2.children" :key="child2.id" :index="child2.id">
-                <i class="el-icon-menu"/>
+              <el-menu-item v-for="child2 in child1.children"
+                            v-if="!child2.children"
+                            :key="child2.id"
+                            :index="child2.id">
+                <i class="el-icon-menu" />
                 <span slot="title">{{ child2.name }}</span>
               </el-menu-item>
               <!-- 三级菜单有子菜单 -->
-              <el-submenu v-for="child2 in child1.children" v-if="child2.children" :key="child2.id" :index="child2.id">
+              <el-submenu v-for="child2 in child1.children"
+                          v-if="child2.children"
+                          :key="child2.id"
+                          :index="child2.id">
                 <template slot="title">
-                  <i class="el-icon-location"/>
+                  <i class="el-icon-location" />
                   <span>{{ child2.name }}</span>
                 </template>
                 <!-- 四级菜单没有子菜单 -->
-                <el-menu-item v-for="child3 in child2.children" v-if="!child3.children" :key="child3.id" :index="child3.id">
-                  <i class="el-icon-menu"/>
+                <el-menu-item v-for="child3 in child2.children"
+                              v-if="!child3.children"
+                              :key="child3.id"
+                              :index="child3.id">
+                  <i class="el-icon-menu" />
                   <span slot="title">{{ child3.name }}</span>
                 </el-menu-item>
                 <!-- 四级菜单有子菜单 -->
-                <el-submenu v-for="child3 in child2.children" v-if="child3.children" :key="child3.id" :index="child3.id">
+                <el-submenu v-for="child3 in child2.children"
+                            v-if="child3.children"
+                            :key="child3.id"
+                            :index="child3.id">
                   <template slot="title">
-                    <i class="el-icon-location"/>
+                    <i class="el-icon-location" />
                     <span>{{ child3.name }}</span>
                   </template>
                   <!-- 五级菜单没有子菜单 -->
-                  <el-menu-item v-for="child4 in child3.children" v-if="!child4.children" :key="child4.id" :index="child4.id">
-                    <i class="el-icon-menu"/>
+                  <el-menu-item v-for="child4 in child3.children"
+                                v-if="!child4.children"
+                                :key="child4.id"
+                                :index="child4.id">
+                    <i class="el-icon-menu" />
                     <span slot="title">{{ child4.name }}</span>
                   </el-menu-item>
                 </el-submenu>
@@ -66,33 +93,29 @@
       </el-col>
       <el-col :span="16">
         <div class="filter-container">
-          <el-button
-            class="filter-item"
-            style="margin-left: 10px;"
-            type="primary"
-            icon="el-icon-edit"
-            @click="handleCreate">{{ $t('table.add') }}</el-button>
-          <el-input
-            v-model="listQuery.keyword"
-            placeholder="关键字"
-            style="width: 200px;"
-            class="filter-item"
-            @keyup.enter.native="handleFilter" />
-          <el-button
-            v-waves
-            class="filter-item"
-            type="primary"
-            icon="el-icon-search"
-            @click="handleFilter">{{ $t('table.search') }}</el-button>
+          <el-button class="filter-item"
+                     style="margin-left: 10px;"
+                     type="primary"
+                     icon="el-icon-edit"
+                     @click="handleCreate">{{ $t('table.add') }}</el-button>
+          <el-input v-model="listQuery.keyword"
+                    placeholder="关键字"
+                    style="width: 200px;"
+                    class="filter-item"
+                    @keyup.enter.native="handleFilter" />
+          <el-button v-waves
+                     class="filter-item"
+                     type="primary"
+                     icon="el-icon-search"
+                     @click="handleFilter">{{ $t('table.search') }}</el-button>
         </div>
-        <el-table
-          v-loading="listLoading"
-          :key="tableKey"
-          :data="list"
-          border
-          fit
-          highlight-current-row
-          style="width: 100%;min-height:500px;">
+        <el-table v-loading="listLoading"
+                  :key="tableKey"
+                  :data="list"
+                  border
+                  fit
+                  highlight-current-row
+                  style="width: 100%;min-height:500px;">
           <!-- <el-table-column
             label="ID"
             align="center"
@@ -101,118 +124,107 @@
               <span>{{ scope.row.id }}</span>
             </template>
           </el-table-column> -->
-          <el-table-column
-            label="图标"
-            min-width="150px"
-            align="center">
+          <el-table-column label="图标"
+                           min-width="150px"
+                           align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.icon }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="标题名称"
-            min-width="150px"
-            align="center">
+          <el-table-column label="标题名称"
+                           min-width="150px"
+                           align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="链接地址/路由地址"
-            min-width="150px"
-            align="center">
+          <el-table-column label="链接地址/路由地址"
+                           min-width="150px"
+                           align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.link }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('table.actions')"
-            align="center"
-            width="230"
-            class-name="small-padding fixed-width">
+          <el-table-column :label="$t('table.actions')"
+                           align="center"
+                           width="230"
+                           class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button
-                type="primary"
-                size="mini"
-                @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-              <el-button
-                type="danger"
-                size="mini"
-                @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
+              <el-button type="primary"
+                         size="mini"
+                         @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+              <el-button type="danger"
+                         size="mini"
+                         @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
             </template>
           </el-table-column>
         </el-table>
 
         <div class="pagination-container">
-          <el-pagination
-            :current-page="listQuery.page"
-            :page-sizes="[10,20,30, 50]"
-            :page-size="listQuery.limit"
-            :total="total"
-            background
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" />
+          <el-pagination :current-page="listQuery.page"
+                         :page-sizes="[10,20,30, 50]"
+                         :page-size="listQuery.limit"
+                         :total="total"
+                         background
+                         layout="total, sizes, prev, pager, next, jumper"
+                         @size-change="handleSizeChange"
+                         @current-change="handleCurrentChange" />
         </div>
 
-        <el-dialog
-          :title="textMap[dialogStatus]"
-          :visible.sync="dialogFormVisible">
-          <el-form
-            ref="dataForm"
-            :rules="rules"
-            :model="temp"
-            label-position="left"
-            label-width="100px"
-            style="width: 400px; margin-left:50px;">
-            <el-form-item
-              label="父节点ID"
-              prop="parentId">
-              <el-input v-model="temp.parentId" disabled/>
+        <el-dialog :title="textMap[dialogStatus]"
+                   :visible.sync="dialogFormVisible">
+          <el-form ref="dataForm"
+                   :rules="rules"
+                   :model="temp"
+                   label-position="left"
+                   label-width="100px"
+                   style="width: 400px; margin-left:50px;">
+            <el-form-item label="父节点ID"
+                          prop="parentId">
+              <el-input v-model="temp.parentId"
+                        disabled />
             </el-form-item>
-            <el-form-item
-              label="应用等级"
-              prop="appGrade">
-              <el-select v-model="temp.appGrade" placeholder="请选择应用等级" style="width:100%">
-                <el-option
-                  v-for="item in appGradeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"/>
+            <el-form-item label="应用等级"
+                          prop="appGrade">
+              <el-select v-model="temp.appGrade"
+                         clearable
+                         placeholder="请选择应用等级"
+                         style="width:100%">
+                <el-option v-for="item in appGradeOptions"
+                           :key="item.value"
+                           :label="item.label"
+                           :value="item.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="资源类型">
-              <el-select v-model="temp.appResourceType" placeholder="请选择资源类型" style="width:100%">
-                <el-option
-                  v-for="item in appResourceTypeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"/>
+              <el-select v-model="temp.appResourceType"
+                         clearable
+                         placeholder="请选择资源类型"
+                         style="width:100%">
+                <el-option v-for="item in appResourceTypeOptions"
+                           :key="item.value"
+                           :label="item.label"
+                           :value="item.value" />
               </el-select>
             </el-form-item>
-            <el-form-item
-              label="应用优先级"
-              prop="appPriority">
+            <el-form-item label="应用优先级"
+                          prop="appPriority">
               <el-input v-model="temp.appPriority" />
             </el-form-item>
-            <el-form-item
-              label="应用编码"
-              prop="appCode">
+            <el-form-item label="应用编码"
+                          prop="appCode">
               <el-input v-model="temp.appCode" />
             </el-form-item>
-            <el-form-item
-              label="应用名称"
-              prop="appName">
+            <el-form-item label="应用名称"
+                          prop="appName">
               <el-input v-model="temp.appName" />
             </el-form-item>
-            <el-form-item
-              label="应用图标"
-              prop="appIcon">
+            <el-form-item label="应用图标"
+                          prop="appIcon">
               <el-input v-model="temp.appIcon" />
             </el-form-item>
-            <el-form-item
-              label="连接地址"
-              prop="appLink">
+            <el-form-item label="连接地址"
+                          prop="appLink">
               <el-input v-model="temp.appLink" />
             </el-form-item>
             <el-form-item label="应用可见">
@@ -222,18 +234,15 @@
               </el-radio-group>
             </el-form-item>
           </el-form>
-          <div
-            slot="footer"
-            class="dialog-footer">
+          <div slot="footer"
+               class="dialog-footer">
             <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-            <el-button
-              v-if="dialogStatus=='create'"
-              type="primary"
-              @click="createData">{{ $t('table.confirm') }}</el-button>
-            <el-button
-              v-else
-              type="primary"
-              @click="updateData">{{ $t('table.confirm') }}</el-button>
+            <el-button v-if="dialogStatus=='create'"
+                       type="primary"
+                       @click="createData">{{ $t('table.confirm') }}</el-button>
+            <el-button v-else
+                       type="primary"
+                       @click="updateData">{{ $t('table.confirm') }}</el-button>
           </div>
         </el-dialog>
 

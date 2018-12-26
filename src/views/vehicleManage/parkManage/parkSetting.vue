@@ -98,6 +98,7 @@
           <!-- <el-input v-model="temp.parkType" /> -->
           <el-select v-model="temp.parkType"
                      :disabled="dialogStatus === 'update' "
+                     clearable
                      class="filter-item"
                      placeholder="车场配置"
                      style="width:100%">

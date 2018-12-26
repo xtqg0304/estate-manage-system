@@ -136,6 +136,7 @@
           <el-select v-model="temp.roleIds"
                      class="filter-item"
                      multiple
+                     clearable
                      placeholder="请选择"
                      style="width:100%">
             <el-option v-for="item in roleList"
@@ -147,6 +148,7 @@
         <el-form-item label="用户状态"
                       prop="status">
           <el-select v-model="temp.status"
+                     clearable
                      class="filter-item"
                      placeholder="请选择"
                      style="width:100%">
@@ -191,6 +193,7 @@
         <el-form-item label="绑定小区"
                       prop="communityIdList">
           <el-select v-model="communityIdList"
+                     clearable
                      class="filter-item"
                      placeholder="请选择小区"
                      multiple

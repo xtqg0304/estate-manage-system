@@ -8,6 +8,7 @@
     <div class="right-menu">
       <error-log class="errLog-container right-menu-item" />
       <el-select v-model="selectAppId"
+                 clearable
                  style="float:left;"
                  placeholder="请选择"
                  @change="handelChange">
@@ -19,6 +20,7 @@
       <!-- <treeselect class="treeSelect" v-model="selectSysId" :multiple="false" :options="permission" placeholder="切换子系统"/> -->
       <el-select v-if="!showCommunity"
                  v-model="communityId"
+                 clearable
                  style="float:left;"
                  placeholder="请选择"
                  @change="handelChangeCommunity">

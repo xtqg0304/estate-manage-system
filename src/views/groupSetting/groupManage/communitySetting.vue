@@ -116,6 +116,7 @@
                       prop="statusservice">
           <el-select v-model="temp.regionId"
                      filterable
+                     clearable
                      placeholder="所属区域"
                      style="width:100%">
             <el-option v-for="item in options"
@@ -141,6 +142,7 @@
                       prop="province">
           <el-select v-model="temp.province"
                      filterable
+                     clearable
                      placeholder="请选择省"
                      style="width:100%"
                      @change="getCityOfProvince">
@@ -153,6 +155,7 @@
         <el-form-item label="所属市"
                       prop="city">
           <el-select v-model="temp.city"
+                     clearable
                      placeholder="请选择市"
                      style="width:100%"
                      @change="getCountyOfCity">
@@ -165,6 +168,7 @@
         <el-form-item label="所属区"
                       prop="county">
           <el-select v-model="temp.county"
+                     clearable
                      style="width:100%"
                      placeholder="请选择区/县">
             <el-option v-for="item in countryOptions"
@@ -209,6 +213,7 @@
         <el-form-item label="小区名称"
                       prop="id">
           <el-select v-model="temp.id"
+                     clearable
                      disabled
                      class="filter-item"
                      placeholder="请选择小区"
@@ -222,6 +227,7 @@
         <el-form-item label="绑定公众号"
                       prop="wechatId">
           <el-select v-model="wechatId"
+                     clearable
                      class="filter-item"
                      placeholder="请选择公众号"
                      style="width:100%">

@@ -1,63 +1,91 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-date-picker
-        v-model="listQuery.beginTime"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="开始时间"
-        align="right"/>
-      <el-date-picker
-        v-model="listQuery.endTime"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="结束时间"
-        align="right"/>
-      <el-select v-model="listQuery.payType" placeholder="支付类型" clearable class="filter-item">
-        <el-option v-for="item in payTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+      <el-date-picker v-model="listQuery.beginTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="开始时间"
+                      align="right" />
+      <el-date-picker v-model="listQuery.endTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="结束时间"
+                      align="right" />
+      <el-select v-model="listQuery.payType"
+                 placeholder="支付类型"
+                 clearable
+                 class="filter-item">
+        <el-option v-for="item in payTypeOptions"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value" />
       </el-select>
-      <el-input v-model="listQuery.transactionMark " placeholder="备注信息" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-input v-model="listQuery.transactionMark "
+                placeholder="备注信息"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column label="订单编号" align="center" width="280">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="订单编号"
+                       align="center"
+                       width="280">
         <template slot-scope="scope">
           <span>{{ scope.row.transactionId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="支付类型" width="110px" align="center">
+      <el-table-column label="支付类型"
+                       width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payType | statusFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="支付时间" width="180px" align="center">
+      <el-table-column label="支付时间"
+                       width="180px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="实际金额" width="80px">
+      <el-table-column label="实际金额"
+                       width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.realFee }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额" width="80px">
+      <el-table-column label="总金额"
+                       width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.totalFee }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="优惠金额" width="180px">
+      <el-table-column label="优惠金额"
+                       width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.discountFee }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="优惠信息" width="180px">
+      <el-table-column label="优惠信息"
+                       width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.discountType }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单备注" >
+      <el-table-column label="订单备注">
         <template slot-scope="scope">
           <span>{{ scope.row.transactionMark }}</span>
         </template>
@@ -65,7 +93,14 @@
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -207,7 +242,7 @@ export default {
 .editor-custom-btn-container {
   top: 0 !important;
 }
-.edit-input{
-  width:100px;
+.edit-input {
+  width: 100px;
 }
 </style>

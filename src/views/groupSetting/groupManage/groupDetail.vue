@@ -28,6 +28,7 @@
             <el-col :span="16">
               <el-form-item label="所属城市">
                 <el-select v-model="tempGroupInfo.province"
+                           clearable
                            filterable
                            placeholder="请选择省"
                            @change="getCityOfProvince">
@@ -37,6 +38,7 @@
                              :value="item.id" />
                 </el-select>
                 <el-select v-model="tempGroupInfo.city"
+                           clearable
                            placeholder="请选择市"
                            @change="getCountyOfCity">
                   <el-option v-for="item in cityOptions"
@@ -45,6 +47,7 @@
                              :value="item.id" />
                 </el-select>
                 <el-select v-model="tempGroupInfo.county"
+                           clearable
                            placeholder="请选择区/县">
                   <el-option v-for="item in countyOptions"
                              :key="item.id"
@@ -104,6 +107,7 @@
                 <!-- {{ groupInfo.province }}/ {{ groupInfo.city }}/{{ groupInfo.county }} -->
                 <el-select :disabled="editdialog === false"
                            v-model="groupInfo.province"
+                           clearable
                            filterable
                            placeholder="请选择省"
                            @change="getCityOfProvince">
@@ -114,6 +118,7 @@
                 </el-select>
                 <el-select :disabled="editdialog === false"
                            v-model="groupInfo.city"
+                           clearable
                            placeholder="请选择市"
                            @change="getCountyOfCity">
                   <el-option v-for="item in cityOptions"
@@ -123,6 +128,7 @@
                 </el-select>
                 <el-select :disabled="editdialog === false"
                            v-model="groupInfo.county"
+                           clearable
                            placeholder="请选择区/县">
                   <el-option v-for="item in countyOptions"
                              :key="item.id"

@@ -1,25 +1,35 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-date-picker
-        v-model="listQuery.beginTime"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="开始时间"
-        align="right"/>
-      <el-date-picker
-        v-model="listQuery.endTime"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="结束时间"
-        align="right"/>
-      <el-select v-model="listQuery.payType" placeholder="车场" clearable class="filter-item">
-        <el-option v-for="item in carOptions" :key="item.value" :label="item.label" :value="item.value" />
+      <el-date-picker v-model="listQuery.beginTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="开始时间"
+                      align="right" />
+      <el-date-picker v-model="listQuery.endTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="结束时间"
+                      align="right" />
+      <el-select v-model="listQuery.payType"
+                 placeholder="车场"
+                 clearable
+                 class="filter-item">
+        <el-option v-for="item in carOptions"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.payType" placeholder="收费员" clearable class="filter-item">
-        <el-option v-for="item in cashOptions" :key="item.value" :label="item.label" :value="item.value" />
+      <el-select v-model="listQuery.payType"
+                 placeholder="收费员"
+                 clearable
+                 class="filter-item">
+        <el-option v-for="item in cashOptions"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value" />
       </el-select>
       <!-- <el-select v-model="listQuery.payType" placeholder="支付类型" clearable class="filter-item">
         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -27,61 +37,97 @@
       <el-input v-model="listQuery.searchKey" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button> -->
     </div>
-    <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column label="车场" width="180px">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="车场"
+                       width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.outTradeNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="收费员" width="110px" align="center">
+      <el-table-column label="收费员"
+                       width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.houseHoldName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="日期" width="110px" align="center">
+      <el-table-column label="日期"
+                       width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.houseHoldName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总订单数" width="80px">
+      <el-table-column label="总订单数"
+                       width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.payType | payFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="电子支付" align="center" width="95">
+      <el-table-column label="电子支付"
+                       align="center"
+                       width="95">
         <template slot-scope="scope">
           <span>{{ scope.row.payAmount }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="现金支付" >
+      <el-table-column label="现金支付">
         <template slot-scope="scope">
           <span>{{ scope.row.payStatus | statusFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')"
+                       align="center"
+                       width="230"
+                       class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleShowDetail(scope.row)">{{ $t('table.detail') }}
+          <el-button size="mini"
+                     type="primary"
+                     @click="handleShowDetail(scope.row)">{{ $t('table.detail') }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDetailVisible">
-      <el-table :data="userList" border fit highlight-current-row style="width: 100%">
-        <el-table-column label="缴费类目" width="80px">
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogDetailVisible">
+      <el-table :data="userList"
+                border
+                fit
+                highlight-current-row
+                style="width: 100%">
+        <el-table-column label="缴费类目"
+                         width="80px">
           <template slot-scope="scope">
             <span>{{ scope.row.payCategory | typeFilter }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="缴费金额" prop="payAmount" />
-        <el-table-column label="缴费时间" prop="payMonth" />
+        <el-table-column label="缴费金额"
+                         prop="payAmount" />
+        <el-table-column label="缴费时间"
+                         prop="payMonth" />
       </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
+      <span slot="footer"
+            class="dialog-footer">
+        <el-button type="primary"
+                   @click="dialogDetailVisible = false">{{ $t('table.confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -306,7 +352,7 @@ export default {
 .editor-custom-btn-container {
   top: 0 !important;
 }
-.edit-input{
-  width:100px;
+.edit-input {
+  width: 100px;
 }
 </style>

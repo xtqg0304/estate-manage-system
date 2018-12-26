@@ -181,6 +181,7 @@
         <el-form-item label="设备类型"
                       prop="deviceType">
           <el-select v-model="temp.deviceTypeName"
+                     clearable
                      class="filter-item"
                      placeholder="请选择"
                      style="width:100%"
@@ -209,6 +210,7 @@
         <el-form-item label="关联房产"
                       prop="relateHouse">
           <el-select v-model="temp.communityName"
+                     clearable
                      class="filter-item"
                      placeholder="选择小区"
                      style="width:31%"
@@ -219,6 +221,7 @@
                        :value="item" />
           </el-select>
           <el-select v-model="temp.buildingName"
+                     clearable
                      class="filter-item"
                      placeholder="选择楼栋"
                      style="width:31%"
@@ -229,6 +232,7 @@
                        :value="item" />
           </el-select>
           <el-select v-model="temp.danyuanName"
+                     clearable
                      class="filter-item"
                      placeholder="选择单元"
                      style="width:31%"
@@ -242,6 +246,7 @@
         <el-form-item label="门号"
                       prop="doorNo">
           <el-select v-model="temp.doorNo"
+                     clearable
                      class="filter-item"
                      placeholder="请选择"
                      style="width:100%">

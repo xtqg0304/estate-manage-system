@@ -1,175 +1,153 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-select
-        v-model="listQuery.status"
-        placeholder="服务类型"
-        clearable
-        class="filter-item">
-        <el-option
-          v-for="item in statusserviceOptions"
-          :key="item.id"
-          :label="item.label"
-          :value="item.id" />
+      <el-button class="filter-item"
+                 style="margin-left: 10px;"
+                 type="primary"
+                 icon="el-icon-edit"
+                 @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-select v-model="listQuery.status"
+                 placeholder="服务类型"
+                 clearable
+                 class="filter-item">
+        <el-option v-for="item in statusserviceOptions"
+                   :key="item.id"
+                   :label="item.label"
+                   :value="item.id" />
       </el-select>
-      <el-input
-        v-model="listQuery.keyword"
-        placeholder="关键字"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter" />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-input v-model="listQuery.keyword"
+                placeholder="关键字"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table
-      v-loading="listLoading"
-      :key="tableKey"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;min-height:500px;">
-      <el-table-column
-        label="服务类型"
-        width="120px">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="服务类型"
+                       width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.serviceType | serviceTypefilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="服务名称"
-        width="120px">
+      <el-table-column label="服务名称"
+                       width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.serviceName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="服务电话"
-        min-width="150px"
-        align="center">
+      <el-table-column label="服务电话"
+                       min-width="150px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.serviceNumber }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="图片"
-        align="center"
-        width="120">
+      <el-table-column label="图片"
+                       align="center"
+                       width="120">
         <template slot-scope="scope">
           <span class="link-type">
-            <el-popover
-              placement="right"
-              trigger="hover">
-              <img :src="scope.row.imageUrl" style="max-height:200px;" >
-              <img slot="reference" :src="scope.row.imageUrl" style="max-height:23px;vertical-align: bottom;" >
+            <el-popover placement="right"
+                        trigger="hover">
+              <img :src="scope.row.imageUrl"
+                   style="max-height:200px;">
+              <img slot="reference"
+                   :src="scope.row.imageUrl"
+                   style="max-height:23px;vertical-align: bottom;">
             </el-popover>
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="备注"
-        min-width="150px"
-        align="center">
+      <el-table-column label="备注"
+                       min-width="150px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.memo }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('table.actions')"
-        align="center"
-        width="230"
-        class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')"
+                       align="center"
+                       width="230"
+                       class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button
-            type="danger"
-            size="mini"
-            @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
+          <el-button type="primary"
+                     size="mini"
+                     @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button type="danger"
+                     size="mini"
+                     @click="handleDelete(scope.row)">{{ $t('table.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination
-        :current-page="listQuery.page"
-        :page-sizes="[10,20,30, 50]"
-        :page-size="listQuery.limit"
-        :total="total"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="100px"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item
-          label="服务类型"
-          prop="serviceType">
-          <el-select
-            v-model="temp.serviceType"
-            class="filter-item"
-            placeholder="请选择服务类型"
-            style="width:100%">
-            <el-option
-              v-for="item in statusserviceOptions"
-              :key="item.id"
-              :label="item.label"
-              :value="item.id" />
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm"
+               :rules="rules"
+               :model="temp"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="服务类型"
+                      prop="serviceType">
+          <el-select v-model="temp.serviceType"
+                     clearable
+                     class="filter-item"
+                     placeholder="请选择服务类型"
+                     style="width:100%">
+            <el-option v-for="item in statusserviceOptions"
+                       :key="item.id"
+                       :label="item.label"
+                       :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="服务名称"
-          prop="serviceName">
+        <el-form-item label="服务名称"
+                      prop="serviceName">
           <el-input v-model="temp.serviceName" />
         </el-form-item>
-        <el-form-item
-          label="服务电话"
-          prop="serviceNumber">
+        <el-form-item label="服务电话"
+                      prop="serviceNumber">
           <el-input v-model="temp.serviceNumber" />
         </el-form-item>
-        <el-form-item
-          label="备注"
-          prop="memo">
-          <el-input v-model="temp.memo" type="textarea" />
+        <el-form-item label="备注"
+                      prop="memo">
+          <el-input v-model="temp.memo"
+                    type="textarea" />
         </el-form-item>
         <el-form-item label="上传图片">
           <Upload v-model="temp.imageUrl" />
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer">
+      <div slot="footer"
+           class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='create'"
-          type="primary"
-          @click="createData">{{ $t('table.confirm') }}</el-button>
-        <el-button
-          v-else
-          type="primary"
-          @click="updateData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='create'"
+                   type="primary"
+                   @click="createData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-else
+                   type="primary"
+                   @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
 

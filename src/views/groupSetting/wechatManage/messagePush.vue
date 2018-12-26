@@ -146,6 +146,7 @@
           <!-- <el-input v-model="temp.appid" /> -->
           <el-select :disabled="dialogStatus === 'update'"
                      v-model="temp.appid"
+                     clearable
                      class="filter-item"
                      placeholder="请选择"
                      style="width:100%">
@@ -159,6 +160,7 @@
                       prop="miniAppid">
           <!-- <el-input v-model="temp.miniAppid" /> -->
           <el-select v-model="temp.miniAppid"
+                     clearable
                      class="filter-item"
                      placeholder="请选择"
                      style="width:100%">
@@ -173,6 +175,7 @@
           <!-- <el-input v-model="temp.templateType" /> -->
           <el-select :disabled="dialogStatus === 'update'"
                      v-model="temp.templateType"
+                     clearable
                      class="filter-item"
                      placeholder="请选择"
                      style="width:100%">
@@ -229,6 +232,7 @@
         <el-form-item label="公众号"
                       prop="wechatMpId">
           <el-select v-model="wechatMpId"
+                     clearable
                      class="filter-item"
                      placeholder="请选择公众号"
                      style="width:100%">

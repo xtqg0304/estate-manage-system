@@ -1,232 +1,195 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-select
-        v-model="listQuery.communityName"
-        placeholder="选择小区"
-        clearable
-        class="filter-item"
-        @change="communitySel">
-        <el-option
-          v-for="item in communityList"
-          :key="item.selectCommunityName"
-          :label="item.selectCommunityName"
-          :value="item" />
+      <el-select v-model="listQuery.communityName"
+                 placeholder="选择小区"
+                 clearable
+                 class="filter-item"
+                 @change="communitySel">
+        <el-option v-for="item in communityList"
+                   :key="item.selectCommunityName"
+                   :label="item.selectCommunityName"
+                   :value="item" />
       </el-select>
-      <el-select
-        v-model="listQuery.buildingName"
-        placeholder="选择楼栋"
-        clearable
-        class="filter-item"
-        @change="buildingSel">
-        <el-option
-          v-for="item in buildingList"
-          :key="item.id"
-          :label="item.buildingName"
-          :value="item" />
+      <el-select v-model="listQuery.buildingName"
+                 placeholder="选择楼栋"
+                 clearable
+                 class="filter-item"
+                 @change="buildingSel">
+        <el-option v-for="item in buildingList"
+                   :key="item.id"
+                   :label="item.buildingName"
+                   :value="item" />
       </el-select>
-      <el-date-picker
-        v-model="listQuery.time"
-        :picker-options="pickerOptions"
-        class="filter-item-rangedate"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间"
-        value-format="yyyy-MM-dd"
-        @change="getTime" />
-      <el-input
-        v-model="search"
-        placeholder="关键字"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter" />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-date-picker v-model="listQuery.time"
+                      :picker-options="pickerOptions"
+                      class="filter-item-rangedate"
+                      type="daterange"
+                      range-separator="至"
+                      start-placeholder="开始时间"
+                      end-placeholder="结束时间"
+                      value-format="yyyy-MM-dd"
+                      @change="getTime" />
+      <el-input v-model="search"
+                placeholder="关键字"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table
-      v-loading="listLoading"
-      :key="tableKey"
-      :data="tables"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;min-height:500px;">
-      <el-table-column
-        label="头像"
-        align="center"
-        width="150">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="tables"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="头像"
+                       align="center"
+                       width="150">
         <template slot-scope="scope">
           <span class="link-type">
-            <el-popover
-              placement="right"
-              trigger="hover">
-              <img
-                :src="scope.row.picUrl"
-                style="max-height:200px;">
-              <img
-                slot="reference"
-                :src="scope.row.picUrl"
-                style="max-height:23px;vertical-align: bottom;">
+            <el-popover placement="right"
+                        trigger="hover">
+              <img :src="scope.row.picUrl"
+                   style="max-height:200px;">
+              <img slot="reference"
+                   :src="scope.row.picUrl"
+                   style="max-height:23px;vertical-align: bottom;">
             </el-popover>
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="用户名称"
-        align="center"
-        width="180"
-        sortable
-        prop="inoutuserName">
+      <el-table-column label="用户名称"
+                       align="center"
+                       width="180"
+                       sortable
+                       prop="inoutuserName">
         <template slot-scope="scope">
           <span>{{ scope.row.inoutuserName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="设备序列"
-        align="center"
-        width="180">
+      <el-table-column label="设备序列"
+                       align="center"
+                       width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.deviceSn }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="设备名称"
-        align="center"
-        width="180">
+      <el-table-column label="设备名称"
+                       align="center"
+                       width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.deviceName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="关联房产"
-        align="center"
-        width="180">
+      <el-table-column label="关联房产"
+                       align="center"
+                       width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.fieldName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="开门状态"
-        align="center"
-        width="150">
+      <el-table-column label="开门状态"
+                       align="center"
+                       width="150">
         <template slot-scope="scope">
           <span>{{ scope.row.inoutSuccess| statusFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="开门时间"
-        align="center">
+      <el-table-column label="开门时间"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inoutTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
     </el-table>
     <div class="pagination-container">
-      <el-pagination
-        :current-page="listQuery.page"
-        :page-sizes="[10,20,30, 50]"
-        :page-size="listQuery.pageSize"
-        :total="total"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.pageSize"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="70px"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item
-          :label="$t('table.date')"
-          prop="timestamp">
-          <el-date-picker
-            v-model="temp.timestamp"
-            type="datetime"
-            placeholder="Please pick a date" />
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm"
+               :rules="rules"
+               :model="temp"
+               label-position="left"
+               label-width="70px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item :label="$t('table.date')"
+                      prop="timestamp">
+          <el-date-picker v-model="temp.timestamp"
+                          type="datetime"
+                          placeholder="Please pick a date" />
         </el-form-item>
-        <el-form-item
-          :label="$t('table.statusservice')"
-          prop="statusservice">
-          <el-select
-            v-model="temp.statusservice"
-            class="filter-item"
-            placeholder="请选择">
-            <el-option
-              v-for="item in statusserviceOptions"
-              :key="item"
-              :label="$t('table.'+item)"
-              :value="item" />
+        <el-form-item :label="$t('table.statusservice')"
+                      prop="statusservice">
+          <el-select v-model="temp.statusservice"
+                     clearable
+                     class="filter-item"
+                     placeholder="请选择">
+            <el-option v-for="item in statusserviceOptions"
+                       :key="item"
+                       :label="$t('table.'+item)"
+                       :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item
-          :label="$t('table.servicename')"
-          prop="servicename">
+        <el-form-item :label="$t('table.servicename')"
+                      prop="servicename">
           <el-input v-model="temp.servicename" />
         </el-form-item>
-        <el-form-item
-          :label="$t('table.servicephone')"
-          prop="servicephone">
+        <el-form-item :label="$t('table.servicephone')"
+                      prop="servicephone">
           <el-input v-model="temp.servicephone" />
         </el-form-item>
-        <el-form-item
-          :label="$t('table.remarks')"
-          prop="remarks"
-          style="width:650px;">
+        <el-form-item :label="$t('table.remarks')"
+                      prop="remarks"
+                      style="width:650px;">
           <tinymce v-model="temp.remarks" />
         </el-form-item>
         <el-form-item :label="$t('table.uploadimg')">
           <Upload v-model="temp.uploadimg" />
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer">
+      <div slot="footer"
+           class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='create'"
-          type="primary"
-          @click="createData">{{ $t('table.confirm') }}</el-button>
-        <el-button
-          v-else
-          type="primary"
-          @click="updateData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='create'"
+                   type="primary"
+                   @click="createData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-else
+                   type="primary"
+                   @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog
-      :visible.sync="dialogPvVisible"
-      title="Reading statistics">
-      <el-table
-        :data="pvData"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%">
-        <el-table-column
-          prop="key"
-          label="Channel" />
-        <el-table-column
-          prop="pv"
-          label="Pv" />
+    <el-dialog :visible.sync="dialogPvVisible"
+               title="Reading statistics">
+      <el-table :data="pvData"
+                border
+                fit
+                highlight-current-row
+                style="width: 100%">
+        <el-table-column prop="key"
+                         label="Channel" />
+        <el-table-column prop="pv"
+                         label="Pv" />
       </el-table>
-      <span
-        slot="footer"
-        class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
+      <span slot="footer"
+            class="dialog-footer">
+        <el-button type="primary"
+                   @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
       </span>
     </el-dialog>
 

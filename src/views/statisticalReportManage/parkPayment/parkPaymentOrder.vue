@@ -1,69 +1,134 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
-      <el-date-picker v-model="listQuery.starttoendimestamp" :picker-options="pickerOptions" :range-separator="$t('table.to')" :start-placeholder="$t('table.startdate')" :end-placeholder="$t('table.enddate')" class="filter-item-rangedate" type="daterange" />
-      <el-select v-model="listQuery.statusPayment" :placeholder="$t('table.statuspayment')" clearable class="filter-item">
-        <el-option v-for="item in statuspaymentOptions" :key="item" :label="$t('table.'+item)" :value="item" />
+      <upload-excel-component :on-success="handleSuccess"
+                              :before-upload="beforeUpload" />
+      <el-button v-waves
+                 :loading="downloadLoading"
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-download"
+                 @click="handleDownload">{{ $t('table.export') }}</el-button>
+      <el-date-picker v-model="listQuery.starttoendimestamp"
+                      :picker-options="pickerOptions"
+                      :range-separator="$t('table.to')"
+                      :start-placeholder="$t('table.startdate')"
+                      :end-placeholder="$t('table.enddate')"
+                      class="filter-item-rangedate"
+                      type="daterange" />
+      <el-select v-model="listQuery.statusPayment"
+                 :placeholder="$t('table.statuspayment')"
+                 clearable
+                 class="filter-item">
+        <el-option v-for="item in statuspaymentOptions"
+                   :key="item"
+                   :label="$t('table.'+item)"
+                   :value="item" />
       </el-select>
-      <el-input v-model="listQuery.keyword" :placeholder="$t('table.keyword')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-input v-model="listQuery.keyword"
+                :placeholder="$t('table.keyword')"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table v-loading="listLoading" :key="tableKey" :data="list" border fit highlight-current-row style="width: 100%;min-height:500px;">
-      <el-table-column :label="$t('table.id')" align="center" width="65">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column :label="$t('table.id')"
+                       align="center"
+                       width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.date')" width="150px" align="center">
+      <el-table-column :label="$t('table.date')"
+                       width="150px"
+                       align="center">
         <template slot-scope="scope">
           <!-- <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.propertyname')" min-width="150px">
+      <el-table-column :label="$t('table.propertyname')"
+                       min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.propertyname }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownername')" width="110px" align="center">
+      <el-table-column :label="$t('table.ownername')"
+                       width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ownername }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.ownerphone')" width="110px" align="center">
+      <el-table-column :label="$t('table.ownerphone')"
+                       width="110px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ownerphone }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.feesofpay')" align="center" width="95">
+      <el-table-column :label="$t('table.feesofpay')"
+                       align="center"
+                       width="95">
         <template slot-scope="scope">
           <span>{{ scope.row.feesofpay }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.statepayment')" align="center" width="95">
+      <el-table-column :label="$t('table.statepayment')"
+                       align="center"
+                       width="95">
         <template slot-scope="scope">
           <el-tag :type="scope.row.statepayment | statusFilter">{{ $t('table.'+scope.row.statepayment) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.statuspayment')" class-name="status-col" width="100">
+      <el-table-column :label="$t('table.statuspayment')"
+                       class-name="status-col"
+                       width="100">
         <template slot-scope="scope">
           <el-tag :type="scope.row.statuspayment | statusFilter">{{ $t('table.'+scope.row.statuspayment) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')"
+                       align="center"
+                       width="230"
+                       class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">{{ $t('table.publish') }}
+          <el-button v-if="scope.row.status!='published'"
+                     size="mini"
+                     type="success"
+                     @click="handleModifyStatus(scope.row,'published')">{{ $t('table.publish') }}
           </el-button>
-          <el-button v-if="scope.row.status!='draft'" size="mini" @click="handleModifyStatus(scope.row,'draft')">{{ $t('table.draft') }}
+          <el-button v-if="scope.row.status!='draft'"
+                     size="mini"
+                     @click="handleModifyStatus(scope.row,'draft')">{{ $t('table.draft') }}
           </el-button>
-          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">{{ $t('table.delete') }}
+          <el-button v-if="scope.row.status!='deleted'"
+                     size="mini"
+                     type="danger"
+                     @click="handleModifyStatus(scope.row,'deleted')">{{ $t('table.delete') }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
