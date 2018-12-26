@@ -32,6 +32,13 @@
           <span>{{ scope.row.status | statusFilter }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="本地车场类型"
+                       width="120px"
+                       align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.parkType | parkTypeFilter }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="详细地址"
                        width="120px"
                        align="center">
@@ -53,7 +60,8 @@
           <el-button type="primary"
                      size="mini"
                      @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button type="primary"
+          <el-button v-if="scope.row.parkType !== 0"
+                     type="primary"
                      size="mini"
                      @click="handleLink(scope.row)">配置</el-button>
           <el-button type="success"
@@ -229,6 +237,13 @@ export default {
       const statusMap = {
         0: '离线',
         1: '在线'
+      }
+      return statusMap[status]
+    },
+    parkTypeFilter(status) {
+      const statusMap = {
+        0: '星网物联停车场',
+        1: '智能腾达停车场'
       }
       return statusMap[status]
     }

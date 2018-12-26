@@ -1,28 +1,5 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-select v-model="listQuery.searchType"
-                 placeholder="搜索类型"
-                 clearable
-                 class="filter-item"
-                 @change="handleChangeSearchType">
-        <el-option v-for="item in searchTypeOptions"
-                   :key="item.value"
-                   :label="item.label"
-                   :value="item.value" />
-      </el-select>
-      <el-select v-model="listQuery.parkType"
-                 placeholder="本地车场类型"
-                 clearable
-                 class="filter-item"
-                 @change="handleChangeParkType">
-        <el-option v-for="item in localLaneTypeOptions"
-                   :key="item.value"
-                   :label="item.label"
-                   :value="item.value" />
-      </el-select>
-    </div>
-
     <el-table v-loading="listLoading"
               :key="tableKey"
               :data="list"
@@ -30,72 +7,53 @@
               fit
               highlight-current-row
               style="width: 100%;min-height:500px;">
-      <el-table-column v-if="listQuery.parkType === 1"
-                       label="车道ID"
-                       width="150px"
-                       align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.carRoadId }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="listQuery.parkType === 1"
-                       label="车道名称"
+      <el-table-column label="车道名称"
                        width="150px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.carRoadName }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="listQuery.parkType === 1"
-                       label="车道类型"
-                       width="“180”"
-                       align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.carRoadType | typeFilter }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="listQuery.parkType === 1"
-                       :label="$t('table.actions')"
-                       align="center"
-                       class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button v-if="scope.row.carRoadType === '2'"
-                     size="large"
-                     type="primary"
-                     @click="handleCreateCode(scope.row)">生成二维码
-          </el-button>
-          <el-button size="large"
-                     type="primary"
-                     @click="handleOpen(scope.row)">远程开闸
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="listQuery.parkType === 0"
-                       label="车道名称"
-                       width="150px"
-                       align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.carRoadName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="listQuery.parkType === 0"
-                       label="车道类型"
+      <el-table-column label="车道类型"
                        width="120px">
         <template slot-scope="scope">
-          <span>{{ scope.row.carRoadType | statusFilter }}</span>
+          <span v-if="scope.row.parkType === 0">{{ scope.row.carRoadType | statusFilter }}</span>
+          <span v-else>{{ scope.row.carRoadType | typeFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="listQuery.parkType === 0"
-                       label="所属车场名称"
+      <el-table-column label="所属车场名称"
                        width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.ownCarparkNoName }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="listQuery.parkType === 0"
-                       label="岗亭名称">
+      <el-table-column label="岗亭名称"
+                       width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.manageComputerName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="本地车场类型"
+                       width="150px"
+                       align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.parkType | parkTypefiter }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('table.actions')"
+                       align="center"
+                       class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.parkType === 1&&scope.row.carRoadType === '2'"
+                     size="large"
+                     type="primary"
+                     @click="handleCreateCode(scope.row)">生成二维码
+          </el-button>
+          <el-button v-if="scope.row.parkType === 1"
+                     size="large"
+                     type="primary"
+                     @click="handleOpen(scope.row)">远程开闸
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -128,7 +86,15 @@ export default {
         4: '小车场出口'
       }
       return statusMap[status]
+    },
+    parkTypefiter(status) {
+      const statusMap = {
+        0: '星网物联停车场',
+        1: '智能腾达停车场'
+      }
+      return statusMap[status]
     }
+
   },
   data() {
     return {
@@ -136,38 +102,8 @@ export default {
       list: null,
       total: null,
       listLoading: true,
-      searchTypeOptions: [
-        {
-          label: '车场',
-          value: 0
-        },
-        {
-          label: '车道',
-          value: 1
-        },
-        {
-          label: '岗亭信息',
-          value: 2
-        },
-        {
-          label: '操作员信息',
-          value: 3
-        }
-      ],
-      localLaneTypeOptions: [
-        {
-          label: '星网物联车场',
-          value: 0
-        },
-        {
-          label: '腾达智能停车场',
-          value: 1
-        }
-      ],
       listQuery: {
-        serviceId: '',
-        searchType: 0,
-        parkType: 0
+        serviceId: ''
       },
       QrcodePark: ''
     }
@@ -184,7 +120,6 @@ export default {
     getList() {
       this.listLoading = true
       this.listQuery.serviceId = this.userInfo.selectCommunity
-      // this.listQuery.searchType = 0
       fetchLaneList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
@@ -193,14 +128,6 @@ export default {
           }
         }
       })
-    },
-    handleChangeSearchType(searchType) {
-      this.listQuery.searchType = searchType
-      this.getList()
-    },
-    handleChangeParkType(parkType) {
-      this.listQuery.parkType = parkType
-      this.getList()
     },
     handleCreateCode(row) {
       fetchQrcodePark({ laneId: row.carRoadId, communityId: this.userInfo.selectCommunity }).then(response => {

@@ -397,7 +397,14 @@ export default {
       fetchPayTypeAnalysis({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            this.payTypeAnalysisdata = Object.assign({}, response.data.data.eventAnalysisdata)
+            const res = response.data.data.eventAnalysisdata
+            if (res.chartData.rows.length === 0) {
+              res.chartData.rows.push({ '类型': '微信', '金额': 0 })
+              this.payTypeAnalysisdata = Object.assign({}, res)
+            } else {
+              this.payTypeAnalysisdata = Object.assign({}, res)
+            }
+            // this.payTypeAnalysisdata = Object.assign({}, response.data.data.eventAnalysisdata)
           }
         }
       })
@@ -410,7 +417,13 @@ export default {
       fetchPropertyPayAnalysis({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            this.eventAnalysisdata = Object.assign({}, response.data.data.eventAnalysisdata)
+            const res = response.data.data.eventAnalysisdata
+            if (res.chartData.rows.length === 0) {
+              res.chartData.rows.push({ '类型': '物业费', '金额': 0 })
+              this.eventAnalysisdata = Object.assign({}, res)
+            } else {
+              this.eventAnalysisdata = Object.assign({}, res)
+            }
           }
         }
       })
@@ -477,6 +490,8 @@ export default {
               for (let i = 0, len = response.data.data.deviceList.length; i < len; i++) {
                 this.doorAnalysisdata.chartData.rows.push({ '设备类型': response.data.data.deviceList[i].deviceFactoryName, '个数': response.data.data.deviceList[i].devType })
               }
+            } else {
+              this.doorAnalysisdata.chartData.rows.push({ '设备类型': '微门禁', '个数': 0 })
             }
           }
         }
@@ -511,6 +526,8 @@ export default {
                   this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '回复', '个数': response.data.data.qryComplaintElementData[i].statusCount })
                 }
               }
+            } else {
+              this.eventpercentAnalysisdata.chartData.rows.push({ '状态': '等待处理', '个数': 0 })
             }
           }
         }
