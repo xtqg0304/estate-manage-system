@@ -75,6 +75,9 @@
               {{ $t('navbar.home') }}
             </el-dropdown-item>
           </router-link>
+          <el-dropdown-item>
+            <span @click="handleUpdatePwd(userId)">修改密码</span>
+          </el-dropdown-item>
           <el-dropdown-item divided>
             <span style="display:block;"
                   @click="logout">{{ $t('navbar.logOut') }}</span>
@@ -82,6 +85,33 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogPwdVisible">
+      <el-form ref="dataForm"
+               :rules="rules"
+               :model="temp"
+               label-position="left"
+               label-width="70px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="旧密码"
+                      prop="userPwd">
+          <el-input v-model="temp.userPwd"
+                    type="password" />
+        </el-form-item>
+        <el-form-item label="新密码"
+                      prop="userPwdNew">
+          <el-input v-model="temp.userPwdNew"
+                    type="password" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="dialogPwdVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button v-if="dialogStatus=='updatePwd'"
+                   type="primary"
+                   @click="updatePwdData">{{ $t('table.confirm') }}</el-button>
+      </div>
+    </el-dialog>
   </el-menu>
 </template>
 
@@ -90,6 +120,9 @@ import {
   getBuildingList,
   getRoomList
 } from '@/api/property'
+import {
+  modifyPwd
+} from '@/api/user'
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
@@ -110,12 +143,39 @@ export default {
     ThemePicker
   },
   data() {
+    const validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('新密码不能为空'))
+      } else if (value === this.temp.userPwd) {
+        callback(new Error('新密码不能和旧的密码一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
       showCommunity: true,
       appPermission: [],
       selectAppId: '',
       communityId: '',
-      communityName: ''
+      communityName: '',
+      dialogPwdVisible: false,
+      dialogStatus: '',
+      textMap: {
+        updatePwd: '修改密码'
+      },
+      temp: {
+        id: '',
+        userPwd: '',
+        userPwdNew: ''
+      },
+      rules: {
+        userPwd: [
+          { required: true, message: '用户密码不能为空', trigger: 'blur' }
+        ],
+        userPwdNew: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -124,6 +184,13 @@ export default {
       'name',
       'avatar'
     ]),
+    userId() {
+      const sessionData = sessionStorage.getItem('userId')
+      if (this.$store.getters.userId === '' && sessionData) {
+        this.$store.commit('SET_USERID', sessionData)// 同步操作
+      }
+      return this.$store.getters.userId
+    },
     trueName() {
       const sessionData = sessionStorage.getItem('trueName')
       if (this.$store.getters.trueName === '' && sessionData) {
@@ -299,6 +366,41 @@ export default {
           this.appPermission.push(this.permissionSys[i])
         }
       }
+    },
+    handleUpdatePwd(id) {
+      // 绑定事件
+      this.temp = {
+        id: '',
+        userPwd: '',
+        userPwdNew: ''
+      }
+      this.temp.id = id // copy obj
+      this.dialogStatus = 'updatePwd'
+      this.dialogPwdVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    updatePwdData() {
+      // 绑定 确认事件
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          modifyPwd({ userId: tempData.id, oldPwd: tempData.userPwd, newPwd: tempData.userPwdNew }).then((response) => {
+            if (response.status === 200) {
+              if (response.data.code === 200) {
+                this.dialogPwdVisible = false
+                this.$notify({
+                  title: '成功',
+                  message: response.data.msg,
+                  type: 'success',
+                  duration: 2000
+                })
+              }
+            }
+          })
+        }
+      })
     }
 
   }
