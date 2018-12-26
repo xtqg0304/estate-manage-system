@@ -14,7 +14,7 @@
         <img :src="logoUrl"
              alt="logo">
         <!-- <span>仟泰科技</span> -->
-        <span>物业宝</span>
+        <span>{{ logoName }}</span>
       </router-link>
       <sidebar-item v-for="route in permission_routers"
                     :key="route.name"
@@ -33,7 +33,8 @@ export default {
   components: { SidebarItem, Item },
   data() {
     return {
-      logoUrl: ''
+      logoUrl: '',
+      logoName: ''
     }
   },
   computed: {
@@ -105,6 +106,7 @@ export default {
       for (let i = 0; i < this.communityList.length; i++) {
         if (this.communityList[i].id === this.selectCommunity) {
           this.logoUrl = this.communityList[i].shortName
+          this.logoName = this.communityList[i].name
         }
       }
     }
