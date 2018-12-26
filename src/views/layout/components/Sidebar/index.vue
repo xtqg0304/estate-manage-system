@@ -78,6 +78,9 @@ export default {
     //     eleA.setAttribute('id', 'titleLogoClose')
     //   }
     // }
+    selectCommunity(curVal, oldVal) {
+      this.getLogo()
+    }
   },
   created() {
     this.getLogo()

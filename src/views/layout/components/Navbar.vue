@@ -1,23 +1,31 @@
 <template>
-  <el-menu class="navbar" mode="horizontal">
-    <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container" />
+  <el-menu class="navbar"
+           mode="horizontal">
+    <hamburger :toggle-click="toggleSideBar"
+               :is-active="sidebar.opened"
+               class="hamburger-container" />
     <breadcrumb class="breadcrumb-container" />
     <div class="right-menu">
       <error-log class="errLog-container right-menu-item" />
-      <el-select v-model="selectAppId" style="float:left;" placeholder="请选择" @change="handelChange">
-        <el-option
-          v-for="item in appPermission"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"/>
+      <el-select v-model="selectAppId"
+                 style="float:left;"
+                 placeholder="请选择"
+                 @change="handelChange">
+        <el-option v-for="item in appPermission"
+                   :key="item.id"
+                   :label="item.name"
+                   :value="item.id" />
       </el-select>
       <!-- <treeselect class="treeSelect" v-model="selectSysId" :multiple="false" :options="permission" placeholder="切换子系统"/> -->
-      <el-select v-if="!showCommunity" v-model="selectCommunity" style="float:left;" placeholder="请选择" @change="handelChangeCommunity" >
-        <el-option
-          v-for="item in communityList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"/>
+      <el-select v-if="!showCommunity"
+                 v-model="communityId"
+                 style="float:left;"
+                 placeholder="请选择"
+                 @change="handelChangeCommunity">
+        <el-option v-for="item in communityList"
+                   :key="item.id"
+                   :label="item.name"
+                   :value="item.id" />
       </el-select>
       <!-- <el-dropdown v-if="showCommunity" class="avatar-container right-menu-item">
         <div class="avatar-wrapper">
@@ -26,10 +34,12 @@
           </span>
         </div>
       </el-dropdown> -->
-      <div v-if="showCommunity" class="avatar-container right-menu-item" style="margin-left:30px;color:#606266;font-size:14px;">
+      <div v-if="showCommunity"
+           class="avatar-container right-menu-item"
+           style="margin-left:30px;color:#606266;font-size:14px;">
         <div class="avatar-wrapper">
           <span @click="handelShow">
-            <svg-icon icon-class="mapLabel1">&nbsp;</svg-icon>{{ selectCommunityText }}
+            <svg-icon icon-class="mapLabel1">&nbsp;</svg-icon>{{ communityName }}
           </span>
         </div>
       </div>
@@ -47,7 +57,8 @@
         <theme-picker class="theme-switch right-menu-item" />
       </el-tooltip> -->
 
-      <el-dropdown class="avatar-container right-menu-item" trigger="click">
+      <el-dropdown class="avatar-container right-menu-item"
+                   trigger="click">
         <div class="avatar-wrapper">
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
           <img class="user-avatar">
@@ -63,7 +74,8 @@
             </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
+            <span style="display:block;"
+                  @click="logout">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -99,7 +111,9 @@ export default {
     return {
       showCommunity: true,
       appPermission: [],
-      selectAppId: ''
+      selectAppId: '',
+      communityId: '',
+      communityName: ''
     }
   },
   computed: {
@@ -153,6 +167,8 @@ export default {
   },
   created() {
     this.selectAppId = this.selectSysId
+    this.communityId = this.selectCommunity
+    this.communityName = this.selectCommunityText
     this.handlePermissionSys()
   },
   methods: {
@@ -269,9 +285,9 @@ export default {
     /** 根据小区id 获取对应小区的名字 */
     getCommunityText() {
       for (let i = 0; i < this.communityList.length; i++) {
-        if (this.communityList[i].id === this.selectCommunity) {
-          this.selectCommunityText = this.communityList[i].name
-          this.$store.commit('SET_SELECTCOMMUNITYNAME', this.selectCommunityText)
+        if (this.communityList[i].id === this.communityId) {
+          this.communityName = this.communityList[i].name
+          this.$store.commit('SET_SELECTCOMMUNITYNAME', this.communityName)
         }
       }
     },
