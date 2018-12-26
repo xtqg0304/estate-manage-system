@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { estateServer } from '@/api/api.js'
+import { estateServer, basicServer } from '@/api/api.js'
 
 /* 获取投诉建议信息列表 */
 export function fetchList(data) {
@@ -14,6 +14,15 @@ export function fetchList(data) {
 export function editComplaint(data) {
   return request({
     url: estateServer + '/complaint/mergeComplaint',
+    method: 'post',
+    data
+  })
+}
+
+/* 报事报修推送 */
+export function pushComplaint(data) {
+  return request({
+    url: basicServer + '/wxmsg/sendWxMsgByAppid',
     method: 'post',
     data
   })

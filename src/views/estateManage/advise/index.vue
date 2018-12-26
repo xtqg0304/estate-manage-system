@@ -182,6 +182,9 @@ import {
   fetchList,
   editReport
 } from '@/api/advise.js'
+import {
+  pushComplaint
+} from '@/api/repair.js'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
@@ -397,6 +400,19 @@ export default {
                       break
                     }
                   }
+                  pushComplaint({ openId: this.temp.wxUserId, templateType: '3', templateDataList: ['投诉建议', this.temp.publishTime, this.temp.content] }).then((response) => {
+                    if (response.status === 200) {
+                      if (response.data.code === 200) {
+                        // 推送成功后的回调
+                        this.$notify({
+                          title: '成功',
+                          message: response.data.msg,
+                          type: 'success',
+                          duration: 2000
+                        })
+                      }
+                    }
+                  })
                   this.dialogFormVisible = false
                   this.$notify({
                     title: '成功',
@@ -436,6 +452,19 @@ export default {
                   break
                 }
               }
+              pushComplaint({ openId: this.temp.wxUserId, templateType: '3', templateDataList: ['投诉建议', this.temp.publishTime, this.temp.content] }).then((response) => {
+                if (response.status === 200) {
+                  if (response.data.code === 200) {
+                    // 推送成功后的回调
+                    this.$notify({
+                      title: '成功',
+                      message: response.data.msg,
+                      type: 'success',
+                      duration: 2000
+                    })
+                  }
+                }
+              })
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',

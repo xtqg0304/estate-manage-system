@@ -179,7 +179,8 @@
 <script>
 import {
   fetchList,
-  editComplaint
+  editComplaint,
+  pushComplaint
 } from '@/api/repair.js'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
@@ -388,7 +389,6 @@ export default {
             editComplaint(tempData).then((response) => {
               if (response.status === 200) {
                 if (response.data.code === 200) {
-                  debugger
                   for (const v of this.list) {
                     // 更新后的值插入原来数据的位置
                     if (v.id === this.temp.id) {
@@ -397,6 +397,19 @@ export default {
                       break
                     }
                   }
+                  pushComplaint({ openId: this.temp.wxUserId, templateType: '3', templateDataList: ['报事报修', this.temp.publishTime, this.temp.content] }).then((response) => {
+                    if (response.status === 200) {
+                      if (response.data.code === 200) {
+                        // 推送成功后的回调
+                        this.$notify({
+                          title: '成功',
+                          message: response.data.msg,
+                          type: 'success',
+                          duration: 2000
+                        })
+                      }
+                    }
+                  })
                   this.dialogFormVisible = false
                   this.$notify({
                     title: '成功',
@@ -404,19 +417,7 @@ export default {
                     type: 'success',
                     duration: 2000
                   })
-                } else {
-                  this.$notify.error({
-                    title: '失败',
-                    message: response.data.msg,
-                    duration: 2000
-                  })
                 }
-              } else {
-                this.$notify.error({
-                  title: '失败',
-                  message: response.data.msg,
-                  duration: 2000
-                })
               }
             })
           }
@@ -436,6 +437,19 @@ export default {
                   break
                 }
               }
+              pushComplaint({ openId: this.temp.wxUserId, templateType: '3', templateDataList: ['报事报修', this.temp.publishTime, this.temp.content] }).then((response) => {
+                if (response.status === 200) {
+                  if (response.data.code === 200) {
+                    // 推送成功后的回调
+                    this.$notify({
+                      title: '成功',
+                      message: response.data.msg,
+                      type: 'success',
+                      duration: 2000
+                    })
+                  }
+                }
+              })
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -443,19 +457,7 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-            } else {
-              this.$notify.error({
-                title: '失败',
-                message: response.data.msg,
-                duration: 2000
-              })
             }
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
           }
         })
       }

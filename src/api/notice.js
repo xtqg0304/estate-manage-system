@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { estateServer } from '@/api/api.js'
+import { estateServer, basicServer } from '@/api/api.js'
 
 /* 获取公告信息列表 */
 export function fetchList(data) {
@@ -14,6 +14,15 @@ export function fetchList(data) {
 export function editNotice(data) {
   return request({
     url: estateServer + '/notice/mergeNotice',
+    method: 'post',
+    data
+  })
+}
+
+/* 推送 公告 */
+export function pushNotice(data) {
+  return request({
+    url: basicServer + '/wxmsg/noticeNotify',
     method: 'post',
     data
   })
