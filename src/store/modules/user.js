@@ -1,5 +1,5 @@
 import { loginByUsername, logout } from '@/api/login'
-import { setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 import {
   getUserCommunity
 } from '@/api/communityManage'
@@ -26,7 +26,7 @@ const user = {
     uuid: '',
     mobile: '',
     email: '',
-    token: '',
+    token: getToken(),
     platform: '',
     pushUserId: '',
     pushChannelId: '',
@@ -228,10 +228,8 @@ const user = {
       return new Promise((resolve, reject) => {
         logout()
           .then((response) => {
-            // console.log(response)
             if(response.data.code === 200){
               commit('SET_TOKEN', '')
-              // commit('SET_ROLES', [])
               removeToken()
               sessionStorage.clear()
               resolve(response)

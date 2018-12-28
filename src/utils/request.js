@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
 import store from '@/store'
 import router from '@/router'
-// import { getToken } from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
 // create an axios instance
@@ -15,10 +15,12 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-    if (sessionStorage.getItem('x-auth-token')) {
-      // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-      config.headers['x-auth-token'] = sessionStorage.getItem('x-auth-token')
-      // config.headers['x-auth-token'] = getToken()
+    // if (sessionStorage.getItem('x-auth-token')) {
+    //   config.headers['x-auth-token'] = sessionStorage.getItem('x-auth-token')
+    // }
+    if (store.getters.token) {
+      // 让每个请求携带 token-- ['X-Token'] 为自定义 key 请根据实际情况自行修改
+      config.headers['x-auth-token'] = getToken()
     }
     return config
   },
