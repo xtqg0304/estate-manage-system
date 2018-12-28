@@ -297,7 +297,6 @@ export default {
     },
     /** 子系统切换 */
     handelChange(value) {
-      console.log(value)
       this.$store.commit('SET_SUBSYSTEMID', value)
       this.$store.dispatch('GenerateRoutes', value).then(() => {
         this.$router.addRoutes(this.$store.getters.addRouters) // 动态添加可访问路由表

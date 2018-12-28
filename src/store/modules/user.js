@@ -170,6 +170,9 @@ const user = {
     // 获取用户小区列表
     GetUserCommunity({ commit, state }) {
       return new Promise((resolve, reject) => {
+        if(!state.userId ){
+          state.userId = sessionStorage.getItem('userId')
+        }
         getUserCommunity({id: state.userId})
           .then(response => {
             if(response.status === 200){

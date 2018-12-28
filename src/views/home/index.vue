@@ -345,10 +345,6 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)
-    this.$store.dispatch('GenerateRoutes', to.params.systemName).then(() => {
-      this.$router.addRoutes(this.$store.getters.addRouters) // 动态添加可访问路由表
-      next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
-    })
     this.$store.dispatch('delAllVisitedViews') // 清空tagview的已访问过的连接
     this.$store.dispatch('delAllCachedViews') // 清空tagview的已访问过的缓存连接
     next()

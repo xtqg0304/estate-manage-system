@@ -118,7 +118,7 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
-            this.$store.dispatch('GetUserCommunity')
+            // this.$store.dispatch('GetUserCommunity')
             this.loading = false
             this.$router.push({ path: '/home' })
           }).catch(() => {
