@@ -1,7 +1,5 @@
 import request from '@/utils/request'
-import {
-  paymentServer
-} from '@/api/api.js'
+import { paymentServer } from '@/api/api.js'
 /*  导入账单信息 */
 export function importBill(data) {
   return request({
@@ -75,6 +73,14 @@ export function fetchEstatePayMonth(data) {
 export function fetchPropertyOrderList(data) {
   return request({
     url: paymentServer + '/property/bigData/getPropertyOrderList',
+    method: 'post',
+    data
+  })
+}
+/* 缴费接口*/
+export function cashPay(data) {
+  return request({
+    url: paymentServer + '/property/case/pay',
     method: 'post',
     data
   })

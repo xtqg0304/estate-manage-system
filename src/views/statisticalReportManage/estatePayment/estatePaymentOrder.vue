@@ -151,7 +151,9 @@ export default {
     payFilter(status) {
       const statusMap = {
         1: '微信支付',
-        2: '支付宝'
+        2: '支付宝',
+        3: '现金支付',
+        10: '其他第三方支付'
       }
       return statusMap[status]
     },
@@ -217,11 +219,19 @@ export default {
       statusOptions: [
         {
           label: '微信支付',
-          value: 1
+          value: '1'
         },
         {
           label: '支付宝',
-          value: 2
+          value: '2'
+        },
+        {
+          label: '现金支付',
+          value: '3'
+        },
+        {
+          label: '其他第三方支付',
+          value: '10'
         }
       ],
       dialogDetailVisible: false,

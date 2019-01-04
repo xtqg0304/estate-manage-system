@@ -26,10 +26,11 @@
 
       <el-cascader :options="roomList"
                    v-model="listQuery.searchEstate"
+                   clearable
                    expand-trigger="hover"
                    placeholder="房产名称"
                    class="filter-item" />
-      <el-select v-model="listQuery.statusBill"
+      <el-select v-model="listQuery.billStatus"
                  placeholder="账单状态"
                  clearable
                  class="filter-item">
@@ -131,6 +132,11 @@
         <template slot-scope="scope">
           <el-button v-if="scope.row.editButton"
                      size="mini"
+                     type="primary"
+                     @click="handlePayEstate(scope.row)">缴费
+          </el-button>
+          <el-button v-if="scope.row.editButton"
+                     size="mini"
                      type="success"
                      @click="handleModifyStatus(scope.row, 4)">销账
           </el-button>
@@ -160,7 +166,8 @@ import {
   fetchBillList,
   editBillAmount,
   editBillStatus,
-  importBill
+  importBill,
+  cashPay
 } from '@/api/payManage'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
@@ -405,6 +412,28 @@ export default {
     },
     submitAssess() {
       this.$refs.upload.submit()
+    },
+    handlePayEstate(row) {
+      cashPay({ id: row.id }).then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            row.billStatus = response.data.data.billStatus
+            for (const v of this.list) {
+              // 更新后的值插入原来数据的位置
+              if (v.id === row.id) {
+                const index = this.list.indexOf(v)
+                this.list.splice(index, 1, row)
+                break
+              }
+            }
+            row.editButton = false
+            this.$message({
+              message: '缴费成功',
+              type: 'success'
+            })
+          }
+        }
+      })
     }
   }
 }
