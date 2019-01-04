@@ -83,6 +83,9 @@
             @click="handleBind(scope.row)">小区</el-button> -->
           <el-button type="primary"
                      size="mini"
+                     @click="handleSecret(scope.row)">加密</el-button>
+          <el-button type="primary"
+                     size="mini"
                      @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
           <el-button type="danger"
                      size="mini"
@@ -195,7 +198,8 @@ import {
   fetchList,
   editPublicAccount,
   deletePublicAccount,
-  bindCommunity
+  bindCommunity,
+  decodeAppid
 } from '@/api/wechat'
 import {
   fetchCommunity
@@ -495,6 +499,18 @@ export default {
               })
             }
           })
+        }
+      })
+    },
+    handleSecret(row) {
+      decodeAppid({ 'appid': row.appid }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const appid = response.data.data
+            this.$alert(`<p style="word-wrap:break-word;">${appid}</p>`, '加密后的APPID，请妥善保存', {
+              dangerouslyUseHTMLString: true
+            })
+          }
         }
       })
     }

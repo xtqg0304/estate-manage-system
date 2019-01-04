@@ -24,14 +24,6 @@
               fit
               highlight-current-row
               style="width: 100%;min-height:500px;">
-      <!-- <el-table-column
-        label="ID"
-        align="center"
-        width="65">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column> -->
       <el-table-column label="开发者ID"
                        align="center"
                        width="200">
@@ -70,6 +62,9 @@
                        width="230"
                        class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button type="primary"
+                     size="mini"
+                     @click="handleSecret(scope.row)">加密</el-button>
           <el-button type="success"
                      size="mini"
                      @click="handleBind(scope.row)">公众号</el-button>
@@ -102,11 +97,6 @@
                label-position="left"
                label-width="100px"
                style="width: 400px; margin-left:50px;">
-        <!-- <el-form-item
-          label="ID"
-          prop="id">
-          <el-input v-model="temp.id" />
-        </el-form-item> -->
         <el-form-item label="开发ID"
                       prop="appid">
           <el-input v-model="temp.appid" />
@@ -186,7 +176,8 @@ import {
   deleteSmallProject,
   bindPublicAccount,
   fetchWechatList,
-  fetcMaBingMpId
+  fetcMaBingMpId,
+  decodeAppid
 } from '@/api/wechat'
 import waves from '@/directive/waves' // 水波纹指令
 export default {
@@ -481,6 +472,18 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.wechatOptions = response.data.data
+          }
+        }
+      })
+    },
+    handleSecret(row) {
+      decodeAppid({ 'appid': row.appid }).then(response => {
+        if (response.status === 200) {
+          if (response.data.code === 200) {
+            const appid = response.data.data
+            this.$alert(`<p style="word-wrap:break-word;">${appid}</p>`, '加密后的APPID，请妥善保存', {
+              dangerouslyUseHTMLString: true
+            })
           }
         }
       })

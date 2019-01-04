@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 @click="handleDownload"> 导出 </el-button>
       <el-date-picker v-model="listQuery.beginTime"
                       :picker-options="timePickerOptions"
                       class="filter-item-rangedate"
@@ -22,7 +26,7 @@
                    :label="item.label"
                    :value="item.id" />
       </el-select>
-      <el-input v-model="listQuery.keyword"
+      <el-input v-model="listQuery.searchKey"
                 placeholder="关键字"
                 style="width: 200px;"
                 class="filter-item"
@@ -64,6 +68,24 @@
                        min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="图片"
+                       align="center"
+                       width="120">
+        <template slot-scope="scope">
+          <span class="link-type">
+            <el-popover v-for="(img,i) in scope.row.urls"
+                        :key="i"
+                        placement="top"
+                        trigger="hover">
+              <img :src="img"
+                   style="max-height:200px;">
+              <img slot="reference"
+                   :src="img"
+                   style="max-height:23px;vertical-align: bottom;">
+            </el-popover>
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="投诉时间"
@@ -146,7 +168,7 @@
                style="width: 400px; margin-left:50px;">
         <el-form-item label="投诉房产"
                       prop="id">
-          {{ temp.id }}
+          {{ temp.roomId }}
         </el-form-item>
         <el-form-item label="投诉人"
                       prop="announcer">
@@ -234,10 +256,10 @@ export default {
       listQuery: {
         currentPage: 1,
         pageSize: 20,
-        status: undefined,
-        beginTime: undefined,
-        endTime: undefined,
-        keyword: undefined,
+        status: '',
+        beginTime: '',
+        endTime: '',
+        searchKey: '',
         qryReportElementData: [
           {
             id: '',
@@ -508,6 +530,11 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'detail'
       this.dialogDetailVisible = true
+    },
+    /* 导出 */
+    handleDownload() {
+      const url = `http://${window.location.host}/api/goodsServer/report/exportReport?searchKey=${this.listQuery.searchKey}&reportType=${this.listQuery.status}&beginTime=${this.listQuery.beginTime}&endTime=${this.listQuery.endTime}&communityId=${this.listQuery.qryReportElementData[0].communityId}`
+      window.location.href = url
     }
   }
 }

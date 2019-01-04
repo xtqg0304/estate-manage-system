@@ -105,3 +105,11 @@ export function deleteWxMsg(data) {
     data
   })
 }
+/*  加密APPId */
+export function decodeAppid(data) {
+  return request({
+    url: basicServer + '/wechat/decodeAppid',
+    method: 'post',
+    data
+  })
+}

@@ -399,19 +399,7 @@ export default {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.communityOptions = response.data.data
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
         }
       })
     },
