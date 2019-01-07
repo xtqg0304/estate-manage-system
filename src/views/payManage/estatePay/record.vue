@@ -84,6 +84,20 @@
           <span>{{ scope.row.payStatus | statusFilter }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="优惠金额"
+                       align="center"
+                       width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.couponAmout }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注"
+                       align="center"
+                       width="220">
+        <template slot-scope="scope">
+          <span>{{ scope.row.couponDemo }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('table.actions')"
                        align="center"
                        width="230"
