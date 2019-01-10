@@ -27,6 +27,15 @@
         <el-option label="已发布"
                    value="PUBLISHED" />
       </el-select>
+      <el-select v-model="listQuery.type"
+                 placeholder="公告类型"
+                 clearable
+                 class="filter-item">
+        <el-option v-for="item in typeOptions"
+                   :key="item.id"
+                   :label="item.label"
+                   :value="item.id" />
+      </el-select>
       <el-input v-model="listQuery.keyword"
                 placeholder="关键字"
                 style="width: 200px;"
@@ -69,6 +78,12 @@
                        min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.announcer }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="类型"
+                       min-width="150px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.type | typeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="阅读数"
@@ -140,6 +155,19 @@
                       prop="announcer">
           <el-input v-model="temp.announcer" />
         </el-form-item>
+        <el-form-item label="类型"
+                      prop="type">
+          <el-select v-model="temp.type"
+                     clearable
+                     class="filter-item"
+                     placeholder="请选择类型"
+                     style="width:100%">
+            <el-option v-for="item in typeOptions"
+                       :key="item.id"
+                       :label="item.label"
+                       :value="item.id" />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -170,6 +198,19 @@ import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
+  filters: {
+    typeFilter(status) {
+      const statusMap = {
+        '0': '默认公告',
+        '1': '社区义诊',
+        '2': '法律咨询',
+        '3': '培训体验',
+        '4': '保险常识',
+        '5': '社区义工'
+      }
+      return statusMap[status]
+    }
+  },
   directives: {
     waves
   },
@@ -209,6 +250,7 @@ export default {
         beginTime: '',
         endTime: '',
         keyword: '',
+        type: '',
         qryInfoData: [
           {
             status: '',
@@ -226,7 +268,8 @@ export default {
         imageUrl: '',
         status: '',
         openOffstatus: '',
-        communityId: ''
+        communityId: '',
+        type: '0'
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -245,7 +288,34 @@ export default {
         announcer: [
           { required: true, message: '请输入发布人员名称', trigger: 'blur' }
         ]
-      }
+      },
+      typeOptions: [
+        {
+          id: '0',
+          label: '默认公告'
+        },
+        {
+          id: '1',
+          label: '社区义诊'
+        },
+        {
+          id: '2',
+          label: '法律咨询'
+        },
+        {
+          id: '3',
+          label: '培训体验'
+        },
+        {
+          id: '4',
+          label: '保险常识'
+        },
+        {
+          id: '5',
+          label: '社区义工'
+        }
+
+      ]
     }
   },
   computed: {
@@ -332,7 +402,8 @@ export default {
         imageUrl: '',
         status: '',
         openOffstatus: '',
-        communityId: this.communityId
+        communityId: this.communityId,
+        type: '0'
       }
     },
     handleCreate() {
