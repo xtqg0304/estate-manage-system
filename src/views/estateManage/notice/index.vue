@@ -420,6 +420,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           this.temp.publishTime = parseTime(new Date())
+          this.temp.status = 'REMOVED'
           editNotice(this.temp).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
@@ -430,19 +431,6 @@ export default {
                   response.data.data.openOffstatus = false
                 }
                 this.list.unshift(response.data.data)
-                pushNotice({ communityId: this.communityId, templateDataList: [this.temp.head, this.temp.publishTime, this._getSimpleText(this.temp.content)] }).then((response) => {
-                  if (response.status === 200) {
-                    if (response.data.code === 200) {
-                      // 推送成功后的回调
-                      this.$notify({
-                        title: '成功',
-                        message: response.data.msg,
-                        type: 'success',
-                        duration: 2000
-                      })
-                    }
-                  }
-                })
                 this.dialogFormVisible = false
                 this.$notify({
                   title: '成功',
@@ -526,26 +514,29 @@ export default {
                 break
               }
             }
-            this.dialogFormVisible = false
+            // this.dialogFormVisible = false
+            if (this.temp.status === 'PUBLISHED') {
+              pushNotice({ communityId: this.communityId, templateDataList: [this.temp.head, this.temp.publishTime, this._getSimpleText(this.temp.content)] }).then((response) => {
+                if (response.status === 200) {
+                  if (response.data.code === 200) {
+                    // 推送成功后的回调
+                    this.$notify({
+                      title: '成功',
+                      message: response.data.msg,
+                      type: 'success',
+                      duration: 2000
+                    })
+                  }
+                }
+              })
+            }
             this.$notify({
               title: '成功',
-              message: '更新成功',
+              message: '公告状态更新成功',
               type: 'success',
               duration: 2000
             })
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: response.data.msg,
-              duration: 2000
-            })
           }
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: response.data.msg,
-            duration: 2000
-          })
         }
       })
     },
@@ -566,6 +557,7 @@ export default {
           const tempData = Object.assign({}, this.temp)
           tempData.id = ''
           tempData.publishTime = parseTime(new Date())
+          tempData.status = 'PUBLISHED'
           editNotice(tempData).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {
