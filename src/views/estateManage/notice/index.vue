@@ -599,7 +599,9 @@ export default {
     _getSimpleText(html) { // 过滤html标签
       const reg = new RegExp('<.+?>', 'g')
       const msg = html.replace(reg, '')
-      return msg
+      const reg1 = /&[^&;]+;/g
+      const msg1 = msg.replace(reg1, '')
+      return msg1
     }
   }
 }
