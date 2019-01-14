@@ -45,21 +45,23 @@
               fit
               highlight-current-row
               style="width: 100%;min-height:500px;">
-      <el-table-column label="标题"
+      <el-table-column :show-overflow-tooltip="true"
+                       label="标题"
                        align="center"
-                       width="65">
+                       width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.head }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布时间"
-                       width="150px"
+                       width="180px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.publishTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="发布内容"
+      <el-table-column :show-overflow-tooltip="true"
+                       label="发布内容"
                        min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
@@ -292,24 +294,24 @@ export default {
     handleFilter() {
       console.log(this.listQuery)
       this.listQuery.qryScrolPicData[0].communityId = this.userInfo.selectCommunity
-      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
-      this.listQuery.endTime = parseTime(this.listQuery.endTime)
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       // 搜索数据（默认请求第一页数据）
       this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
       this.listQuery.qryInfoData[0].communityId = this.userInfo.selectCommunity
-      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
-      this.listQuery.endTime = parseTime(this.listQuery.endTime)
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       // 每页显示多少条数据
       this.listQuery.pageSize = val
       this.getList()
     },
     handleCurrentChange(val) {
       this.listQuery.qryInfoData[0].communityId = this.userInfo.selectCommunity
-      this.listQuery.beginTime = parseTime(this.listQuery.beginTime)
-      this.listQuery.endTime = parseTime(this.listQuery.endTime)
+      this.listQuery.beginTime = this.listQuery.beginTime && parseTime(this.listQuery.beginTime)
+      this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
       // 显示第几页的数据
       this.listQuery.page = val
       this.getList()
@@ -405,7 +407,6 @@ export default {
       })
     },
     handleChangeStatus(row) {
-      debugger
       this.temp = Object.assign({}, row) // copy obj
       if (this.temp.openOffstatus === true) {
         this.temp.status = 'PUBLISHED'

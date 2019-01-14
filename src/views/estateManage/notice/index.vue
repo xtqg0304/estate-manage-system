@@ -54,21 +54,23 @@
               fit
               highlight-current-row
               style="width: 100%;min-height:500px;">
-      <el-table-column label="公告标题"
+      <el-table-column :show-overflow-tooltip="true"
+                       label="公告标题"
                        align="center"
-                       width="100">
+                       width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.head }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布时间"
-                       width="220px"
+                       width="180px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.publishTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="发布内容"
+      <el-table-column :show-overflow-tooltip="true"
+                       label="发布内容"
                        min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
