@@ -23,13 +23,19 @@
                  class="filter-item"
                  type="primary"
                  @click="handleDownload"> 模版下载 </el-button>
-
-      <el-cascader :options="roomList"
+      <!-- 一次性获取全部的房产数据 -->
+      <!-- <el-cascader :options="roomList"
                    v-model="listQuery.searchEstate"
                    clearable
                    expand-trigger="hover"
                    placeholder="房产名称"
-                   class="filter-item" />
+                   class="filter-item" /> -->
+      <!-- 根据楼栋分别获取房产信息 -->
+      <el-cascader :options="buildings"
+                   v-model="listQuery.searchEstate"
+                   placeholder="房产名称"
+                   class="filter-item"
+                   @active-item-change="handleChange" />
       <el-select v-model="listQuery.billStatus"
                  placeholder="账单状态"
                  clearable
@@ -170,6 +176,7 @@ import {
   cashPay
 } from '@/api/payManage'
 import waves from '@/directive/waves' // 水波纹指令
+import { estateSelectMixin, estateSelectLazyLoadMixin } from '@/mixin/estateSelect'
 export default {
   name: 'ComplexTable',
   directives: {
@@ -195,6 +202,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [estateSelectMixin, estateSelectLazyLoadMixin],
   data() {
     return {
       tableData: [],
@@ -225,7 +233,8 @@ export default {
           label: '未缴',
           value: 3
         }
-      ]
+      ],
+      buildings: []
     }
   },
   computed: {
@@ -246,6 +255,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getBuilding()
   },
   methods: {
     getList() {
@@ -351,12 +361,6 @@ export default {
               message: '金额改变成功',
               type: 'success'
             })
-            // this.$notify({
-            //   title: '成功',
-            //   message: '更新成功',
-            //   type: 'success',
-            //   duration: 2000
-            // })
           } else {
             this.$notify.error({
               title: '失败',

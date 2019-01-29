@@ -23,13 +23,12 @@
                  class="filter-item"
                  type="primary"
                  @click="handleDownload"> 模版下载 </el-button>
-
-      <el-cascader :options="roomList"
+      <!-- 根据楼栋分别获取房产信息 -->
+      <el-cascader :options="buildings"
                    v-model="listQuery.searchEstate"
-                   clearable
-                   expand-trigger="hover"
                    placeholder="房产名称"
-                   class="filter-item" />
+                   class="filter-item"
+                   @active-item-change="handleChange" />
       <el-select v-model="listQuery.billStatus"
                  placeholder="账单状态"
                  clearable
@@ -170,6 +169,7 @@ import {
   cashPay
 } from '@/api/payManage'
 import waves from '@/directive/waves' // 水波纹指令
+import { estateSelectLazyLoadMixin } from '@/mixin/estateSelect'
 export default {
   name: 'ComplexTable',
   directives: {
@@ -195,6 +195,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [estateSelectLazyLoadMixin],
   data() {
     return {
       tableData: [],
@@ -225,7 +226,8 @@ export default {
           label: '未缴',
           value: 3
         }
-      ]
+      ],
+      buildings: []
     }
   },
   computed: {
@@ -235,17 +237,11 @@ export default {
         this.$store.commit('SET_SELECTCOMMUNITY', sessionData)// 同步操作
       }
       return this.$store.state.user.selectCommunity
-    },
-    roomList() {
-      const sessionData = JSON.parse(sessionStorage.getItem('roomList'))
-      if (this.$store.getters.roomList.length === 0 && sessionData) {
-        this.$store.commit('SET_COMMUNITYLIST', sessionData)// 同步操作
-      }
-      return this.$store.getters.roomList
     }
   },
   created() {
     this.getList()
+    this.getBuilding()
   },
   methods: {
     getList() {

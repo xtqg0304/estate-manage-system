@@ -149,12 +149,14 @@ import {
   getEstateInfo
 } from '@/api/property'
 import waves from '@/directive/waves' // 水波纹指令
+import { estateSelectMixin } from '@/mixin/estateSelect'
 import { mapGetters } from 'vuex'
 export default {
   name: 'ComplexTable',
   directives: {
     waves
   },
+  mixins: [estateSelectMixin],
   data() {
     const validPhone = (rule, value, callback) => {
       if (!value) {
@@ -247,6 +249,9 @@ export default {
   },
   created() {
     this.getList()
+    if (this.roomList.length === 0) {
+      this._getRoomList()
+    }
   },
   methods: {
     getList() {

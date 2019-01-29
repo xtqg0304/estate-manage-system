@@ -116,10 +116,10 @@
 </template>
 
 <script>
-import {
-  getBuildingList,
-  getRoomList
-} from '@/api/property'
+// import {
+//   getBuildingList,
+//   getRoomList
+// } from '@/api/property'
 import {
   modifyPwd
 } from '@/api/user'
@@ -316,34 +316,34 @@ export default {
       // let communityIdTemp = value
       this.$store.commit('SET_SELECTCOMMUNITY', value)
       this.getCommunityText()
-      getBuildingList({ id: value }).then(response => {
-        if (response.status === 200) {
-          if (response.data.code === 200) {
-            const buildings = response.data.data
-            const roomList = buildings.map(v => {
-              v.label = v.buildingName
-              v.value = v.id
-              v.children = []
-              return v
-            })
-            for (let i = 0; i < roomList.length; i++) {
-              getRoomList({ communityId: value, buildingId: roomList[i].id }).then(response => {
-                if (response.status === 200) {
-                  if (response.data.code === 200) {
-                    const rooms = response.data.data
-                    roomList[i].children = rooms.map(v => {
-                      v.label = v.room
-                      v.value = v.id
-                      return v
-                    })
-                  }
-                }
-              })
-            }
-            this.$store.commit('SET_ROOMLIST', roomList)
-          }
-        }
-      })
+      // getBuildingList({ id: value }).then(response => {
+      //   if (response.status === 200) {
+      //     if (response.data.code === 200) {
+      //       const buildings = response.data.data
+      //       const roomList = buildings.map(v => {
+      //         v.label = v.buildingName
+      //         v.value = v.id
+      //         v.children = []
+      //         return v
+      //       })
+      //       for (let i = 0; i < roomList.length; i++) {
+      //         getRoomList({ communityId: value, buildingId: roomList[i].id }).then(response => {
+      //           if (response.status === 200) {
+      //             if (response.data.code === 200) {
+      //               const rooms = response.data.data
+      //               roomList[i].children = rooms.map(v => {
+      //                 v.label = v.room
+      //                 v.value = v.id
+      //                 return v
+      //               })
+      //             }
+      //           }
+      //         })
+      //       }
+      //       this.$store.commit('SET_ROOMLIST', roomList)
+      //     }
+      //   }
+      // })
       this.showCommunity = true
     },
     /** 控制显示 小区文字/选择小区下拉 */
