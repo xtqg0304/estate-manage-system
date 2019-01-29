@@ -685,7 +685,7 @@ export default {
           this.getParkingRealTimeInfo()
           this.getParkingChargeInfo()
           this.getComplaintStatusTrend()
-          this.getDcInoutFlagType()
+          // this.getDcInoutFlagType()
           this.getComplaintStatus()
           this.getPayType()
           this.getPropertyPay()
