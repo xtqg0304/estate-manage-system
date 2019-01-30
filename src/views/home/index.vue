@@ -462,8 +462,7 @@ export default {
       let beginTime = new Date()
       beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
       beginTime = new Date(beginTime)
-      //  communityIdList: this.communityIds  先注释
-      fetchDevicetypeCount({ beginTime: parseTime(beginTime), endTime: parseTime(endTime) }).then(response => {
+      fetchDevicetypeCount({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), communityIdList: this.communityIds }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.doorAnalysisdata = {
@@ -529,8 +528,7 @@ export default {
       let beginTime = new Date()
       beginTime = beginTime.setDate(beginTime.getDate() - 30) // 减少30天
       beginTime = new Date(beginTime)
-      // , communityIdList: this.communityIds  先注释
-      fetchDeviceInoutPage({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), currentPage: 1, pageSize: 10 }).then(response => {
+      fetchDeviceInoutPage({ beginTime: parseTime(beginTime), endTime: parseTime(endTime), currentPage: 1, pageSize: 10, communityIdList: this.communityIds }).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
             this.doorTabledata = {

@@ -1,308 +1,368 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item"
-                 style="margin-left: 10px;"
-                 type="primary"
-                 icon="el-icon-edit"
-                 @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-select v-model="listQuery.communityName"
-                 placeholder="选择小区"
-                 clearable
-                 class="filter-item"
-                 @change="communitySelQuery">
-        <el-option v-for="item in communityList"
-                   :key="item.selectCommunityName"
-                   :label="item.selectCommunityName"
-                   :value="item" />
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-select
+        v-model="listQuery.communityName"
+        placeholder="选择小区"
+        clearable
+        class="filter-item"
+        @change="communitySelQuery">
+        <el-option
+          v-for="item in communityList"
+          :key="item.selectCommunityName"
+          :label="item.selectCommunityName"
+          :value="item" />
       </el-select>
-      <el-select v-model="listQuery.buildingName"
-                 placeholder="选择楼栋"
-                 clearable
-                 class="filter-item"
-                 @change="buildingSelQuery">
-        <el-option v-for="item in buildingList"
-                   :key="item.id"
-                   :label="item.buildingName"
-                   :value="item" />
+      <el-select
+        v-model="listQuery.buildingName"
+        placeholder="选择楼栋"
+        clearable
+        class="filter-item"
+        @change="buildingSelQuery">
+        <el-option
+          v-for="item in buildingList"
+          :key="item.id"
+          :label="item.buildingName"
+          :value="item" />
       </el-select>
-      <el-input v-model="search"
-                placeholder="关键字"
-                style="width: 200px;"
-                class="filter-item"
-                @keyup.enter.native="handleFilter" />
-      <el-button v-waves
-                 class="filter-item"
-                 type="primary"
-                 icon="el-icon-search"
-                 @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-input
+        v-model="search"
+        placeholder="关键字"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter" />
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table v-loading="listLoading"
-              :key="tableKey"
-              :data="tables"
-              border
-              fit
-              highlight-current-row
-              style="width: 100%;min-height:500px;">
-      <el-table-column label="设备序列"
-                       align="center"
-                       width="120px"
-                       sortable
-                       prop="deviceSn">
+    <el-table
+      v-loading="listLoading"
+      :key="tableKey"
+      :data="tables"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;min-height:500px;">
+      <el-table-column
+        label="设备序列"
+        align="center"
+        width="120px"
+        sortable
+        prop="deviceSn">
         <template slot-scope="scope">
           <span>{{ scope.row.deviceSn }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备名称"
-                       width="120px"
-                       sortable
-                       prop="deviceName">
+      <el-table-column
+        label="设备名称"
+        width="120px"
+        sortable
+        prop="deviceName">
         <template slot-scope="scope">
           <span>{{ scope.row.deviceName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联房产"
-                       width="180px"
-                       sortable
-                       prop="fieldName">
+      <el-table-column
+        label="关联房产"
+        width="180px"
+        sortable
+        prop="fieldName">
         <template slot-scope="scope">
           <span>{{ scope.row.fieldName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="排序"
-                       min-width="80px"
-                       align="center"
-                       sortable
-                       prop="sort">
+      <el-table-column
+        label="排序"
+        min-width="80px"
+        align="center"
+        sortable
+        prop="sort">
         <template slot-scope="scope">
           <span>{{ scope.row.sort }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="在线状态"
-                       width="120px"
-                       align="center"
-                       sortable
-                       prop="devStatus">
+      <el-table-column
+        label="在线状态"
+        width="120px"
+        align="center"
+        sortable
+        prop="devStatus">
         <template slot-scope="scope">
           <span :class="scope.row.devStatus | statusClassFilter">{{ scope.row.devStatus| statusFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进出标注"
-                       min-width="120px"
-                       align="center"
-                       sortable
-                       prop="outInFlag">
+      <el-table-column
+        label="进出标注"
+        min-width="120px"
+        align="center"
+        sortable
+        prop="outInFlag">
         <template slot-scope="scope">
           <span>{{ scope.row.outInFlag| outFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备流量"
-                       width="120px"
-                       align="center"
-                       sortable
-                       prop="capacity">
+      <el-table-column
+        label="设备流量"
+        width="120px"
+        align="center"
+        sortable
+        prop="capacity">
         <template slot-scope="scope">
-          <el-progress :text-inside="true"
-                       :stroke-width="18"
-                       :percentage="scope.row.capacity | capacityFilter" />
+          <el-progress
+            :text-inside="true"
+            :stroke-width="18"
+            :percentage="scope.row.capacity | capacityFilter" />
         </template>
       </el-table-column>
-      <el-table-column label="备注"
-                       width="80px"
-                       align="center"
-                       sortable
-                       prop="content">
+      <el-table-column
+        label="备注"
+        width="80px"
+        align="center"
+        sortable
+        prop="content">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')"
-                       align="center"
-                       min-width="330"
-                       class-name="small-padding fixed-width">
+      <el-table-column
+        :label="$t('table.actions')"
+        align="center"
+        min-width="330"
+        class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="text"
-                     size="small"
-                     @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button type="text"
-                     size="small"
-                     class="red"
-                     @click="handleDelete(scope.row)">删除</el-button>
-          <el-button type="text"
-                     size="small"
-                     @click="openLog(scope.row)">开锁日志</el-button>
-          <el-button type="text"
-                     size="small"
-                     @click="getKey(scope.row)">二维码</el-button>
-          <el-button type="text"
-                     size="small"
-                     @click="getCode(scope.row)">获取钥匙</el-button>
-          <el-button type="text"
-                     size="small"
-                     @click="getList()">刷新在线状态</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button
+            type="text"
+            size="small"
+            class="red"
+            @click="handleDelete(scope.row)">删除</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="openLog(scope.row)">开锁日志</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="getKey(scope.row)">二维码</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="getCode(scope.row)">获取钥匙</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="getList()">刷新在线状态</el-button>
 
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page"
-                     :page-sizes="[10,20,30, 50]"
-                     :page-size="listQuery.pageSize"
-                     :total="total"
-                     background
-                     layout="total, sizes, prev, pager, next, jumper"
-                     @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange" />
+      <el-pagination
+        :current-page="listQuery.page"
+        :page-sizes="[10,20,30, 50]"
+        :page-size="listQuery.pageSize"
+        :total="total"
+        background
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog :title="textMap[dialogStatus]"
-               :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm"
-               :rules="rules"
-               :model="temp"
-               label-position="left"
-               label-width="90px"
-               style="width: 430px; margin-left:50px;">
-        <el-form-item label="设备名称"
-                      prop="deviceName">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="90px"
+        style="width: 430px; margin-left:50px;">
+        <el-form-item
+          label="设备名称"
+          prop="deviceName">
           <el-input v-model="temp.deviceName" />
         </el-form-item>
 
-        <el-form-item label="设备序列"
-                      prop="deviceSn">
+        <el-form-item
+          label="设备序列"
+          prop="deviceSn">
           <el-input v-model="temp.deviceSn" />
         </el-form-item>
 
-        <el-form-item label="排序"
-                      prop="sort">
+        <el-form-item
+          label="排序"
+          prop="sort">
           <el-input v-model="temp.sort" />
         </el-form-item>
-        <el-form-item label="设备类型"
-                      prop="deviceType">
-          <el-select v-model="temp.deviceTypeName"
-                     clearable
-                     class="filter-item"
-                     placeholder="请选择"
-                     style="width:100%"
-                     @change="deviceTypeSel">
-            <el-option v-for="item in deviceTypeList"
-                       :key="item.deviceFactoryName"
-                       :label="item.deviceFactoryName"
-                       :value="item" />
+        <el-form-item
+          label="设备类型"
+          prop="deviceType">
+          <el-select
+            v-model="temp.deviceTypeName"
+            clearable
+            class="filter-item"
+            placeholder="请选择"
+            style="width:100%"
+            @change="deviceTypeSel">
+            <el-option
+              v-for="item in deviceTypeList"
+              :key="item.deviceFactoryName"
+              :label="item.deviceFactoryName"
+              :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="temp.deviceTypeName === '声波门禁'"
-                      label="设备IP"
-                      prop="deviceIp">
+        <el-form-item
+          v-if="temp.deviceTypeName === '声波门禁'"
+          label="设备IP"
+          prop="deviceIp">
           <el-input v-model="temp.deviceIp" />
         </el-form-item>
-        <el-form-item v-if="temp.deviceTypeName === '声波门禁'"
-                      label="服务器IP"
-                      prop="serviceIp">
+        <el-form-item
+          v-if="temp.deviceTypeName === '声波门禁'"
+          label="服务器IP"
+          prop="serviceIp">
           <el-input v-model="temp.serviceIp" />
         </el-form-item>
-        <el-form-item v-if="temp.deviceTypeName === '声波门禁'"
-                      label="端口"
-                      prop="port">
+        <el-form-item
+          v-if="temp.deviceTypeName === '声波门禁'"
+          label="端口"
+          prop="port">
           <el-input v-model="temp.port" />
         </el-form-item>
-        <el-form-item label="关联房产"
-                      prop="relateHouse">
-          <el-select v-model="temp.communityName"
-                     clearable
-                     class="filter-item"
-                     placeholder="选择小区"
-                     style="width:31%"
-                     @change="communitySel">
-            <el-option v-for="item in communityList"
-                       :key="item.selectCommunityName"
-                       :label="item.selectCommunityName"
-                       :value="item" />
+        <el-form-item
+          label="关联房产"
+          prop="relateHouse">
+          <el-select
+            v-model="temp.communityName"
+            clearable
+            class="filter-item"
+            placeholder="选择小区"
+            style="width:31%"
+            @change="communitySel">
+            <el-option
+              v-for="item in communityList"
+              :key="item.selectCommunityName"
+              :label="item.selectCommunityName"
+              :value="item" />
           </el-select>
-          <el-select v-model="temp.buildingName"
-                     clearable
-                     class="filter-item"
-                     placeholder="选择楼栋"
-                     style="width:31%"
-                     @change="buildingSel">
-            <el-option v-for="item in buildingList"
-                       :key="item.id"
-                       :label="item.buildingName"
-                       :value="item" />
+          <el-select
+            v-model="temp.buildingName"
+            clearable
+            class="filter-item"
+            placeholder="选择楼栋"
+            style="width:31%"
+            @change="buildingSel">
+            <el-option
+              v-for="item in buildingList"
+              :key="item.id"
+              :label="item.buildingName"
+              :value="item" />
           </el-select>
-          <el-select v-model="temp.danyuanName"
-                     clearable
-                     class="filter-item"
-                     placeholder="选择单元"
-                     style="width:31%"
-                     @change="danyuanSel">
-            <el-option v-for="item in danyuanList"
-                       :key="item"
-                       :label="item.unit"
-                       :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="门号"
-                      prop="doorNo">
-          <el-select v-model="temp.doorNo"
-                     clearable
-                     class="filter-item"
-                     placeholder="请选择"
-                     style="width:100%">
-            <el-option v-for="item in doorNoList"
-                       :key="item"
-                       :label="item"
-                       :value="item" />
+          <el-select
+            v-model="temp.danyuanName"
+            clearable
+            class="filter-item"
+            placeholder="选择单元"
+            style="width:31%"
+            @change="danyuanSel">
+            <el-option
+              v-for="item in danyuanList"
+              :key="item"
+              :label="item.unit"
+              :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="备注"
-                      prop="remarks">
-          <el-input :autosize="{ minRows: 2, maxRows: 4}"
-                    v-model="temp.remarks"
-                    type="textarea"
-                    placeholder="请输入内容" />
+        <el-form-item
+          label="门号"
+          prop="doorNo">
+          <el-select
+            v-model="temp.doorNo"
+            clearable
+            class="filter-item"
+            placeholder="请选择"
+            style="width:100%">
+            <el-option
+              v-for="item in doorNoList"
+              :key="item"
+              :label="item"
+              :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="备注"
+          prop="remarks">
+          <el-input
+            :autosize="{ minRows: 2, maxRows: 4}"
+            v-model="temp.remarks"
+            type="textarea"
+            placeholder="请输入内容" />
         </el-form-item>
 
       </el-form>
-      <div slot="footer"
-           class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button v-if="dialogStatus==='create'"
-                   type="primary"
-                   @click="createData">{{ $t('table.confirm') }}</el-button>
-        <el-button v-else
-                   type="primary"
-                   @click="updateData">{{ $t('table.confirm') }}</el-button>
+        <el-button
+          v-if="dialogStatus==='create'"
+          type="primary"
+          @click="createData">{{ $t('table.confirm') }}</el-button>
+        <el-button
+          v-else
+          type="primary"
+          @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
     <!-- 图片 -->
-    <el-dialog :title="codeTitle"
-               :visible.sync="dialogForKey"
-               width="40%">
-      <div align="center"
-           style="width:100%;height:430px">
-        <img :src="qrcode"
-             style="width:80%;height:100%">
+    <el-dialog
+      :title="codeTitle"
+      :visible.sync="dialogForKey"
+      width="40%">
+      <div
+        align="center"
+        style="width:100%;height:430px">
+        <img
+          :src="qrcode"
+          style="width:80%;height:100%">
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible"
-               title="Reading statistics">
-      <el-table :data="pvData"
-                border
-                fit
-                highlight-current-row
-                style="width: 100%">
-        <el-table-column prop="key"
-                         label="Channel" />
-        <el-table-column prop="pv"
-                         label="Pv" />
+    <el-dialog
+      :visible.sync="dialogPvVisible"
+      title="Reading statistics">
+      <el-table
+        :data="pvData"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%">
+        <el-table-column
+          prop="key"
+          label="Channel" />
+        <el-table-column
+          prop="pv"
+          label="Pv" />
       </el-table>
-      <span slot="footer"
-            class="dialog-footer">
-        <el-button type="primary"
-                   @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
+      <span
+        slot="footer"
+        class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -638,6 +698,7 @@ export default {
       }
       getBuilding(params).then(response => {
         if (response.data.code === 200) {
+          console.log('楼栋', response.data.data)
           this.buildingList = response.data.data
         }
 
@@ -672,6 +733,7 @@ export default {
         }
         getCommunity(params).then(response => {
           if (response.data.code === 200) {
+            console.log('单元', response.data.data)
             this.danyuanList = response.data.data
           }
         })
@@ -816,7 +878,8 @@ export default {
             deviceType: this.temp.deviceTypeId,
             deviceIp: this.temp.deviceIp,
             deviceChannelNo: this.temp.doorNo,
-            fieldId: this.temp.danyuanId,
+            // fieldId: this.temp.danyuanId,
+            fieldId: this.temp.buildingId,
             fieldName: fieldName,
             content: this.temp.remarks,
             parentDeviceId: this.temp.serviceIp,
@@ -855,7 +918,7 @@ export default {
       this.temp.deviceIp = row.deviceIp
       this.temp.serviceIp = row.parentDeviceId
       this.temp.remarks = row.content
-      this.temp.danyuanId = row.fieldId
+      this.temp.danyuanId = row.fieldId// 变成楼栋id了(fieldId返回是楼栋id)
       this.temp.port = row.devicePort
       if (row.fieldName) {
         const filename = row.fieldName.split('-')
@@ -909,7 +972,8 @@ export default {
             deviceIp: this.temp.deviceIp,
             deviceType: this.temp.deviceTypeId,
             deviceChannelNo: this.temp.doorNo,
-            fieldId: this.temp.danyuanId,
+            fieldId: this.temp.buildingId,
+            // fieldId: this.temp.danyuanId,
             content: this.temp.remarks,
             fieldName: fieldName,
             devicePort: this.temp.port
