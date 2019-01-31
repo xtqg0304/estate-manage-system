@@ -9,10 +9,12 @@
                action=""
                multiple>
       <el-button slot="trigger"
+                 :disabled="uploadBtn"
                  size="small"
                  type="primary"
                  icon="el-icon-plus">上传文件</el-button>
-      <el-button style="margin-left: 10px;"
+      <el-button :disabled="uploadBtn"
+                 style="margin-left: 10px;"
                  size="small"
                  type="success"
                  icon="el-icon-upload"
@@ -227,7 +229,8 @@ export default {
           value: 3
         }
       ],
-      buildings: []
+      buildings: [],
+      uploadBtn: false
     }
   },
   computed: {
@@ -380,6 +383,8 @@ export default {
     },
     /* 导入数据 */
     submitUpload(content) { // 自定义的上传方法
+      const _this = this
+      _this.uploadBtn = true
       const formdata = new FormData()
       formdata.append('file', content.file)
       formdata.append('communityId', this.communityId) // 获取小区id
@@ -387,6 +392,7 @@ export default {
         .then(response => {
           if (response.status === 200) {
             if (response.data.code === 200) {
+              _this.uploadBtn = false
               this.$notify({
                 title: '成功',
                 message: '导入成功',
@@ -403,6 +409,7 @@ export default {
           }
         })
         .catch(function(error) {
+          _this.uploadBtn = false
           console.log(error)
         })
     },

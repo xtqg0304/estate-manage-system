@@ -34,34 +34,33 @@
               highlight-current-row
               style="width: 100%;min-height:500px;">
       <el-table-column label="房产名称"
-                       min-width="150px">
+                       width="250px">
         <template slot-scope="scope">
           <span>{{ scope.row.estateName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="用户名称"
-                       width="110px"
+                       width="180px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="手机号码"
-                       width="110px"
+                       width="180px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.telephone }}</span>
         </template>
       </el-table-column>
       <el-table-column label="身份证"
-                       width="200px">
+                       width="220px">
         <template slot-scope="scope">
           <span>{{ scope.row.identifyNo }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')"
                        align="center"
-                       width="230"
                        class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary"

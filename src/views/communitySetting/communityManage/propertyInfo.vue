@@ -34,34 +34,33 @@
               highlight-current-row
               style="width: 100%;min-height:500px;">
       <el-table-column :label="$t('table.building')"
-                       min-width="150px">
+                       width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.building }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.floor')"
-                       width="110px"
+                       width="180px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.floor }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.unit')"
-                       width="110px"
+                       width="180px"
                        align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.roomNumber')"
-                       width="200px">
+                       width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.room }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')"
                        align="center"
-                       width="230"
                        class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary"
