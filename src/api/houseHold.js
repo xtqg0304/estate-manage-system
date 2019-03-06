@@ -13,6 +13,7 @@ export function importHousehold(data) {
   return request({
     url: basicServer + '/household/importHouseHold',
     method: 'post',
+    timeout: 60000,
     headers: {
       'Content-Type': 'application/multipart/form-data; charset=UTF-8'
     },

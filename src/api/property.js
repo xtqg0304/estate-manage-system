@@ -12,6 +12,7 @@ export function exportModule(communityId) {
 export function importEstate(data) {
   return request({
     url: basicServer + '/estate/importEstate',
+    timeout: 60000,
     method: 'post',
     headers: {
       'Content-Type': 'application/multipart/form-data; charset=UTF-8'

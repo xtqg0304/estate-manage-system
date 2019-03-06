@@ -18,10 +18,10 @@
                        type="primary"
                        icon="el-icon-plus">上传文件</el-button>
             <el-button :disabled="uploadBtn"
+                       :icon="iconUpload"
                        style="margin-left: 10px;"
                        size="small"
                        type="success"
-                       icon="el-icon-upload"
                        @click="submitAssess">房产导入</el-button>
           </el-upload>
         </span>
@@ -54,7 +54,8 @@ export default {
       tableData: [],
       tableHeader: [],
       tableKey: 0,
-      uploadBtn: false
+      uploadBtn: false,
+      iconUpload: 'el-icon-upload'
     }
   },
   computed: {
@@ -82,6 +83,7 @@ export default {
     submitUpload(content) { // 自定义的上传方法
       const _this = this
       _this.uploadBtn = true
+      _this.iconUpload = 'el-icon-loading'
       const formdata = new FormData()
       formdata.append('file', content.file)
       formdata.append('communityId', this.communityId) // 获取小区id
@@ -90,6 +92,7 @@ export default {
           if (response.status === 200) {
             if (response.data.code === 200) {
               _this.uploadBtn = false
+              _this.iconUpload = 'el-icon-upload'
               this.$notify({
                 title: '成功',
                 message: '导入成功',

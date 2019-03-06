@@ -6,7 +6,7 @@
                  type="primary"
                  icon="el-icon-edit"
                  @click="handleCreate">新增楼栋</el-button>
-      <el-select v-model="listQuery.statusProperty"
+      <el-select v-model="listQuery.estateType"
                  clearable
                  placeholder="请选择房产类型"
                  class="filter-item">
@@ -15,7 +15,7 @@
                    :label="item.value"
                    :value="item.name" />
       </el-select>
-      <el-input v-model="listQuery.keyword"
+      <el-input v-model="listQuery.searchKey"
                 placeholder="关键字"
                 style="width: 200px;"
                 class="filter-item"
@@ -160,15 +160,11 @@ export default {
       listLoading: true,
       listQuery: {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 10,
         statusProperty: undefined,
         communityId: '',
-        keyword: undefined,
-        qryList: [
-          {
-            estateType: ''
-          }
-        ]
+        searchKey: '',
+        estateType: ''
       },
       statuspropertyOptions: [],
       downloadLoading: false,
@@ -273,7 +269,6 @@ export default {
     },
     handleFilter() {
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.qryList[0].estateType = this.listQuery.statusProperty
       this.listQuery.currentPage = 1
       this.getList()
     },

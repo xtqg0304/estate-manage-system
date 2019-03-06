@@ -6,7 +6,7 @@
                  type="primary"
                  icon="el-icon-edit"
                  @click="handleCreate">新增住户</el-button>
-      <el-select v-model="listQuery.statusProperty"
+      <el-select v-model="listQuery.identifyNo"
                  placeholder="请选择住户身份"
                  clearable
                  class="filter-item">
@@ -15,7 +15,7 @@
                    :label="item.value"
                    :value="item.name" />
       </el-select>
-      <el-input v-model="listQuery.keyword"
+      <el-input v-model="listQuery.searchKey"
                 placeholder="关键字"
                 style="width: 200px;"
                 class="filter-item"
@@ -175,10 +175,11 @@ export default {
       listLoading: true,
       listQuery: {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 10,
         statusProperty: undefined,
         communityId: '',
-        keyword: undefined
+        searchKey: '',
+        identifyNo: ''
       },
       statuspropertyOptions: [
         {
@@ -279,7 +280,6 @@ export default {
       })
     },
     handleFilter() {
-      console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
       this.listQuery.currentPage = 1
       this.getList()

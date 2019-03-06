@@ -1,186 +1,156 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate">{{ $t('table.add') }}</el-button>
-      <el-date-picker
-        v-model="listQuery.beginTime"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="开始时间"
-        align="right"/>
-      <el-date-picker
-        v-model="listQuery.endTime"
-        :picker-options="timePickerOptions"
-        class="filter-item-rangedate"
-        type="datetime"
-        placeholder="结束时间"
-        align="right"/>
-      <el-select
-        v-model="listQuery.status"
-        placeholder="公告状态"
-        clearable
-        class="filter-item">
-        <el-option
-          label="已下架"
-          value="REMOVED" />
-        <el-option
-          label="已发布"
-          value="PUBLISHED1" />
+      <el-button class="filter-item"
+                 style="margin-left: 10px;"
+                 type="primary"
+                 icon="el-icon-edit"
+                 @click="handleCreate">{{ $t('table.add') }}</el-button>
+      <el-date-picker v-model="listQuery.beginTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="开始时间"
+                      align="right" />
+      <el-date-picker v-model="listQuery.endTime"
+                      :picker-options="timePickerOptions"
+                      class="filter-item-rangedate"
+                      type="datetime"
+                      placeholder="结束时间"
+                      align="right" />
+      <el-select v-model="listQuery.status"
+                 placeholder="公告状态"
+                 clearable
+                 class="filter-item">
+        <el-option label="已下架"
+                   value="REMOVED" />
+        <el-option label="已发布"
+                   value="PUBLISHED1" />
       </el-select>
-      <el-input
-        v-model="listQuery.keyword"
-        placeholder="关键字"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter" />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-input v-model="listQuery.keyword"
+                placeholder="关键字"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table
-      v-loading="listLoading"
-      :key="tableKey"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;min-height:500px;">
-      <el-table-column
-        label="公告标题"
-        align="center"
-        width="65">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="公告标题"
+                       align="center"
+                       width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.head }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="发布时间"
-        width="150px"
-        align="center">
+      <el-table-column label="发布时间"
+                       width="150px"
+                       align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.publishTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="发布内容"
-        min-width="150px">
+      <el-table-column label="发布内容"
+                       min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="发布者"
-        min-width="150px">
+      <el-table-column label="发布者"
+                       min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.announcer }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="阅读数"
-        align="center"
-        width="95">
+      <el-table-column label="阅读数"
+                       align="center"
+                       width="95">
         <template slot-scope="scope">
-          <span
-            v-if="scope.row.readTimes"
-            class="link-type"
-            @click="handleFetchPv(scope.row.readTimes)">{{ scope.row.readTimes }}</span>
+          <span v-if="scope.row.readTimes"
+                class="link-type"
+                @click="handleFetchPv(scope.row.readTimes)">{{ scope.row.readTimes }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="公告状态"
-        class-name="status-col"
-        width="200">
+      <el-table-column label="公告状态"
+                       class-name="status-col"
+                       width="200">
         <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.status"
-            active-text="已发布"
-            inactive-text="已下架"
-            @change="handleChangeStatus(scope.row)"/>
+          <el-switch v-model="scope.row.status"
+                     active-text="已发布"
+                     inactive-text="已下架"
+                     @change="handleChangeStatus(scope.row)" />
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('table.actions')"
-        align="center"
-        width="230"
-        class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')"
+                       align="center"
+                       width="230"
+                       class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button
-            size="mini"
-            type="success"
-            @click="handleReCreate(scope.row)">再发布</el-button>
+          <el-button type="primary"
+                     size="mini"
+                     @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button size="mini"
+                     type="success"
+                     @click="handleReCreate(scope.row)">再发布</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination
-        :current-page="listQuery.page"
-        :page-sizes="[10,20,30, 50]"
-        :page-size="listQuery.limit"
-        :total="total"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.page"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.limit"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="70px"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item
-          label="标题"
-          prop="title">
+    <el-dialog :title="textMap[dialogStatus]"
+               :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm"
+               :rules="rules"
+               :model="temp"
+               label-position="left"
+               label-width="70px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="标题"
+                      prop="title">
           <el-input v-model="temp.head" />
         </el-form-item>
-        <el-form-item
-          label="公告内容"
-          prop="content"
-          style="width:650px;">
+        <el-form-item label="公告内容"
+                      prop="content"
+                      style="width:650px;">
           <tinymce v-model="temp.content" />
         </el-form-item>
-        <el-form-item
-          label="发布者"
-          prop="announcer">
+        <el-form-item label="发布者"
+                      prop="announcer">
           <el-input v-model="temp.announcer" />
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer">
+      <div slot="footer"
+           class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='create'"
-          type="primary"
-          @click="createData">{{ $t('table.confirm') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='update'"
-          type="primary"
-          @click="updateData">{{ $t('table.confirm') }}</el-button>
-        <el-button
-          v-if="dialogStatus=='reCreate'"
-          type="primary"
-          @click="reCreateData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='create'"
+                   type="primary"
+                   @click="createData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='update'"
+                   type="primary"
+                   @click="updateData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='reCreate'"
+                   type="primary"
+                   @click="reCreateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -231,7 +201,7 @@ export default {
       listLoading: true,
       listQuery: {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 10,
         status: '',
         beginTime: '',
         endTime: '',
