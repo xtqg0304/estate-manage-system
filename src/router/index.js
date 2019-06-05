@@ -49,6 +49,11 @@ export const constantRouterMap = [{
   hidden: true
 },
 {
+  path: '/homeSys',
+  component: () => import('@/views/home/homeSys.vue'),
+  hidden: true
+},
+{
   path: '/404',
   component: () => import('@/views/errorPage/404'),
   hidden: true
