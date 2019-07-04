@@ -81,9 +81,14 @@
                label-position="left"
                label-width="100px"
                style="width: 400px; margin-left:50px;">
-        <el-form-item label="车场ID"
+        <!-- <el-form-item label="车场ID"
                       prop="id">
           {{ temp.id }}
+        </el-form-item> -->
+        <el-form-item v-if="dialogStatus==='update'"
+                      label="小区ID"
+                      prop="id">
+          {{ temp.communityId }}
         </el-form-item>
         <el-form-item label="车场编码"
                       prop="carparkKey ">
@@ -157,9 +162,9 @@
                label-position="left"
                label-width="100px"
                style="width: 400px; margin-left:50px;">
-        <el-form-item label="车场ID"
+        <el-form-item label="小区ID"
                       prop="id">
-          {{ tempDetail.id }}
+          {{ tempDetail.communityId }}
         </el-form-item>
         <el-form-item label="车场编码"
                       prop="carparkKey ">

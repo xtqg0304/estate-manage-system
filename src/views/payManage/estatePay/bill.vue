@@ -9,10 +9,12 @@
                action=""
                multiple>
       <el-button slot="trigger"
+                 :disabled="uploadBtn"
                  size="small"
                  type="primary"
                  icon="el-icon-plus">上传文件</el-button>
-      <el-button style="margin-left: 10px;"
+      <el-button :disabled="uploadBtn"
+                 style="margin-left: 10px;"
                  size="small"
                  type="success"
                  icon="el-icon-upload"
@@ -23,13 +25,11 @@
                  class="filter-item"
                  type="primary"
                  @click="handleDownload"> 模版下载 </el-button>
-
-      <el-cascader :options="roomList"
+      <el-cascader :options="buildings"
                    v-model="listQuery.searchEstate"
-                   clearable
-                   expand-trigger="hover"
                    placeholder="房产名称"
-                   class="filter-item" />
+                   class="filter-item"
+                   @active-item-change="handleChange" />
       <el-select v-model="listQuery.billStatus"
                  placeholder="账单状态"
                  clearable
@@ -170,6 +170,7 @@ import {
   cashPay
 } from '@/api/payManage'
 import waves from '@/directive/waves' // 水波纹指令
+import { estateSelectMixin, estateSelectLazyLoadMixin } from '@/mixin/estateSelect'
 export default {
   name: 'ComplexTable',
   directives: {
@@ -195,6 +196,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [estateSelectMixin, estateSelectLazyLoadMixin],
   data() {
     return {
       tableData: [],
@@ -225,7 +227,9 @@ export default {
           label: '未缴',
           value: 3
         }
-      ]
+      ],
+      buildings: [],
+      uploadBtn: false
     }
   },
   computed: {
@@ -246,6 +250,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getBuilding()
   },
   methods: {
     getList() {
@@ -351,12 +356,6 @@ export default {
               message: '金额改变成功',
               type: 'success'
             })
-            // this.$notify({
-            //   title: '成功',
-            //   message: '更新成功',
-            //   type: 'success',
-            //   duration: 2000
-            // })
           } else {
             this.$notify.error({
               title: '失败',
@@ -384,6 +383,8 @@ export default {
     },
     /* 导入数据 */
     submitUpload(content) { // 自定义的上传方法
+      const _this = this
+      _this.uploadBtn = true
       const formdata = new FormData()
       formdata.append('file', content.file)
       formdata.append('communityId', this.communityId) // 获取小区id
@@ -391,22 +392,18 @@ export default {
         .then(response => {
           if (response.status === 200) {
             if (response.data.code === 200) {
+              _this.uploadBtn = false
               this.$notify({
                 title: '成功',
                 message: '导入成功',
                 type: 'success',
                 duration: 2000
               })
-            } else {
-              this.$notify.error({
-                title: '失败',
-                message: response.data.msg,
-                duration: 2000
-              })
             }
           }
         })
         .catch(function(error) {
+          _this.uploadBtn = false
           console.log(error)
         })
     },

@@ -25,34 +25,45 @@ router.beforeEach((to, from, next) => {
           .dispatch('GetUserCommunity')
           .then(() => {
             // 拉取 小区信息
-            if (!sessionStorage.getItem('subSystemId')) { // 登录成功  默认设置 物业管理系统 的路由
-              const permissionSys = JSON.parse(sessionStorage.getItem('permission'))
-              permissionSys.forEach((v) => {
+            if (!sessionStorage.getItem('subSystemId')) {
+              // 登录成功  默认设置 物业管理系统 的路由
+              const permissionSys = JSON.parse(
+                sessionStorage.getItem('permission')
+              )
+              permissionSys.forEach(v => {
                 if (v.name === '物管系统') {
                   store.commit('SET_SUBSYSTEMID', v.id)
                 }
               })
             }
-            store.dispatch('GenerateRoutes', sessionStorage.getItem('subSystemId')).then(() => {
-              // 根据 子系统id权限生成可访问的路由表
-              router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
-              next({ ...to, replace: true }) // hack 方法 确保 addRoutes 已完成 ,set the replace: true so the navigation will not leave a history record
-            })
+            store
+              .dispatch('GenerateRoutes', sessionStorage.getItem('subSystemId'))
+              .then(() => {
+                // 根据 子系统id权限生成可访问的路由表
+                router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+                next({ ...to, replace: true }) // hack 方法 确保 addRoutes 已完成 ,set the replace: true so the navigation will not leave a history record
+              })
           })
           .catch(err => {
             store.dispatch('LogOut').then(() => {
-              Message.error(err || '用户没有绑定小区,请绑定至少一个小区后,重新登录!')
+              Message.error(
+                err || '用户没有绑定小区,请绑定至少一个小区后,重新登录!'
+              )
               next({ path: '/login' })
             })
           })
       } else {
-        store.dispatch('GenerateRoutes', sessionStorage.getItem('subSystemId')).then(() => {
-          // 根据 子系统id 权限生成可访问的路由表
-          router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
-          next({ ...to, replace: true }) // hack 方法 确保 addRoutes 已完成 ,set the replace: true so the navigation will not leave a history record
-        })
+        store
+          .dispatch('GenerateRoutes', sessionStorage.getItem('subSystemId'))
+          .then(() => {
+            // 根据 子系统id 权限生成可访问的路由表
+            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+            next({ ...to, replace: true }) // hack 方法 确保 addRoutes 已完成 ,set the replace: true so the navigation will not leave a history record
+          })
         // 没有动态改变权限的需求可直接 next() 删除下方权限判断 ↓
-        if (hasPermission([sessionStorage.getItem('subSystemId')], to.meta.roles)) {
+        if (
+          hasPermission([sessionStorage.getItem('subSystemId')], to.meta.roles)
+        ) {
           next()
         } else {
           next({ path: '/401', replace: true, query: { noGoBack: true }})

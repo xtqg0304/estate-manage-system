@@ -220,17 +220,6 @@ export default {
       fetchBillList(this.listQuery).then(response => {
         if (response.status === 200) {
           if (response.data.code === 200) {
-            // const items = response.data.data.qryList
-            // this.list = items.map(v => {
-            //   if (v.billStatus === 3) {
-            //     this.$set(v, 'editButton', true)
-            //     this.$set(v, 'edit', false)
-            //     v.originalPayAmount = v.payAmount
-            //   }
-            //   return v
-            // })
-            // // this.list = response.data.data.qryList
-            // this.total = response.data.totalCount
             this.list = []
             this.listLoading = false
           } else {

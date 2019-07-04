@@ -205,7 +205,7 @@ export default {
       listLoading: true,
       listQuery: {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 10,
         status: '',
         beginTime: '',
         endTime: '',
@@ -353,6 +353,8 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           this.temp.publishTime = parseTime(new Date())
+          // 需要加上小区 ID
+          this.temp.communityId = this.$store.state.user.selectCommunity
           editInformation(this.temp).then((response) => {
             if (response.status === 200) {
               if (response.data.code === 200) {

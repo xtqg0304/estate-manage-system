@@ -117,10 +117,13 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          this.$store.dispatch('LoginByUsername', this.loginForm).then((res) => {
             // this.$store.dispatch('GetUserCommunity')
-            this.loading = false
-            this.$router.push({ path: '/home' })
+            console.log(res)
+            if (res.data.code === 200) {
+              // this.loading = false
+              this.$router.push({ path: '/home' })
+            }
           }).catch(() => {
             this.loading = false
           })

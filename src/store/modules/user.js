@@ -1,12 +1,10 @@
 import { loginByUsername, logout } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import {
-  getUserCommunity
-} from '@/api/communityManage'
-import {
-  getBuildingList,
-  getRoomList
-} from '@/api/property'
+import { getUserCommunity } from '@/api/communityManage'
+// import {
+//   getBuildingList,
+//   getRoomList
+// } from '@/api/property'
 
 const user = {
   state: {
@@ -36,7 +34,6 @@ const user = {
     selectCommunity: '',
     selectCommunityName: '',
     roomList: []
-
   },
 
   mutations: {
@@ -151,13 +148,16 @@ const user = {
         loginByUsername(username, userInfo.password)
           .then(response => {
             /* eslint-disable */
-            if(response.status === 200){
-              if(response.data.code === 200){
+            if (response.status === 200) {
+              if (response.data.code === 200) {
                 const data = response.data.data
-                commit('SET_TOKEN', response.headers["x-auth-token"]) // 设置vuex里面token的值
+                commit('SET_TOKEN', response.headers['x-auth-token']) // 设置vuex里面token的值
                 commit('SET_USER_INFO', data)
-                setToken(response.headers["x-auth-token"]) // 将token的值存储在cookie或者sessionstorage
-                sessionStorage.setItem('x-auth-token', response.headers["x-auth-token"])
+                setToken(response.headers['x-auth-token']) // 将token的值存储在cookie或者sessionstorage
+                sessionStorage.setItem(
+                  'x-auth-token',
+                  response.headers['x-auth-token']
+                )
               }
             }
             resolve(response)
@@ -170,49 +170,51 @@ const user = {
     // 获取用户小区列表
     GetUserCommunity({ commit, state }) {
       return new Promise((resolve, reject) => {
-        if(!state.userId ){
+        if (!state.userId) {
           state.userId = sessionStorage.getItem('userId')
         }
-        getUserCommunity({id: state.userId})
+        getUserCommunity({ id: state.userId })
           .then(response => {
-            if(response.status === 200){
-              if(response.data.code === 200){
+            if (response.status === 200) {
+              if (response.data.code === 200) {
                 const communityList = response.data.data
                 if (communityList && communityList.length > 0) {
                   // 验证返回的communityList是否是一个非空数组
                   commit('SET_COMMUNITYLIST', communityList) // 设置vuex的用户绑定的小区列表值
                   commit('SET_SELECTCOMMUNITY', communityList[0].id) // 设置vuex的默认选中绑定小区的值
                   commit('SET_SELECTCOMMUNITYNAME', communityList[0].name)
-                  getBuildingList({ id: communityList[0].id }).then(response => {
-                    if (response.status === 200) {
-                      if (response.data.code === 200) {
-                        let buildings = response.data.data
-                        let roomList = buildings.map(v => {
-                          v.label = v.buildingName
-                          v.value = v.id
-                          v.children = []
-                          return v
-                        })
-                        for (let i = 0; i < roomList.length; i++) {
-                          getRoomList({ communityId: communityList[0].id, buildingId: roomList[i].id }).then(response => {
-                            if (response.status === 200) {
-                              if (response.data.code === 200) {
-                                const rooms = response.data.data
-                                roomList[i].children = rooms.map(v => {
-                                  v.label = v.room
-                                  v.value = v.id
-                                  return v
-                                })
-                              }
-                            }
-                          })
-                        }
-                        commit('SET_ROOMLIST', roomList)
-                      }
-                    }
-                  })
+                  // getBuildingList({ id: communityList[0].id }).then(response => {
+                  //   if (response.status === 200) {
+                  //     if (response.data.code === 200) {
+                  //       let buildings = response.data.data
+                  //       let roomList = buildings.map(v => {
+                  //         v.label = v.buildingName
+                  //         v.value = v.id
+                  //         v.children = []
+                  //         return v
+                  //       })
+                  //       for (let i = 0; i < roomList.length; i++) {
+                  //         getRoomList({ communityId: communityList[0].id, buildingId: roomList[i].id }).then(response => {
+                  //           if (response.status === 200) {
+                  //             if (response.data.code === 200) {
+                  //               const rooms = response.data.data
+                  //               roomList[i].children = rooms.map(v => {
+                  //                 v.label = v.room
+                  //                 v.value = v.id
+                  //                 return v
+                  //               })
+                  //             }
+                  //           }
+                  //         })
+                  //       }
+                  //       commit('SET_ROOMLIST', roomList)
+                  //     }
+                  //   }
+                  // })
                 } else {
-                  reject('getCommunityList: communityList must be a non-null array !')
+                  reject(
+                    'getCommunityList: communityList must be a non-null array !'
+                  )
                 }
               }
             }
@@ -227,13 +229,13 @@ const user = {
     LogOut({ commit }) {
       return new Promise((resolve, reject) => {
         logout()
-          .then((response) => {
-            if(response.data.code === 200){
+          .then(response => {
+            if (response.data.code === 200) {
               commit('SET_TOKEN', '')
               removeToken()
               sessionStorage.clear()
               resolve(response)
-            }else{
+            } else {
               reject(error)
             }
           })
