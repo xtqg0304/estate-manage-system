@@ -12,8 +12,7 @@
                 style="width: 200px;"
                 class="filter-item"
                 @keyup.enter.native="handleFilter" />
-      <el-button v-waves
-                 class="filter-item"
+      <el-button class="filter-item"
                  type="primary"
                  icon="el-icon-search"
                  @click="handleFilter">{{ $t('table.search') }}</el-button>
@@ -71,7 +70,7 @@
       </el-table-column>
     </el-table>
     <div class="pagination-container">
-      <el-pagination :current-page="listQuery.page"
+      <el-pagination :current-page="listQuery.currentPage"
                      :page-sizes="[10,20,30, 50]"
                      :page-size="listQuery.pageSize"
                      :total="total"
@@ -130,7 +129,7 @@ export default {
       total: null,
       listLoading: true,
       listQuery: {
-        page: 1,
+        currentPage: 1,
         pageSize: 10,
         serviceId: '',
         searchType: 0,
@@ -171,7 +170,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.endTime = this.listQuery.endTime && parseTime(this.listQuery.endTime)
-      this.listQuery.page = 1
+      this.listQuery.currentPage = 1
       this.getList()
     },
     handleSizeChange(val) {
@@ -179,7 +178,7 @@ export default {
       this.getList()
     },
     handleCurrentChange(val) {
-      this.listQuery.page = val
+      this.listQuery.currentPage = val
       this.getList()
     }
   }

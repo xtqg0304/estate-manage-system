@@ -1,78 +1,67 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-select
-        v-model="listQuery.communityName"
-        placeholder="选择小区"
-        clearable
-        class="filter-item"
-        @change="communitySelQuery">
-        <el-option
-          v-for="item in communityList"
-          :key="item.selectCommunityName"
-          :label="item.selectCommunityName"
-          :value="item" />
+      <el-select v-model="listQuery.communityName"
+                 placeholder="选择小区"
+                 clearable
+                 class="filter-item"
+                 @change="communitySelQuery">
+        <el-option v-for="item in communityList"
+                   :key="item.selectCommunityName"
+                   :label="item.selectCommunityName"
+                   :value="item" />
       </el-select>
-      <el-select
-        v-model="listQuery.buildingName"
-        placeholder="选择楼栋"
-        clearable
-        class="filter-item"
-        @change="buildingSelQuery">
-        <el-option
-          v-for="item in buildingList"
-          :key="item.id"
-          :label="item.buildingName"
-          :value="item" />
+      <el-select v-model="listQuery.buildingName"
+                 placeholder="选择楼栋"
+                 clearable
+                 class="filter-item"
+                 @change="buildingSelQuery">
+        <el-option v-for="item in buildingList"
+                   :key="item.id"
+                   :label="item.buildingName"
+                   :value="item" />
       </el-select>
-      <el-select
-        v-model="listQuery.keyStatusName"
-        placeholder="权限状态"
-        clearable
-        class="filter-item"
-        @change="keySel">
-        <el-option
-          v-for="item in keyStatusList"
-          :key="item"
-          :label="item"
-          :value="item" />
+      <el-select v-model="listQuery.keyStatusName"
+                 placeholder="权限状态"
+                 clearable
+                 class="filter-item"
+                 @change="keySel">
+        <el-option v-for="item in keyStatusList"
+                   :key="item"
+                   :label="item"
+                   :value="item" />
       </el-select>
-      <el-input
-        v-model="search"
-        placeholder="关键字"
-        style="width: 200px;"
-        class="filter-item" />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter">{{ $t('table.search') }}</el-button>
+      <el-input v-model="keyword"
+                placeholder="关键字"
+                style="width: 200px;"
+                class="filter-item" />
+      <el-button v-waves
+                 class="filter-item"
+                 type="primary"
+                 icon="el-icon-search"
+                 @click="handleFilter">{{ $t('table.search') }}</el-button>
     </div>
-    <el-table
-      v-loading="listLoading"
-      :key="tableKey"
-      :data="tables"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;min-height:500px;">
-      <el-table-column
-        label="用户名称"
-        align="center"
-        width="120"
-        sortable
-        prop="wxUserName ">
+    <el-table v-loading="listLoading"
+              :key="tableKey"
+              :data="tables"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%;min-height:500px;">
+      <el-table-column label="用户名称"
+                       align="center"
+                       width="120"
+                       sortable
+                       prop="wxUserName ">
         <template slot-scope="scope">
           <span>{{ scope.row.wxUserName }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="用户手机"
-        align="center"
-        width="120"
-        sortable
-        prop="wxUserTelephone ">
+      <el-table-column label="用户手机"
+                       align="center"
+                       width="120"
+                       sortable
+                       prop="wxUserTelephone ">
         <template slot-scope="scope">
           <span>{{ scope.row.wxUserTelephone }}</span>
         </template>
@@ -88,89 +77,80 @@
         </template>
       </el-table-column> -->
 
-      <el-table-column
-        label="设备名称"
-        align="center"
-        width="120"
-        sortable
-        prop="deviceName  ">
+      <el-table-column label="设备名称"
+                       align="center"
+                       width="120"
+                       sortable
+                       prop="deviceName  ">
         <template slot-scope="scope">
           <span>{{ scope.row.deviceName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        label="关联房产"
-        align="center"
-        width="120"
-        sortable
-        prop="filedName ">
+      <el-table-column label="关联房产"
+                       align="center"
+                       width="120"
+                       sortable
+                       prop="filedName ">
         <template slot-scope="scope">
           <span>{{ scope.row.filedName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        label="过期时间"
-        align="center"
-        width="180"
-        sortable
-        prop="overdueTime ">
+      <el-table-column label="过期时间"
+                       align="center"
+                       width="180"
+                       sortable
+                       prop="overdueTime ">
         <template slot-scope="scope">
           <span>{{ scope.row.overdueTime | dateFormat(('yyyy-MM-dd hh:mm:ss')) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        label="授权状态"
-        align="center"
-        width="120"
-        sortable
-        prop="shareStatus  ">
+      <el-table-column label="授权状态"
+                       align="center"
+                       width="120"
+                       sortable
+                       prop="shareStatus  ">
         <template slot-scope="scope">
           <span>{{ scope.row.shareStatus|keyShareFilter }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        label="添加时间"
-        align="center"
-        width="180"
-        sortable
-        prop="addTime ">
+      <el-table-column label="添加时间"
+                       align="center"
+                       width="180"
+                       sortable
+                       prop="addTime ">
         <template slot-scope="scope">
           <span>{{ scope.row.addTime | dateFormat(('yyyy-MM-dd hh:mm:ss')) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        :label="$t('table.actions')"
-        align="center">
+      <el-table-column :label="$t('table.actions')"
+                       align="center">
         <template slot-scope="scope">
-          <el-switch
-            :active-value="1"
-            v-model="scope.row.enableStatus"
-            :active-text="(scope.row.enableStatus=='1')?'启用':'禁用'"
-            @change="changeSwitch(scope.row)"/>
+          <el-switch :active-value="1"
+                     v-model="scope.row.enableStatus"
+                     :active-text="(scope.row.enableStatus=='1')?'启用':'禁用'"
+                     @change="changeSwitch(scope.row)" />
           <!-- <el-switch v-model="keyStatus"  v-if="item.redirect==='noredirect'||index==levelList.length-1" active-text="启用"   ></el-switch> -->
-          <el-button
-            type="text"
-            size="small"
-            @click="openLog(scope.row)">开锁日志</el-button>
+          <el-button type="text"
+                     size="small"
+                     @click="openLog(scope.row)">开锁日志</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination
-        :current-page="listQuery.page"
-        :page-sizes="[10,20,30, 50]"
-        :page-size="listQuery.currentPage"
-        :total="total"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
+      <el-pagination :current-page="listQuery.currentPage"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.pageSize"
+                     :total="total"
+                     background
+                     layout="total, sizes, prev, pager, next, jumper"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -432,7 +412,8 @@ export default {
       // 数据
       buildingList: [],
       communityList: [],
-      keyStatusList: ['可分享钥匙', '不可分享钥匙']
+      keyStatusList: ['可分享钥匙', '不可分享钥匙'],
+      keyword: '' // 搜索关键字
     }
   },
   computed: {
@@ -544,7 +525,7 @@ export default {
       if (val.enableStatus) {
         params.enablestatus = 1
       } else {
-        params.enablestatus = 0
+        params.enablestatus = 2
       }
       // 修改可用状态
       updatekeyPage(params).then(response => {
@@ -565,8 +546,14 @@ export default {
     handleFilter() {
       console.log(this.listQuery)
       // 搜索数据（默认请求第一页数据）
-      this.listQuery.page = 1
-      this.getList()
+      this.listQuery.currentPage = 1
+      this.listQuery.inoutuserName = this.keyword
+      this.listLoading = true
+      getkeyPage(this.listQuery).then(response => {
+        this.list = response.data.data.qryWxUserData
+        this.total = response.data.data.totalCount
+        this.listLoading = false
+      })
     },
     handleSizeChange(val) {
       // 每页显示多少条数据
@@ -575,7 +562,7 @@ export default {
     },
     handleCurrentChange(val) {
       // 显示第几页的数据
-      this.listQuery.page = val
+      this.listQuery.currentPage = val
       this.getList()
     },
     handleModifyStatus(row, status) {

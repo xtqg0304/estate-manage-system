@@ -341,7 +341,12 @@ export default {
       const hours = new Date().getHours()
       self.hoursT = (hours < 10 ? '0' : '') + hours
     }, 1000)
-    this._handelCommunityIds()
+    // 首次先调用
+    self._handelCommunityIds()
+    // 每隔五分钟刷新接口
+    setInterval(function() {
+      self._handelCommunityIds()
+    }, 300000)
   },
   beforeRouteLeave(to, from, next) {
     this.$store.commit('SET_SUBSYSTEMID', to.params.systemName)

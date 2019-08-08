@@ -64,6 +64,7 @@ export function fetchRealTimeChargeReport(data) {
   return request({
     url: paymentServer + '/dataStatistics/getRealTimeChargeReport',
     method: 'post',
-    data
+    data,
+    timeout: 20000
   })
 }

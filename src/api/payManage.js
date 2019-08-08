@@ -66,7 +66,8 @@ export function fetchEstatePayMonth(data) {
   return request({
     url: paymentServer + '/property/month/getPayMonthPage',
     method: 'post',
-    data
+    data,
+    timeout: 100000
   })
 }
 /* 获取首页缴费实时数据接口*/
@@ -81,6 +82,15 @@ export function fetchPropertyOrderList(data) {
 export function cashPay(data) {
   return request({
     url: paymentServer + '/property/case/pay',
+    method: 'post',
+    data
+  })
+}
+
+/* 优惠券使用情况 */
+export function getDiscountMonthPage(data) {
+  return request({
+    url: paymentServer + '/property/month/getDiscountMonthPage',
     method: 'post',
     data
   })

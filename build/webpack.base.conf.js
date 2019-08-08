@@ -34,10 +34,11 @@ module.exports = {
         ? config.build.assetsPublicPath
         : config.dev.assetsPublicPath
   },
-  externals: {
-    vue: 'Vue',
-    'element-ui':'ELEMENT'
-  },
+  // 开启 CDN
+  // externals: {
+  //   vue: 'Vue',
+  //   'element-ui':'ELEMENT'
+  // },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {

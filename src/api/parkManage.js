@@ -63,7 +63,8 @@ export function fetchLaneList(data) {
   return request({
     url: paymentServer + '/communityParkInfo/getCommunityRoadnfo',
     method: 'post',
-    data
+    data,
+    timeout: 20000
   })
 }
 /* 岗亭信息列表 table*/

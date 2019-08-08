@@ -32,6 +32,7 @@ export default {
     estatePaymentMonthly: '物缴月报',
     parkPaymentDaily: '车缴日报',
     parkPaymentMonthly: '车缴月报',
+    couponPaymentMonthly: '优惠券月报',
     realtimeInOut: '实时进出',
     presentVehicle: '在场车辆',
     vehicleInOut: '车辆进出',

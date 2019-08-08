@@ -32,6 +32,7 @@ export default {
     estatePaymentMonthly: 'estatePaymentMonthly',
     parkPaymentDaily: 'ParkPaymentDaily',
     parkPaymentMonthly: 'ParkPaymentMonthly',
+    couponPaymentMonthly: 'couponPaymentMonthly',
     realtimeInOut: 'RealtimeInOut',
     presentVehicle: 'PresentVehicle',
     vehicleInOut: 'VehicleInOut',
@@ -178,7 +179,6 @@ export default {
     floor: 'Floor',
     unit: 'Unit',
     roomNumber: 'RoomNumber'
-
   },
   tagsView: {
     refresh: 'Refresh',

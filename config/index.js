@@ -10,6 +10,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+      // '/api': {
+      //   target: 'http://192.168.69.170:8500/',
+      //   pathRewrite: { '^/api': '/' },
+      //   changeOrigin: true
+      // }
       '/api': {
         target: 'https://www.starnetiot-park.top/',
         pathRewrite: { '^/api': '/' },

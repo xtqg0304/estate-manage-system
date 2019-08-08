@@ -142,6 +142,7 @@ export const map = {
   estatePaymentOrder: () => import('@/views/statisticalReportManage/estatePayment/estatePaymentOrder.vue'),
   parkPaymentBill: () => import('@/views/statisticalReportManage/parkPayment/parkPaymentBill.vue'),
   parkPaymentOrder: () => import('@/views/statisticalReportManage/parkPayment/parkPaymentOrder.vue'),
+  couponPaymentMonthly: () => import('@/views/statisticalReportManage/paymentStatistical/couponPaymentMonthly.vue'),
   estatePaymentMonthly: () => import('@/views/statisticalReportManage/paymentStatistical/estatePaymentMonthly.vue'),
   parkPaymentDaily: () => import('@/views/statisticalReportManage/paymentStatistical/parkPaymentDaily.vue'),
   parkPaymentMonthly: () => import('@/views/statisticalReportManage/paymentStatistical/parkPaymentMonthly.vue'),
@@ -832,6 +833,17 @@ export const asyncRouterMap = [{
     meta: {
       title: 'parkPaymentMonthly',
       icon: 'parkPayMonthly',
+      noCache: true,
+      roles: ['statisticalReport']
+    }
+  },
+  {
+    path: 'couponPaymentMonthly',
+    component: () => import('@/views/statisticalReportManage/paymentStatistical/couponPaymentMonthly.vue'),
+    name: 'couponPaymentMonthly',
+    meta: {
+      title: 'couponPaymentMonthly',
+      icon: 'sentryboxPayDaily',
       noCache: true,
       roles: ['statisticalReport']
     }
